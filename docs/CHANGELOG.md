@@ -4,6 +4,18 @@ Append-only, newest first. One entry per committed copperhead run.
 
 ## 2026-09-15 — create pipeline stage: part-selection
 
+- Change: recover-part-selection-weather-balloon-logger
+- Files: docs/BOM.md, docs/CHANGELOG.md, docs\DECISIONS.md
+- Verification: ERC not required
+
+## 2026-09-15 — recover pipeline stage: part-selection
+
+- Change: recover-part-selection-weather-balloon-logger
+- Files: docs/BOM.md, docs/CHANGELOG.md, docs/DECISIONS.md
+- Verification: complete BOM reread; fresh installed-symbol searches and authoritative pin checks; power-budget audit; check_drift after readback
+
+## 2026-09-15 — create pipeline stage: part-selection
+
 - Change: part-selection-weather-balloon-logger
 - Files: docs/BOM.md, docs/CHANGELOG.md, docs\DECISIONS.md
 - Verification: ERC not required

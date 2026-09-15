@@ -1,12 +1,12 @@
 # Bill of materials — Weather Balloon Logger harness
 
-This is the stage-3 selection for the carrier PCB. Every manufacturer part number is **UNVERIFIED** until checked against the current manufacturer datasheet, ordering record, land pattern, temperature range, and availability. The rationale column states the exact acceptance checks; no UNVERIFIED item may be released to procurement merely because its name appears here. The fixed table has one row per refdes, and each Value cell contains only the component value that stage 4 will place on the schematic; all descriptive prose stays in Rationale.
+This is the complete stage-3 selection for the carrier PCB, recovered and re-audited on 2026-09-15. Every manufacturer part number is **UNVERIFIED** until checked against the current manufacturer datasheet, ordering record, land pattern, temperature range, availability, and the stated power-budget acceptance limits. No UNVERIFIED item may be released to procurement merely because its name appears here. The fixed table has exactly one row per individual refdes; each Value cell contains only the component value that stage 4 will place on the schematic, and all descriptive prose stays in Rationale.
 
 ## KiCad capture contract
 
-Only symbols installed in KiCad 10 on this machine are used. `LightAPRS-W 2.0` and `OpenLog` do not exist as named installed symbols. The off-board LightAPRS-W host is therefore represented by its seven-wire carrier interface J2 using `Connector_Generic:Conn_01x07`; A1 OpenLog is represented by its real six-pin header using `Connector_Generic:Conn_01x06`. This is intentional and avoids an invented module symbol. Host GPIO functions and J2 pin allocation remain unassigned until the LightAPRS-W 2.0 / ESP32 strapping and occupied-pin tables are checked in stage 4.
+Fresh `search_symbols` checks against the installed KiCad 10 libraries found no named `LightAPRS-W 2.0` or `OpenLog` symbol. The off-board LightAPRS-W host is therefore represented by its seven-wire carrier interface J2 using the installed `Connector_Generic:Conn_01x07`; A1 OpenLog is represented by its real six-pin header using the installed `Connector_Generic:Conn_01x06`. This is intentional and avoids invented module symbols. Searches also confirmed the selected generic connectors, coax connector, SPDT switch, AO3400A, and LED symbols; authoritative `symbol_pins` calls confirmed every selected lib_id, including the passive R and C symbols. Host GPIO functions and J2 pin allocation remain unassigned until the LightAPRS-W 2.0 / ESP32 strapping and occupied-pin tables are checked in stage 4.
 
-Installed-symbol pin contracts confirmed on this machine with `search_symbols` and authoritative `symbol_pins` results:
+Installed-symbol pin contracts freshly confirmed on this machine:
 
 - J1 and J5: `Connector_Generic:Conn_01x02`, package pins 1–2.
 - J2: `Connector_Generic:Conn_01x07`, package pins 1–7.
