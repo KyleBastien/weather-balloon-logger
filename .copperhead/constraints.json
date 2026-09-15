@@ -1,0 +1,216 @@
+{
+  "flight.duration_h": {
+    "min": 4,
+    "source": "docs/SPEC.md §1 Flight duration ≥ 4 h (brief ~4 hour flight)",
+    "affects": [
+      "docs/SPEC.md",
+      "power.pack",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.pack_chemistry": {
+    "forbidden": [
+      "alkaline AA",
+      "alkaline AAA",
+      "LiPo 1S flight pack"
+    ],
+    "value": "L91 AA Li-FeS2",
+    "source": "docs/SPEC.md §2.1 Energizer L91 Ultimate Lithium AA; forbidden alkaline and LiPo 1S",
+    "affects": [
+      "docs/SPEC.md",
+      "power.pack",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.series_cells": {
+    "min": 3,
+    "max": 4,
+    "source": "docs/SPEC.md §2.1 Topology: 3 cells baseline, 4 cells allowed only if host VIN/UVLO requires it",
+    "affects": [
+      "docs/SPEC.md",
+      "power.pack",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.pack_voltage_V": {
+    "min": 3,
+    "max": 7.2,
+    "source": "docs/SPEC.md §2.1 Pack voltage 3s 3.0–5.4 V and 4s 4.0–7.2 V (EOD–fresh); combined bound 3.0–7.2 V",
+    "affects": [
+      "docs/SPEC.md",
+      "power.pack",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.mean_flight_current_mA": {
+    "max": 200,
+    "source": "docs/SPEC.md §2.2 ASSUMED average pack current ≤ 200 mA mean over 4 h (GPS on + ESP32 + OpenLog + APRS/WSPR TX duty)",
+    "affects": [
+      "docs/SPEC.md",
+      "power.pack",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.flight_energy_mAh": {
+    "min": 1600,
+    "source": "docs/SPEC.md §2.2 Design margin: usable pack capacity ≥ 2× flight energy → ≥ 1600 mAh vs 800 mAh load after ASSUMED cold derate",
+    "affects": [
+      "docs/SPEC.md",
+      "power.pack",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.switch_off_current_uA": {
+    "max": 0,
+    "source": "docs/SPEC.md §2.3 Switch OFF pack current: 0 µA except holder/switch leakage; switch must break the pack positive",
+    "affects": [
+      "docs/SPEC.md",
+      "power.pack",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.board_added_idle_mA": {
+    "max": 2,
+    "source": "docs/SPEC.md §2.3 Switch ON, cutdown OFF: board-added Iq (LED off, MOSFET off, OpenLog idle) ≤ 2 mA beyond LightAPRS-W 2.0",
+    "affects": [
+      "docs/SPEC.md",
+      "power.pack",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.cutdown_off_leakage_uA": {
+    "max": 50,
+    "source": "docs/SPEC.md §2.3 Cutdown MOSFET/relay OFF leakage ≤ 50 µA at max pack voltage",
+    "affects": [
+      "docs/SPEC.md",
+      "power.pack",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.led_off_leakage_uA": {
+    "max": 1,
+    "source": "docs/SPEC.md §2.3 Write LED OFF leakage ≤ 1 µA (no bleed path that looks like a glow)",
+    "affects": [
+      "docs/SPEC.md",
+      "power.pack",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.gpio_logic_V": {
+    "value": "3.3",
+    "source": "docs/SPEC.md §2.4 GPIO / LED / FET gate: 3.3 V logic from LightAPRS-W 3V3, not raw pack",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/PINOUT.md",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/PINOUT.md",
+      "docs/BOM.md"
+    ]
+  },
+  "openlog.vcc_V": {
+    "min": 3.3,
+    "max": 12,
+    "source": "docs/SPEC.md §2.4 / §4 OpenLog VCC 3.3–12 V (module); tie to 3.3 V unless 3V3 LDO current share is exceeded",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md",
+      "power.pack"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "antenna.connector": {
+    "value": "SMA 50 ohm, two jacks, downward",
+    "source": "docs/SPEC.md §3 Two SMA jacks facing downward through the payload; 50 Ω; APRS and WSPR",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "cutdown.load_current_A": {
+    "max": 2,
+    "source": "docs/SPEC.md §5 Cutdown current ASSUMED ≤ 2 A burst for ≤ 30 s; FET/relay and trace must carry this",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md",
+      "power.pack"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "cutdown.vgs_fully_on_V": {
+    "forbidden": [
+      "IRLZ44N without 3.3V Rds(on) proof"
+    ],
+    "value": "must be fully enhanced at 3.3 V Vgs; IRLZ44N not auto-approved",
+    "source": "docs/SPEC.md §5 IRLZ44N Rds(on) is specified at 5 V Vgs; at 3.3 V it may not be fully on — stop rather than silently use IRLZ44N",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md",
+      "power.pack"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  },
+  "power.strap_leakage_uA": {
+    "max": 50,
+    "source": "docs/SPEC.md §2.3 Pull-ups/downs on host GPIOs: extra leakage through straps ≤ 50 µA total; check MCU strapping table before any pin",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/PINOUT.md",
+      "power.pack"
+    ],
+    "deferred": [
+      "docs/PINOUT.md"
+    ]
+  },
+  "antenna.keepout_mm": {
+    "min": 5,
+    "source": "docs/SPEC.md §3 Keepout: ASSUMED ≥ 5 mm board keepout from SMA dielectric; no battery metal in the near-field of the jacks",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md"
+    ],
+    "deferred": [
+      "docs/BOM.md"
+    ]
+  }
+}
