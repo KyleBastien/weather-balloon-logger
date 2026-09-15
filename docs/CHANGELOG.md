@@ -2,6 +2,18 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-15 — create pipeline stage: part-selection
+
+- Change: part-selection-weather-balloon-logger
+- Files: docs/BOM.md, docs/CHANGELOG.md, docs\DECISIONS.md
+- Verification: ERC not required
+
+## 2026-09-15 — create pipeline stage: part-selection
+
+- Change: part-selection-weather-balloon-logger
+- Files: docs/BOM.md, docs/CHANGELOG.md, docs/DECISIONS.md
+- Verification: installed KiCad symbols searched and authoritative pins checked; BOM-to-schematic drift checked before finish
+
 ## 2026-09-15 — create pipeline stage: architecture
 
 - Change: architecture-weather-balloon-logger
