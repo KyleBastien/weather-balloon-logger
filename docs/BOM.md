@@ -1,12 +1,12 @@
 # Bill of materials — Weather Balloon Logger harness
 
-This is the stage-3 selection for the carrier PCB. Every manufacturer part number is **UNVERIFIED** until checked against the current manufacturer datasheet, ordering record, land pattern, temperature range, and availability. The rationale column states the exact acceptance checks; no UNVERIFIED item may be released to procurement merely because its name appears here.
+This is the stage-3 selection for the carrier PCB. Every manufacturer part number is **UNVERIFIED** until checked against the current manufacturer datasheet, ordering record, land pattern, temperature range, and availability. The rationale column states the exact acceptance checks; no UNVERIFIED item may be released to procurement merely because its name appears here. The fixed table has one row per refdes, and each Value cell contains only the component value that stage 4 will place on the schematic; all descriptive prose stays in Rationale.
 
 ## KiCad capture contract
 
 Only symbols installed in KiCad 10 on this machine are used. `LightAPRS-W 2.0` and `OpenLog` do not exist as named installed symbols. The off-board LightAPRS-W host is therefore represented by its seven-wire carrier interface J2 using `Connector_Generic:Conn_01x07`; A1 OpenLog is represented by its real six-pin header using `Connector_Generic:Conn_01x06`. This is intentional and avoids an invented module symbol. Host GPIO functions and J2 pin allocation remain unassigned until the LightAPRS-W 2.0 / ESP32 strapping and occupied-pin tables are checked in stage 4.
 
-Installed-symbol pin contracts confirmed for capture:
+Installed-symbol pin contracts confirmed on this machine with `search_symbols` and authoritative `symbol_pins` results:
 
 - J1 and J5: `Connector_Generic:Conn_01x02`, package pins 1–2.
 - J2: `Connector_Generic:Conn_01x07`, package pins 1–7.
@@ -29,7 +29,7 @@ Installed-symbol pin contracts confirmed for capture:
 | J4 | SMA | Connector_Coaxial:SMA_Amphenol_132289 | UNVERIFIED — 132289 | WSPR 50 Ω SMA jack, mounted so the mate points downward. Verify jack gender, vertical orientation, footprint, HF performance, and −40 °C operation. Passive connector draws no current; keep at least 5 mm board keepout from dielectric and battery metal. |
 | J5 | Conn_01x02 | Connector_Molex:Molex_Micro-Fit_3.0_43650-0200_1x02_P3.00mm_Horizontal | UNVERIFIED — 43650-0200 | Nichrome output connector, placed outside both SMA keepouts. Verify land pattern, mating family, retention, at least 2 A DC for 30 s, contact heating, and −40 °C operation. Passive connector adds no Iq and must have negligible insulation leakage. |
 | Q1 | AO3400A | Package_TO_SOT_SMD:SOT-23 | UNVERIFIED — AO3400A | Low-side cutdown FET with installed exact symbol and real G/S/D pins 1/2/3. Verify authentic manufacturer source, VDS at least 30 V, maximum RDS(on) specified at VGS = 2.5 V or lower, safe operating area and junction rise for 2 A for 30 s at 3.3 V gate drive, IDSS no greater than 1 µA at 7.2 V over −40 °C to +40 °C, and IGSS no greater than 0.1 µA. This is selected instead of IRLZ44N because 3.3 V enhancement is specified. |
-| D1 | Green LED | LED_SMD:LED_0603_1608Metric | UNVERIFIED — LTST-C190KGKT | Write-activity indicator driven only during an SD write through R1. Verify polarity, footprint, visibility at about 1–2 mA, reverse leakage no greater than 1 µA, and −40 °C operation. GPIO-low OFF state creates no forward-current path and must meet the 1 µA LED-off limit. |
+| D1 | LTST-C190KGKT | LED_SMD:LED_0603_1608Metric | UNVERIFIED — LTST-C190KGKT | Green write-activity LED driven only during an SD write through R1. Verify polarity, footprint, visibility at about 1–2 mA, reverse leakage no greater than 1 µA, and −40 °C operation. GPIO-low OFF state creates no forward-current path and must meet the 1 µA LED-off limit. |
 | R1 | 1k | Resistor_SMD:R_0603_1608Metric | UNVERIFIED — RC0603FR-071KL | LED current limiter; at 3.3 V it keeps current below 3 mA for any plausible green LED forward voltage. Verify 1%, at least 0.1 W, pulse rating, footprint, and −40 °C operation. It draws zero current when D1 is off. |
 | R2 | 100R | Resistor_SMD:R_0603_1608Metric | UNVERIFIED — RC0603FR-07100RL | Series gate resistor limits GPIO edge current and ringing without creating DC idle draw. Verify 1%, at least 0.1 W, footprint, and −40 °C operation. |
 | R3 | 1M | Resistor_SMD:R_0603_1608Metric | UNVERIFIED — RC0603FR-071ML | Intentional Q1 gate pulldown prevents reset-time nichrome firing. It draws 0 µA while the gate is low and 3.3 µA only while cutdown is commanded, below the 50 µA strap-leakage ceiling; verify 1%, voltage rating, footprint, and −40 °C operation. |

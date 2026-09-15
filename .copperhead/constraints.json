@@ -6,9 +6,6 @@
       "docs/SPEC.md",
       "power.pack",
       "docs/BOM.md"
-    ],
-    "deferred": [
-      "docs/BOM.md"
     ]
   },
   "power.pack_chemistry": {
@@ -23,9 +20,6 @@
       "docs/SPEC.md",
       "power.pack",
       "docs/BOM.md"
-    ],
-    "deferred": [
-      "docs/BOM.md"
     ]
   },
   "power.series_cells": {
@@ -35,9 +29,6 @@
     "affects": [
       "docs/SPEC.md",
       "power.pack",
-      "docs/BOM.md"
-    ],
-    "deferred": [
       "docs/BOM.md"
     ]
   },
@@ -49,9 +40,6 @@
       "docs/SPEC.md",
       "power.pack",
       "docs/BOM.md"
-    ],
-    "deferred": [
-      "docs/BOM.md"
     ]
   },
   "power.mean_flight_current_mA": {
@@ -60,9 +48,6 @@
     "affects": [
       "docs/SPEC.md",
       "power.pack",
-      "docs/BOM.md"
-    ],
-    "deferred": [
       "docs/BOM.md"
     ]
   },
@@ -73,9 +58,6 @@
       "docs/SPEC.md",
       "power.pack",
       "docs/BOM.md"
-    ],
-    "deferred": [
-      "docs/BOM.md"
     ]
   },
   "power.switch_off_current_uA": {
@@ -84,9 +66,6 @@
     "affects": [
       "docs/SPEC.md",
       "power.pack",
-      "docs/BOM.md"
-    ],
-    "deferred": [
       "docs/BOM.md"
     ]
   },
@@ -97,9 +76,6 @@
       "docs/SPEC.md",
       "power.pack",
       "docs/BOM.md"
-    ],
-    "deferred": [
-      "docs/BOM.md"
     ]
   },
   "power.cutdown_off_leakage_uA": {
@@ -109,9 +85,6 @@
       "docs/SPEC.md",
       "power.pack",
       "docs/BOM.md"
-    ],
-    "deferred": [
-      "docs/BOM.md"
     ]
   },
   "power.led_off_leakage_uA": {
@@ -120,9 +93,6 @@
     "affects": [
       "docs/SPEC.md",
       "power.pack",
-      "docs/BOM.md"
-    ],
-    "deferred": [
       "docs/BOM.md"
     ]
   },
@@ -135,8 +105,7 @@
       "docs/BOM.md"
     ],
     "deferred": [
-      "docs/PINOUT.md",
-      "docs/BOM.md"
+      "docs/PINOUT.md"
     ]
   },
   "openlog.vcc_V": {
@@ -147,9 +116,6 @@
       "docs/SPEC.md",
       "docs/BOM.md",
       "power.pack"
-    ],
-    "deferred": [
-      "docs/BOM.md"
     ]
   },
   "antenna.connector": {
@@ -157,9 +123,6 @@
     "source": "docs/SPEC.md §3 Two SMA jacks facing downward through the payload; 50 Ω; APRS and WSPR",
     "affects": [
       "docs/SPEC.md",
-      "docs/BOM.md"
-    ],
-    "deferred": [
       "docs/BOM.md"
     ]
   },
@@ -170,9 +133,6 @@
       "docs/SPEC.md",
       "docs/BOM.md",
       "power.pack"
-    ],
-    "deferred": [
-      "docs/BOM.md"
     ]
   },
   "cutdown.vgs_fully_on_V": {
@@ -185,9 +145,6 @@
       "docs/SPEC.md",
       "docs/BOM.md",
       "power.pack"
-    ],
-    "deferred": [
-      "docs/BOM.md"
     ]
   },
   "power.strap_leakage_uA": {
@@ -207,9 +164,6 @@
     "source": "docs/SPEC.md §3 Keepout: ASSUMED ≥ 5 mm board keepout from SMA dielectric; no battery metal in the near-field of the jacks",
     "affects": [
       "docs/SPEC.md",
-      "docs/BOM.md"
-    ],
-    "deferred": [
       "docs/BOM.md"
     ]
   }
