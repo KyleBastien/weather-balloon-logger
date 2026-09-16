@@ -80,11 +80,19 @@ Pass 1 also keeps every footprint position and orientation fixed while repairing
 
 Rationale: J1 and J5 already fit when their rotated courtyards are evaluated correctly; only SW1 moves 2 mm right, which is the minimum placement change that separates the real J1/SW1 courtyards without changing the outline or disturbing another footprint.
 
+## OpenLog mechanical pass — final placement
+
+- A1 `WeatherBalloon:SparkFun_OpenLog_DEV-13712_Carrier` is at (171,110) mm, rotation 0°, top-side and direct-soldered. Its official 15.24 × 19.05 mm body and 16.24 × 20.05 mm courtyard lie outside the fixed LightAPRS body zone. The BLK-through-GRN pad order and pad geometry are unchanged; pads 2/3/5 remain GND/3V3/UART_TX and pins 1/4/6 remain intentionally unconnected.
+- C2 remains at (164,114) mm, rotation 0°, and C1 remains at (168,114) mm, rotation 0°. Both bypass capacitors remain close to A1's supply header while avoiding the module body and the fixed U1 corridor.
+- The outline is (100,91.5)–(180,170) mm, 80 × 78.5 mm. Only the top edge moved, by 8.5 mm; A1's microSD end faces that edge so the card and solder-down header remain accessible for home assembly.
+- Only the stale A1 GND and UART_TX route ends plus the local A1 3V3/bypass feed were repaired. The fixed LightAPRS interface, bottom RF layout, all unrelated routes, and the six exact H3/J7 and H4/J6 exclusions remain unchanged.
+
+Rationale: moving A1 9 mm right and extending only the top edge is the smallest coherent change that clears the fixed LightAPRS body reservation, contains the real OpenLog courtyard, and provides edge access without disturbing the RF or power layout.
+
 ## Required next Copperhead pass
 
-1. Replace every `CopperheadDraft_*` board footprint with the target map above.
-2. Enlarge the carrier as needed, then place the top-side OpenLog using its full
-   module courtyard and de-congest the right-side corridor.
+1. Replace every remaining `CopperheadDraft_*` board footprint with the target map above.
+2. Retain the qualified A1/C1/C2 cluster and top-edge microSD access unless later enclosure measurements require an explicit mechanical revision.
 3. Keep both vertical SMA connectors on the bottom and preserve the extra RF and
    cable keepouts.
 4. Re-place and reroute after real courtyard substitution; do not preserve draft
