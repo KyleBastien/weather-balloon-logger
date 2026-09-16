@@ -5,6 +5,12 @@ Append-only, newest first. One entry per committed copperhead run.
 ## 2026-09-16 — create pipeline stage: layout-draft
 
 - Change: layout-draft-weather-balloon-logger
+- Files: docs\DECISIONS.md
+- Verification: ERC clean, DRC clean
+
+## 2026-09-16 — create pipeline stage: layout-draft
+
+- Change: layout-draft-weather-balloon-logger
 - Files: weather-balloon-logger.kicad_pcb, LAYOUT.md, docs/CHANGELOG.md, docs\DECISIONS.md
 - Verification: ERC clean, DRC clean
 
