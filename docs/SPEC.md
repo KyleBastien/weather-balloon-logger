@@ -1,12 +1,12 @@
 # Specification — Weather Balloon Logger
 
-Carrier board that integrates a LightAPRS-W 2.0 tracker with flight-pack power, dual SMA antennas, UART SD logging, a write-activity LED, and a nichrome cutdown driver. Firmware lives on the LightAPRS-W 2.0 (ESP32). This board is the harness, not a second MCU.
+Carrier board that integrates a LightAPRS-W 2.0 tracker with flight-pack power, dual SMA antennas, UART SD logging, a write-activity LED, and a nichrome cutdown driver. Firmware lives on the LightAPRS-W 2.0 (ATSAMD21G18 / ARM Cortex-M0). This board is the harness, not a second MCU.
 
 ## 1. Device and architecture
 
 | Item | Requirement |
 | --- | --- |
-| Host | LightAPRS-W 2.0 (QRP Labs), ESP32, hosts all flight firmware. Rationale: brief names this as brains. |
+| Host | LightAPRS-W 2.0 (QRP Labs), ATSAMD21G18 (ARM Cortex-M0), hosts all flight firmware. Rationale: brief names this as brains. |
 | Role of this PCB | Power distribution, connectors, OpenLog + write LED, cutdown switch, downward SMA. No competing MCU. |
 | Flight duration | **≥ 4 h** continuous GPS + APRS + WSPR for the whole flight. Source: brief “~4 hour flight”. |
 | Logging | SparkFun OpenLog (ATmega328, headers), UART from host, post-flight SD analysis. |
@@ -34,7 +34,7 @@ Carrier board that integrates a LightAPRS-W 2.0 tracker with flight-pack power, 
 | Parameter | Value | Status |
 | --- | --- | --- |
 | GPS mode | Continuous for the entire flight (not 1-Hz duty-cycled off) | Stated |
-| ASSUMED average pack current | **≤ 200 mA** mean over 4 h (GPS on + ESP32 + OpenLog + APRS/WSPR TX duty). Peak TX may exceed this; peaks do not relax the mean. | ASSUMED |
+| ASSUMED average pack current | **≤ 200 mA** mean over 4 h (GPS on + ATSAMD21G18 + OpenLog + APRS/WSPR TX duty). Peak TX may exceed this; peaks do not relax the mean. | ASSUMED |
 | Energy at 4 h | 200 mA × 4 h = **800 mAh** at pack current | Derived |
 | L91 usable capacity | **≥ 1500 mAh** after **ASSUMED 50% cold/high-altitude derate** from ~3000 mAh class | ASSUMED |
 | Design margin | Usable pack capacity **≥ 2×** flight energy → **≥ 1600 mAh** required vs 800 mAh load | ASSUMED budget |
@@ -58,7 +58,7 @@ This vehicle is **GPS-on for the whole powered flight**; there is **no in-flight
 
 | Rail | Value | Status |
 | --- | --- | --- |
-| GPIO / LED / FET gate | **3.3 V** logic, sourced from LightAPRS-W 3V3 (or equivalent regulated 3.3 V), not raw pack | ASSUMED (ESP32) |
+| GPIO / LED / FET gate | **3.3 V** logic, sourced from LightAPRS-W 3V3 (or equivalent regulated 3.3 V), not raw pack | ATSAMD21G18, 3.3 V |
 | OpenLog VCC | **3.3–12 V** allowed by module; **tie to 3.3 V** unless current share on the 3V3 LDO is exceeded | Stated range; 3.3 V tie ASSUMED |
 | OpenLog UART | 3.3 V TX/RX; no 5 V shifter | ASSUMED |
 | LED | 3.3 V GPIO → series resistor → LED → GND. Flash **only on SD write**. | Stated behavior; resistor **ASSUMED 1 kΩ**, If **≤ 3 mA** |
@@ -83,7 +83,7 @@ Do **not** feed OpenLog or the LED from unregulated 4s (~7.2 V fresh) if a 3.3 V
 | Interface | UART: host TX → OpenLog RX, host RX optional (OpenLog TX) for commands; GND common |
 | Power | OpenLog VCC within 3.3–12 V; see §2.4 |
 | Write LED | On **this** board (not only module LEDs). Illuminates/flashes **each time data is written** to SD. Rationale: visual check in the field. Firmware or OpenLog “write” activity line may drive it; if no dedicated pin, **ASSUMED** host GPIO toggled in the same code path as the log write |
-| Absence of USB-serial bridge on this PCB | **Intentional** — OpenLog is the logger; programming the ESP32 stays on LightAPRS-W 2.0 |
+| Absence of USB-serial bridge on this PCB | **Intentional** — OpenLog is the logger; programming the ATSAMD21G18 stays on LightAPRS-W 2.0 |
 
 ## 5. Cutdown (nichrome)
 
@@ -99,11 +99,13 @@ Do **not** feed OpenLog or the LED from unregulated 4s (~7.2 V fresh) if a 3.3 V
 
 ## 6. Pin and strapping rules (host)
 
-LightAPRS-W 2.0 exposes ESP32 pins already used by GPS, radio, and flash.
+LightAPRS-W 2.0 (ATSAMD21G18 / ARM Cortex-M0) breaks out only "I2C, SPI, 2× Analog"; most GPIO are already used by GPS, the Si4463/Si5351 radios, and flash.
 
-- **Check the LightAPRS-W 2.0 / ESP32 strapping table before assigning any harness GPIO** (boot, log UART, cutdown, LED).
-- **Forbidden:** strapping pins that would hold the ESP32 in download mode or disable flash at reset; cutdown on a pin that glitches high at boot.
-- OpenLog UART must use a **free UART** or documented TX pin; do not steal the GPS UART.
+- **MCU is ATSAMD21G18, not ESP32:** the SAMD21 has no ESP32-style GPIO boot straps (no GPIO0/2/12/15 rules). It boots from internal flash; the bootloader is a double-tap on RESET; SWDIO/SWCLK/RESET are not on the extension header. The governing rule is the verified occupied-pin map, not strap avoidance.
+- **Occupied (do not reuse):** D0/D1 GPS UART, D3 VHF PTT, D4 Si4463 SDN, D7 GPS power, D8 Si4463 nSEL, D9 Si4463 nIRQ, A3 Si5351 power, A4 TCXO power, A5 battery sense; SDA/SCL (I2C: BMP180 + Si5351); MOSI/MISO/SCK (SPI: Si4463).
+- **Available (extension header):** A0, A1 free GPIO/analog (A1=PB08 SERCOM4-capable, A2=PB09 if broken out), plus the shared I2C and SPI buses.
+- **Cutdown default-off** via gate pulldown is still required (a floating gate can false-fire nichrome on reset).
+- OpenLog UART must be a firmware SERCOM UART on exposed pins (e.g., A1/A2); do not steal the GPS UART (D0/D1).
 - RTC: **not required** on this carrier (host RTC/GPS time is sufficient). Absence of a carrier RTC is **intentional**.
 
 Pin table will live in `docs/PINOUT.md` when schematic exists. Until then: no GPIO is assigned.
