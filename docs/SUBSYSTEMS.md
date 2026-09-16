@@ -80,6 +80,16 @@ Nichrome burn wire severs payload-from-balloon cord at max altitude. Load **ASSU
 
 SMA perpendicular to board, mates pointing down. Temperature **ASSUMED −40 °C to +40 °C**; L91 chosen because alkaline fails cold. Mass/outline unspecified (fit under typical HAB foam). Conformal coat / enclosure out of scope. Battery holder is off-board (3AA class, or 4AA if voltage requires it); keep pack metal out of SMA near-field.
 
+**LightAPRS-W 2.0 module mounting (verified from qrp-labs.com + repo pinout image).** The module is **32 mm × 55 mm** (portrait, plus a small antenna tab at the top edge), ~4.6 g, SMD on both sides. To mount it on this carrier, reserve a **32 × 55 mm module keepout** with standoff/component-height clearance and keep the SMA jacks (J3/J4), pack input (J1), switch (SW1), OpenLog (A1), and cutdown (Q1) out of that footprint. The board is 80 × 70 mm, so the module fits with margin — but the reservation and connector alignment are not yet in the layout.
+
+Verified module connector geometry (for header placement / mating):
+- **Interface header:** a single **2.54 mm-pitch row along one long edge**, 11 positions in order: `RAW(VBAT)`, `GND`, `A1/AIN2 (PB08)`, `A2/AIN3 (PB09)`, `3V3`, `GND`, `SCL (PA23)`, `SDA (PA22)`, `SCK (PB11)`, `MISO (PA12)`, `MOSI (PB10)`. This carries VIN (RAW), 3V3, GND, the free UART pins (PB08/PB09 = SERCOM4), and the shared I2C/SPI buses.
+- **RF pins:** `HF` (WSPR) at one bottom corner and `VHF` (APRS) at the other bottom corner, with an `HF GND` pad near the top-left. These are the J6 endpoints (VHF→J3 APRS, HF→J4 WSPR).
+- **USB micro-B** on the opposite long edge (keep accessible if in-field reflash is wanted).
+- **Mounting holes:** exact pattern not officially published; at least one hole near top-center. Reserve corner standoff holes (≈M2) pending confirmation from the physical board.
+
+Note: the real interface is one 11-position edge header + two RF corner pins, which differs from the current `J2` (7-pin) + `J6` (2-pin) BOM model; reconcile the carrier header footprints to these positions when the module footprint is added.
+
 ## 7. Intentional absences
 
 | Missing block | Why the absence is intentional |
