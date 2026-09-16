@@ -65,6 +65,12 @@ separate references, represent the 32.77 x 54.80 mm body as an explicit board
 rule/mechanical area instead of a component courtyard. Permit only J2, J6, J7,
 and H1-H4 inside that area.
 
+## Pass 1 real-geometry repair and scoped exclusions
+
+The pass-1 library imports keep H3/J7 and H4/J6 at the fixed, measured LightAPRS-W vendor-module coordinates. Their actual NPTH and PTH copper/hole features do not overlap, but the stock `MountingHole_2.2mm_M2` circular courtyard intersects the stock `PinHeader_1x01_P2.54mm_Vertical` rectangular courtyard at each pair. The project therefore excludes only the six exact UUID-paired `courtyards_overlap`, `npth_inside_courtyard`, and `pth_inside_courtyard` findings for H3/J7 and H4/J6. No DRC class or severity is disabled globally; copper, hole, clearance, connectivity, and every unrelated courtyard finding remain enforced. Rationale: moving either member would violate the measured module interface, while broad suppression would conceal unrelated assembly errors.
+
+Pass 1 also keeps every footprint position and orientation fixed while repairing the local Q1 gate/ground routing, clearing the two vias adjacent to U1 pads 4 and 15, hiding the colliding C1 reference, and moving only the two J6 silkscreen strokes clipped by H4 from F.SilkS to F.Fab. `scripts/update_board_footprints.py` remains the reproducible source for the imported library geometry.
+
 ## Required next Copperhead pass
 
 1. Replace every `CopperheadDraft_*` board footprint with the target map above.
