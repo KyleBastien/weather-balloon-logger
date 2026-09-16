@@ -10,8 +10,8 @@ The front silkscreen includes the horizontal, right-reading board label `JAVAS L
 
 | Refdes | Position (mm) | Rotation | Placement rationale |
 | --- | ---: | ---: | --- |
-| J1 | (103,108) | 90° | Pack input remains on the left edge, outside the module and RF zones. |
-| SW1 | (112,108) | 0° | Adjacent to J1; PACK_IN stays short and SW1 still breaks pack positive. |
+| J1 | (103,108) | 90° | Real side-entry JST-PH footprint remains at the left edge; its rotated full courtyard is inside the outline and its mating opening is edge-accessible. |
+| SW1 | (114,108) | 0° | Exact 7101SYZQE direct-solder slot footprint shifted right for J1 courtyard clearance; top-side toggle actuation remains unobstructed and SW1 still breaks pack positive. |
 | J2 | (154.9,121.72) | 270° | Inside the FACE-UP module zone along its matching right long edge; 11 pads at exact drawing pitch 2.548 mm span y=121.72–147.20 and center on the rectangular body without mirroring. |
 | A1 | (162,110) | 0° | OpenLog is outside the module's right edge with short UART and 3V3 access. |
 | C2 | (164,114) | 0° | OpenLog high-frequency bypass immediately below A1. |
@@ -20,7 +20,7 @@ The front silkscreen includes the horizontal, right-reading board label `JAVAS L
 | C3 | (172,124) | 0° | Local U1 decoupling beside VDD/GND. |
 | R1 | (162,137) | 0° | LED limiter outside the module zone beside U1/D1. |
 | D1 | (166,137) | 180° | Visible active-low LED beside U1 P0, isolated from UART_TX. |
-| J5 | (103,141) | 90° | Nichrome connector remains on the left edge and outside both RF envelopes. |
+| J5 | (103,141) | 90° | Real side-entry JST-XH footprint remains at the left edge; its rotated full courtyard is inside the outline, its mating opening is edge-accessible, and it stays outside both RF envelopes. |
 | R2 | (116,135) | 0° | Gate series resistor in the left-side cutdown cluster. |
 | Q1 | (116,141) | 0° | FET remains close to J5 to minimize the high-current drain neck. |
 | R3 | (116,147) | 0° | Intentional default-off pulldown remains adjacent to Q1. |

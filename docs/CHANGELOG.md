@@ -2,6 +2,18 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-16 — Power connector pass only. J1, J5, and SW1 now contain their exact real footprints: Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal, Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal, and WeatherBalloon:SW_CK_7101SYZQE. SW1 is the requested C&K 7101SYZQE with direct-solder plated slots; keep its library identity and pad geometry.\n\nRepair this batch in the smallest manufacturable change:\n- Keep the board outline and every footprint except J1, J5, and SW1 fixed.\n- You may move and rotate only J1, J5, and SW1 so their real bodies/courtyards do not overlap, remain fully inside the board, and their mating/actuation directions remain accessible from board edges for hand assembly.\n- Preserve net intent: SW1 pad 2 is PACK_IN common, pad 1 is switched PACK_SW, and pad 3 is intentionally no-connect. Never connect pad 3.\n- Reroute only PACK_IN, PACK_SW, GND, and CUTDOWN_OUT as locally necessary; remove stale track segments beneath the real switch/connector bodies.\n- Maintain existing current-capable track widths for the battery and cutdown paths.\n- Resolve all new courtyard, edge, silkscreen, solder-mask, short, and connectivity findings without global DRC suppression. Reference-text or nonfunctional silk may move/hide.\n- Preserve the six already documented and exact vendor-module exclusions in weather-balloon-logger.kicad_pro.\n- Update docs/FOOTPRINT_AUDIT.md with final J1/J5/SW1 locations/orientations and hand-assembly accessibility.\n- Run kicad-cli DRC and Copperhead checks. Commit this bounded pass only if normal DRC has zero violations and zero unconnected items.
+
+- Change: repair-power-connector-footprints
+- Files: weather-balloon-logger.kicad_pcb, docs/LAYOUT.md, docs/FOOTPRINT_AUDIT.md, docs/CHANGELOG.md, docs\DECISIONS.md
+- Verification: ERC clean, DRC clean
+
+## 2026-09-16 — Repair real power connector placement
+
+- Change: repair-power-connector-footprints
+- Files: weather-balloon-logger.kicad_pcb, docs/FOOTPRINT_AUDIT.md, docs/LAYOUT.md, docs/CHANGELOG.md, docs/DECISIONS.md
+- Verification: normal DRC clean with zero violations and zero unconnected items; ERC clean; drift clean; J1/J5 remain at their edge-accessible real-footprint positions, only SW1 moves to (114,108), local PACK_IN/PACK_SW/GND/CUTDOWN_DRAIN copper is repaired, pad 3 remains unconnected, and all six vendor-module exclusions are preserved
+
 ## 2026-09-16 — Add front-silkscreen (F.SilkS) board label text reading 'JAVAS Logger' in a clear, readable area that does not overlap any component, pad, trace, mounting hole (H1-H4), the 32.77 x 54.80 mm module zone, or the >=5 mm SMA keepouts. Use a standard silkscreen text height of about 1.5-2 mm, horizontal and right-reading (upright). A good open area is the left-center of the board. Update docs/LAYOUT.md to note the label, then re-run DRC and keep it clean.
 
 - Change: add-javas-logger-silkscreen-label

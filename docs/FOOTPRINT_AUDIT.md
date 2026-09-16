@@ -71,6 +71,15 @@ The pass-1 library imports keep H3/J7 and H4/J6 at the fixed, measured LightAPRS
 
 Pass 1 also keeps every footprint position and orientation fixed while repairing the local Q1 gate/ground routing, clearing the two vias adjacent to U1 pads 4 and 15, hiding the colliding C1 reference, and moving only the two J6 silkscreen strokes clipped by H4 from F.SilkS to F.Fab. `scripts/update_board_footprints.py` remains the reproducible source for the imported library geometry.
 
+## Power-connector pass — final placement
+
+- J1 `Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal` is at (103, 108) mm, rotation 90°. Its rotated full real courtyard is inside the 100 mm left board edge, and the side-entry mating opening remains accessible from that edge for the battery-holder cable and hand assembly.
+- J5 `Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal` is at (103, 141) mm, rotation 90°. Its rotated larger real courtyard is fully on-board, its side-entry opening remains accessible from the left edge, and it clears fixed Q1/R2 plus the RF reservation.
+- SW1 `WeatherBalloon:SW_CK_7101SYZQE` is at (114, 108) mm, rotation 0°. Its exact three 2.30 x 1.10 mm plated slots and library identity are unchanged; pad 2 remains PACK_IN common, pad 1 remains PACK_SW, and pad 3 remains intentionally unconnected. The top-side toggle and solder lugs remain unobstructed for hand assembly.
+- Only local PACK_IN, PACK_SW, GND, and schematic-named CUTDOWN_DRAIN copper was repaired. Battery and cutdown widths remain 1.0–1.5 mm except the pre-existing 0.6 mm Q1 drain neck. The six exact H3/J7 and H4/J6 vendor-module DRC exclusions remain unchanged.
+
+Rationale: J1 and J5 already fit when their rotated courtyards are evaluated correctly; only SW1 moves 2 mm right, which is the minimum placement change that separates the real J1/SW1 courtyards without changing the outline or disturbing another footprint.
+
 ## Required next Copperhead pass
 
 1. Replace every `CopperheadDraft_*` board footprint with the target map above.

@@ -53,6 +53,9 @@ GROUPS = {
         "C1", "C2", "C3", "R1", "R2", "R3", "D1", "U1", "Q1",
         "H1", "H2", "H3", "H4", "J2", "J6", "J7",
     ],
+    "power": ["J1", "J5", "SW1"],
+    "openlog": ["A1"],
+    "sma": ["J3", "J4"],
     "connectors": ["J1", "J5", "SW1", "A1", "J3", "J4"],
     "all": list(TARGETS),
 }
