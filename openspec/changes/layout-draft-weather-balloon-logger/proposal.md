@@ -2,11 +2,12 @@
 
 ## Why
 
-Recover and verify the already committed Stage 5 first-draft layout without needlessly recreating it, then refresh its board render and complete all verification and artifact-registration obligations.
+Complete and recover Stage 5 as a verifiable coordinate-level KiCad board draft, preserving the existing valid work where possible and explicitly disclosing every non-fabrication-ready element.
 
 ## What Changes
 
-- Reopen and verify the committed coordinate-level board draft and LAYOUT.md.
-- Preserve the existing layout if placement, keepouts, critical routing, and Draft quality documentation read back correctly.
-- Re-export the PCB SVG and explicitly register the board, layout document, and render paths.
-- Run ERC, DRC, drift, and schematic-legibility checks required for a clean finish.
+- Verify and surgically correct the existing rule-driven PCB placement, edge connectors, decoupling proximity, RF/cutdown separation, keepouts, and routed critical nets.
+- Keep noncritical connectivity as ratsnest where appropriate; require every existing routed net to pass DRC.
+- Ensure LAYOUT.md contains a complete `## Draft quality` section stating exactly what is acceptable and what a human or specialist tool must redo.
+- Export and verify the exact PCB SVG artifact.
+- Update the design memory/changelog and register the exact PCB, LAYOUT.md, and PCB SVG artifact paths before finish.
