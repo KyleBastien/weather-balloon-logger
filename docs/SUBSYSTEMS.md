@@ -92,6 +92,16 @@ Verified connector/mechanical geometry (top view, module face-up):
 
 **Correction to prior layout:** the earlier 32 × 55 mm zone with J2 on the left edge and VHF bottom-left / HF bottom-right assumed a mirrored (face-down) mount and is **superseded**. For the FACE-UP module, resize the zone to **32.77 × 54.80 mm**, put J2 on the edge matching the module header, place **HF bottom-left (J7) and VHF bottom-right (J6)**, and route SMAs accordingly (APRS/J3 toward the VHF side, WSPR/J4 toward the HF side).
 
+**Measured coordinate transcription** (from `lightaprs-w-2-0-dimensions.png` by image analysis; overall dims and the 2.548 mm pitch are exact from the drawing labels, derived coordinates ≈ ±0.3 mm — refine against the vendor drawing at footprint creation). Module own frame: rectangular **body 42.73 mm (long) × 32.77 mm (short)**, with the antenna tab occupying the remaining **12.07 mm** of the 54.80 mm long axis.
+- **4 mounting holes** (≈M2, ~2.2 mm dia) inset **≈2.28 mm** from the body corners → hole rectangle **38.16 mm (long) × 28.18 mm (short)**.
+- **11-pin header:** 2.548 mm pitch along one long edge, ~1.8 mm from that edge, ~25.48 mm total span centered on the body length.
+- **HF/VHF** RF contacts at the two corners of the short edge opposite the tab.
+
+Carrier placement (zone x 123.615–156.385, y 101–155.8; module **face-up**, long axis vertical, antenna tab at the top edge y≈101, rectangular body y≈113.07–155.8):
+- Mounting holes: **H1 (125.9, 115.35), H2 (154.1, 115.35), H3 (125.9, 153.52), H4 (154.1, 153.52)** — ≈M2, 28.18 mm (x) × 38.16 mm (y) rectangle.
+- **J2** 11-pin header: right edge x≈154.9, y ≈121.7→147.2, 270°, 2.548 mm pitch.
+- **J7 HF** bottom-left ≈(125.9, 154.5) → J4 WSPR; **J6 VHF** bottom-right ≈(154.1, 154.5) → J3 APRS.
+
 The schematic/BOM now match the verified model: one 11-position J2 edge header plus separate J6 VHF and J7 HF corner contacts. All three footprints remain UNVERIFIED until aligned to the physical module and its keepout.
 
 ## 7. Intentional absences
