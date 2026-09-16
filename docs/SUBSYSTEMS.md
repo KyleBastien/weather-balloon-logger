@@ -4,7 +4,7 @@ Carrier PCB only. Firmware, GPS, and radios live on LightAPRS-W 2.0. This docume
 
 ## Prose block diagram
 
-Energizer L91 AA cells in a **3s baseline** holder (4s only if host VIN/UVLO cannot run to 3s EOD 3.0 V) feed pack+ through a mechanical switch **SW1 that breaks pack positive**. Switched pack+ goes to LightAPRS-W 2.0 **VIN**. The tracker’s regulated **3V3** fans out on this board to OpenLog VCC, the write-activity LED (GPIO → 1 kΩ → LED → GND), and the cutdown MOSFET gate (GPIO → gate, **intentional pulldown** to GND so nichrome cannot false-fire on reset). Cutdown is a **low-side** FET: nichrome 2-pin jack between switched pack+ and FET drain; source to GND. Host UART TX (and optional RX) go to OpenLog RX/TX with common GND. Two **50 Ω SMA jacks** on this board, mates pointing **downward**, take APRS and WSPR RF from the tracker (short RF path; **≥ 5 mm** keepout from SMA dielectric; no battery metal in the near field). No second MCU, no carrier RTC, no USB-serial bridge, no L91 charger, no 5 V USB as a flight source.
+Energizer L91 AA cells in a **3s baseline** holder (4s only if host VIN/UVLO cannot run to 3s EOD 3.0 V) feed pack+ through a mechanical switch **SW1 that breaks pack positive**. Switched pack+ goes to LightAPRS-W 2.0 **VIN**. The tracker’s regulated **3V3** fans out on this board to OpenLog VCC, the write-activity LED (GPIO → 1 kΩ → LED → GND), and the cutdown MOSFET gate (GPIO → gate, **intentional pulldown** to GND so nichrome cannot false-fire on reset). Cutdown is a **low-side** FET: nichrome 2-pin jack between switched pack+ and FET drain; source to GND. Host UART TX (and optional RX) go to OpenLog RX/TX with common GND. Two **50 Ω SMA jacks** on this board, mates pointing **downward**, take APRS and WSPR RF from the tracker’s bottom **VHF** (APRS) and **HF** (WSPR) pins via a 2-pin host RF header **J6** (VHF→SMA_APRS J3, HF→SMA_WSPR J4) (short RF path; **≥ 5 mm** keepout from SMA dielectric; no battery metal in the near field). No second MCU, no carrier RTC, no USB-serial bridge, no L91 charger, no 5 V USB as a flight source.
 
 ```text
 L91 3s (4s iff UVLO) --pack+--> SW1 --VIN--> LightAPRS-W 2.0 --3V3--> OpenLog, LED, FET gate
@@ -12,7 +12,7 @@ L91 3s (4s iff UVLO) --pack+--> SW1 --VIN--> LightAPRS-W 2.0 --3V3--> OpenLog, L
 Host UART TX/RX <------------------> OpenLog RX/TX
 Host GPIO (unassigned) ------------> LED + series R; FET gate + pulldown
 Pack+ --nichrome jack--> FET drain; FET source --> GND
-LightAPRS-W RF ------------------> SMA_APRS + SMA_WSPR (downward, 50 Ω)
+LightAPRS-W VHF/HF pins --(J6 RF hdr)--> SMA_APRS (VHF,J3) + SMA_WSPR (HF,J4) (downward, 50 Ω)
 ```
 
 ## 1. Power
@@ -55,6 +55,8 @@ OpenLog idle current counts toward **board-added ≤ 2 mA**. If 3V3 LDO current 
 ### 3.2 Antennas
 
 Two SMA jacks, 50 Ω, mates facing **downward** through the payload. One SMA **APRS** (typically 2 m), one SMA **WSPR** (HF as built on LightAPRS-W 2.0). Keep RF path short. Board keepout **≥ 5 mm** from SMA dielectric; no battery metal in the near-field of the jacks. Nichrome connector stays out of that keepout.
+
+The tracker feeds RF from its two bottom-edge pins — **VHF** (APRS) and **HF** (WSPR) — into a 2-pin host RF header **J6** on this board: J6 pin 1 (VHF) → SMA_APRS **J3** center, J6 pin 2 (HF) → SMA_WSPR **J4** center; both SMA shields return to board GND. Keep each RF run short and inside the ≥ 5 mm keepout.
 
 ## 4. UI (operator)
 
