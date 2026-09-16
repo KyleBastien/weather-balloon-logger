@@ -2,6 +2,12 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-16 — Correct the module-mount layout to the exact verified LightAPRS-W 2.0 geometry and FACE-UP orientation in docs/SUBSYSTEMS.md section 6. (1) Resize the module-mount zone to exactly 32.77 x 54.80 mm with the long axis vertical. (2) The module mounts FACE UP, so carrier pads must match the module top view with NO left-right mirror: place J2 (11-pin header) on the zone edge that matches the module's header edge, and place the RF corner contacts as HF bottom-left = J7 and VHF bottom-right = J6, which reverses the previous mirrored placement. (3) Keep RF nets VHF/J6 -> J3 (RF_APRS) and HF/J7 -> J4 (RF_WSPR); the two SMA jacks are edge-mounted facing down, so move J3 toward the VHF/right side and J4 toward the HF/left side for short launches. (4) Place four approximate M2 standoff holes on the dimensioned pattern with about a 42.73 mm outer horizontal span. (5) Keep J1, SW1, A1, U1, C3, Q1 and all passives outside the module zone and honor the >=5 mm SMA keepouts. Update docs/LAYOUT.md and the board, then re-run DRC.
+
+- Change: correct-face-up-lightaprs-module-layout
+- Files: weather-balloon-logger.kicad_pcb, docs/LAYOUT.md, docs\DECISIONS.md
+- Verification: ERC clean, DRC clean
+
 ## 2026-09-16 — Re-lay-out the board for the revised schematic and reserve a 32 x 55 mm LightAPRS-W 2.0 module-mount zone per docs/SUBSYSTEMS.md section 6. Place the mating headers J2 (11-pin host interface), J6 (VHF) and J7 (HF) INSIDE that zone, positioned to align with the module's 2.54 mm edge header and its bottom opposite-corner HF/VHF pins so the module plugs directly onto them; add corner standoff mounting holes in the zone. Place all OTHER components (J1 pack input, SW1, A1 OpenLog, U1 PCF8574T + C3, J3/J4 SMA jacks, Q1 cutdown plus D1/R1/R2/R3/C1/C2) OUTSIDE the module footprint so they cannot collide with the module body, honoring the >=5 mm SMA keepouts. Update docs/LAYOUT.md and the board, then re-run DRC.
 
 - Change: relayout-revised-lightaprs-module-zone

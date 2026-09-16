@@ -1,8 +1,8 @@
 # Revised layout — Weather Balloon Logger harness
 
-The coordinate-level PCB draft is synchronized to the revised schematic: J2 is the 11-position LightAPRS-W interface, J6 and J7 are separate VHF/HF contacts, U1/C3 implement the I2C LED path, D1 is on `LED_N`, and cutdown uses A2/PB09 on `CUTDOWN_CTRL`. The board outline remains 80 mm × 70 mm, from (100,100) to (180,170) mm in KiCad coordinates.
+The coordinate-level PCB draft is synchronized to the verified FACE-UP LightAPRS-W 2.0 geometry: J2 is the 11-position module interface on the matching right-hand long edge in carrier top view, J7/HF is bottom-left, J6/VHF is bottom-right, U1/C3 implement the I2C LED path, D1 is on `LED_N`, and cutdown uses A2/PB09 on `CUTDOWN_CTRL`. The board outline remains 80 mm × 70 mm, from (100,100) to (180,170) mm in KiCad coordinates. Rationale: a face-up module must reproduce the vendor top view directly, without a left-right mirror.
 
-A 32 × 55 mm LightAPRS-W 2.0 body reservation occupies (124,101) to (156,156). Only the direct-mating contacts J2, J6, J7 and four approximate M2 standoff holes are inside this zone. Every other electrical component is outside the body projection. The hole pattern, header-to-module alignment, component-height clearance, and module orientation still require confirmation against a physical LightAPRS-W board before fabrication. All `CopperheadDraft_*` land patterns remain non-fabrication-ready placeholders, and the existing `outputs/` package is stale until explicitly regenerated after footprint qualification.
+The exact 32.77 × 54.80 mm LightAPRS-W 2.0 body reservation occupies (123.615,101) to (156.385,155.8), with the 54.80 mm long axis vertical. Only direct-mating contacts J2, J6, J7 and four approximate M2 standoff holes are inside this zone. The vendor drawing's approximately 42.73 mm outer hole span lies along its long horizontal drawing axis; rotating the module to the required long-axis-vertical carrier orientation makes that a 42.73 mm PCB-vertical span, from y=106.535 to y=149.265. Every other electrical component is outside the body projection. Exact hole offsets, header-to-module alignment, component-height clearance, and USB access still require confirmation against the vendor drawing and a physical LightAPRS-W board before fabrication. All `CopperheadDraft_*` land patterns remain non-fabrication-ready placeholders, and the existing `outputs/` package is stale until explicitly regenerated after footprint qualification.
 
 ## Placement
 
@@ -10,7 +10,7 @@ A 32 × 55 mm LightAPRS-W 2.0 body reservation occupies (124,101) to (156,156). 
 | --- | ---: | ---: | --- |
 | J1 | (103,108) | 90° | Pack input remains on the left edge, outside the module and RF zones. |
 | SW1 | (112,108) | 0° | Adjacent to J1; PACK_IN stays short and SW1 still breaks pack positive. |
-| J2 | (125.5,112) | 270° | Inside the module zone along its left long edge; 11 pads at 2.54 mm pitch directly mate the verified host row. |
+| J2 | (154.885,112) | 270° | Inside the FACE-UP module zone along its matching right long edge; 11 pads at 2.54 mm pitch reproduce the verified top-view host row without mirroring. |
 | A1 | (162,110) | 0° | OpenLog is outside the module's right edge with short UART and 3V3 access. |
 | C2 | (164,114) | 0° | OpenLog high-frequency bypass immediately below A1. |
 | C1 | (168,114) | 0° | OpenLog bulk bypass immediately below A1. |
@@ -22,14 +22,14 @@ A 32 × 55 mm LightAPRS-W 2.0 body reservation occupies (124,101) to (156,156). 
 | R2 | (116,135) | 0° | Gate series resistor in the left-side cutdown cluster. |
 | Q1 | (116,141) | 0° | FET remains close to J5 to minimize the high-current drain neck. |
 | R3 | (116,147) | 0° | Intentional default-off pulldown remains adjacent to Q1. |
-| J6 | (126,154) | 0° | VHF/APRS single contact inside the module's lower-left corner. |
-| J7 | (154,154) | 0° | HF/WSPR single contact inside the module's lower-right corner. |
-| J3 | (112,162) | 0° | APRS SMA on the downward-facing bottom-left edge, directly outward from J6. |
-| J4 | (168,162) | 0° | WSPR SMA on the downward-facing bottom-right edge, directly outward from J7. |
-| H1/H2 | (128.5,105) / (151.5,105) | — | Approximate top M2 standoff reservations inside the module zone. |
-| H3/H4 | (128.5,150) / (151.5,150) | — | Approximate bottom M2 standoff reservations, separated from J6/J7. |
+| J7 | (125.615,154) | 0° | HF/WSPR single contact at the FACE-UP module's bottom-left corner. |
+| J6 | (154.385,154) | 0° | VHF/APRS single contact at the FACE-UP module's bottom-right corner. |
+| J4 | (112,162) | 0° | WSPR SMA on the downward-facing bottom-left edge, directly outward from J7/HF. |
+| J3 | (168,162) | 0° | APRS SMA on the downward-facing bottom-right edge, directly outward from J6/VHF. |
+| H1/H2 | (128.5,106.535) / (151.5,106.535) | — | Approximate upper M2 standoff reservations inside the exact module zone. |
+| H3/H4 | (128.5,149.265) / (151.5,149.265) | — | Approximate lower M2 reservations; the upper-to-lower span is 42.73 mm after rotating the vendor drawing to the carrier's vertical long axis. |
 
-The on-board APRS clearance envelope is drawn from (102,152) to (122,170); the WSPR envelope is drawn from (158,152) to (178,170). Each reserves 5 mm laterally and above the 10 mm-diameter draft SMA body; the required lower clearance continues beyond the board edge, where no PCB copper or parts exist. Only the intended SMA, RF trace, and shield-ground copper occupy each envelope. Battery, OpenLog, expander, LED, and nichrome hardware remain outside both. Reserved ESD areas remain drawings only because no protection device is captured in the schematic or BOM.
+The on-board WSPR clearance envelope is drawn from (102,152) to (122,170) around left-side J4, and the APRS envelope is drawn from (158,152) to (178,170) around right-side J3. Each reserves at least 5 mm laterally and above the 10 mm-diameter draft SMA body; the required lower clearance continues beyond the board edge, where no PCB copper or parts exist. Only the intended SMA, RF trace, and shield-ground copper occupy each envelope. Battery, OpenLog, expander, LED, and nichrome hardware remain outside both. Reserved ESD areas remain drawings only because no protection device is captured in the schematic or BOM. Rationale: placing each downward-facing SMA outward from its corrected FACE-UP RF corner avoids crossed, long launches.
 
 ## Routing rules used
 
@@ -37,7 +37,7 @@ The on-board APRS clearance envelope is drawn from (102,152) to (122,170); the W
 - Ground uses a 1.0 mm B.Cu perimeter/bottom trunk with 0.4–1.0 mm local branches. Rationale: keep returns continuous while clearing the direct-mating header and revised signal corridors.
 - 3V3 uses 0.5 mm on the host trunk and 0.4 mm local branches; the short U1-to-C3 connection changes layer through local vias to clear SCL. Rationale: keep both OpenLog and U1 bypass connections short without copper collisions.
 - UART_TX, I2C_SCL, I2C_SDA, LED_A, LED_N, CUTDOWN_CTRL, and CUTDOWN_GATE use 0.3 mm. SCL and SDA use controlled layer changes where necessary to reach U1 without crossing address straps or supply copper.
-- RF_APRS and RF_WSPR use separate 0.5 mm first-draft traces directly outward from J6/J7 to J3/J4. Rationale: preserve physical channel separation and short launches pending a real 50 Ω stackup calculation.
+- RF_WSPR uses a separate 0.5 mm first-draft trace from bottom-left J7/HF to left-side J4; RF_APRS runs from bottom-right J6/VHF to right-side J3. Rationale: preserve the electrical mappings while making both FACE-UP launches short and uncrossed pending a real 50 Ω stackup calculation.
 - Every schematic-connected net is routed and the revised board has no ratsnest or DRC violation. Copper under the module zone is limited to required mating-contact fanout and shared routing; no non-mating component body is placed there.
 
 ## Draft quality
@@ -45,8 +45,8 @@ The on-board APRS clearance envelope is drawn from (102,152) to (122,170); the W
 The revised coordinate study is internally consistent and DRC-clean:
 
 - All 18 schematic refdes are present with exact revised net names; J2 has 11 contacts, J6/J7 are separate, and U1/C3 plus `I2C_SCL`, `I2C_SDA`, and `LED_N` are routed.
-- The 32 × 55 mm module zone is explicit. J2/J6/J7 and H1–H4 are inside; J1, SW1, A1, U1, C3, J3, J4, J5, Q1, D1, R1–R3, and C1/C2 are outside.
-- The APRS and WSPR branches leave opposite module corners toward separate bottom-edge SMA envelopes; unrelated parts do not enter those envelopes.
+- The exact 32.77 × 54.80 mm FACE-UP module zone is explicit. J2/J6/J7 and H1–H4 are inside; J1, SW1, A1, U1, C3, J3, J4, J5, Q1, D1, R1–R3, and C1/C2 are outside.
+- The HF/WSPR branch leaves bottom-left J7 toward left-side J4, while VHF/APRS leaves bottom-right J6 toward right-side J3; unrelated parts do not enter either ≥5 mm SMA envelope.
 - OpenLog bypassing, U1 bypassing, active-low LED control, reset-default-off cutdown hardware, power, ground, UART, I2C, and both RF paths are routed with no DRC violations.
 
 A human or specialist must still close these fabrication holds:
