@@ -169,5 +169,22 @@
       "docs/SUBSYSTEMS.md",
       "docs/PINOUT.md"
     ]
+  },
+  "firmware.cutdown_boot_state": {
+    "value": "CUTDOWN_CTRL must be driven low/off before any other application-level initialization; R3 remains the reset-time hardware default-off path",
+    "source": "docs/SPEC.md §5 Default-off and firmware/DEVPLAN.md Happy-path acceptance",
+    "affects": [
+      "firmware/WeatherBalloonLogger.ino",
+      "firmware/src/cutdown.cpp",
+      "firmware/DEVPLAN.md"
+    ]
+  },
+  "firmware.openlog_baud": {
+    "value": "9600 baud scaffold default; verify against the installed OpenLog configuration before flight",
+    "source": "firmware/DEVPLAN.md UART qualification default",
+    "affects": [
+      "firmware/include/pins.h",
+      "firmware/DEVPLAN.md"
+    ]
   }
 }

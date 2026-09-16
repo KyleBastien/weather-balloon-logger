@@ -2,6 +2,18 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-16 — create pipeline stage: firmware
+
+- Change: firmware-weather-balloon-logger
+- Files: firmware/tools/generate_pins.py, firmware/include/pins.h, firmware/include/cutdown.h, firmware/include/openlog.h, firmware/include/telemetry.h, firmware/src/cutdown.cpp, firmware/src/openlog.cpp, firmware/src/telemetry_stub.cpp, firmware/WeatherBalloonLogger.ino, firmware/README.md, firmware/DEVPLAN.md, docs/CHANGELOG.md, docs\DECISIONS.md, openspec/changes/firmware-weather-balloon-logger/tasks.md
+- Verification: ERC clean, DRC clean
+
+## 2026-09-16 — create pipeline stage: firmware
+
+- Change: firmware-weather-balloon-logger
+- Files: firmware/, docs/CHANGELOG.md, docs/DECISIONS.md, .copperhead/constraints.json
+- Verification: pins generated from docs/PINOUT.md; safe one-record happy path added; C++11 compatibility/readback checks clean; firmware not compiled here because no exact board package/compiler/build action is exposed; ERC clean; DRC clean; drift clean; schematic legibility 0 errors with one low-utilization advisory
+
 ## 2026-09-16 — create pipeline stage: outputs
 
 - Change: outputs-weather-balloon-logger
