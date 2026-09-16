@@ -2,6 +2,18 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-16 — create pipeline stage: devplan
+
+- Change: devplan-weather-balloon-logger
+- Files: docs/DEVPLAN.md, docs/CHANGELOG.md, docs\DECISIONS.md
+- Verification: ERC clean, DRC clean
+
+## 2026-09-16 — create pipeline stage: devplan
+
+- Change: devplan-weather-balloon-logger
+- Files: docs/DEVPLAN.md, docs/CHANGELOG.md, docs/DECISIONS.md
+- Verification: hardware bring-up, probe-location, risk, and prototype-order plan added; ERC, DRC, drift, and schematic legibility checks run in this stage
+
 ## 2026-09-16 — create pipeline stage: firmware
 
 - Change: firmware-weather-balloon-logger
