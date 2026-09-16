@@ -1,6 +1,6 @@
 {
-  "schematic": null,
-  "board": null,
+  "schematic": "weather-balloon-logger.kicad_sch",
+  "board": "weather-balloon-logger.kicad_pcb",
   "docs": "docs/",
   "model": null,
   "maxTurns": 40,

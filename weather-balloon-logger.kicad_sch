@@ -1,0 +1,11 @@
+(kicad_sch
+	(version 20231120)
+	(generator "copperhead-draft")
+	(generator_version "0")
+	(uuid "9bd8c6a7-bb86-4119-80a3-7e5830a2e2e6")
+	(paper "A4")
+	(lib_symbols)
+	(sheet_instances
+		(path "/" (page "1"))
+	)
+)
