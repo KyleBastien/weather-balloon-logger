@@ -2,6 +2,18 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-16 — Add front-silkscreen (F.SilkS) board label text reading 'JAVAS Logger' in a clear, readable area that does not overlap any component, pad, trace, mounting hole (H1-H4), the 32.77 x 54.80 mm module zone, or the >=5 mm SMA keepouts. Use a standard silkscreen text height of about 1.5-2 mm, horizontal and right-reading (upright). A good open area is the left-center of the board. Update docs/LAYOUT.md to note the label, then re-run DRC and keep it clean.
+
+- Change: add-javas-logger-silkscreen-label
+- Files: weather-balloon-logger.kicad_pcb, docs/LAYOUT.md, docs/CHANGELOG.md, docs\DECISIONS.md
+- Verification: ERC clean, DRC clean
+
+## 2026-09-16 — Add front-silkscreen `JAVAS Logger` board label
+
+- Change: add-javas-logger-silkscreen-label
+- Files: weather-balloon-logger.kicad_pcb, docs/LAYOUT.md, docs/CHANGELOG.md, docs/DECISIONS.md
+- Verification: label centered at (114.5, 118.0) mm on F.SilkS with 1.8 mm upright text; DRC and drift re-run
+
 ## 2026-09-16 — Apply the measured LightAPRS-W 2.0 coordinates from docs/SUBSYSTEMS.md section 6 (Measured coordinate transcription) to the board. (1) Place the four module standoff holes as ~M2 (2.2 mm) holes at H1 (125.9,115.35), H2 (154.1,115.35), H3 (125.9,153.52), H4 (154.1,153.52), forming a 28.18 x 38.16 mm rectangle. (2) Keep J2 (11-pin, 2.548 mm pitch, 270 deg) along the right edge at about x=154.9, centered vertically over the rectangular body, spanning about y=121.7 to 147.2. (3) Keep J7 HF at the module bottom-left and J6 VHF at the module bottom-right, positioned clear of the H3/H4 standoff holes. (4) Keep every other component outside the 32.77 x 54.80 mm module zone and honor the >=5 mm SMA keepouts. Update docs/LAYOUT.md and re-run DRC; iterate placement and routing until DRC is clean.
 
 - Change: apply-measured-lightaprs-module-coordinates
