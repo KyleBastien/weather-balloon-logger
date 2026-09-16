@@ -1,0 +1,155 @@
+(footprint "SW_CK_7101SYZQE"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "C&K 7101SYZQE SPDT miniature toggle switch adapted for direct PCB soldering of Z solder lugs; three 2.30 x 1.10 mm plated slots on 4.70 mm centers; lug nominal 2.03 x 0.76 mm; derived from C&K drawing CKCI-S-A0001796810-1 pages F-4 and F-9")
+	(tags "C&K 7101 SPDT toggle switch solder lug plated slot THT")
+	(property "Reference" "REF**"
+		(at 0 -8.25 0)
+		(layer "F.SilkS")
+		(uuid "14b01624-cdaf-46f0-bc07-54f1726dd1b9")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "SW_CK_7101SYZQE"
+		(at 0 8.25 0)
+		(layer "F.Fab")
+		(uuid "9c5acc37-b4cd-4ac4-bd4d-e9cccde5dd15")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "4711e103-d9b3-4923-b05a-93cdd0e5143f")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "0e24ead4-ab5e-4877-81ef-b3b3a775b482")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr through_hole)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -1.2 5.25)
+		(end 0 6.45)
+		(stroke
+			(width 0.25)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "ba1526a4-4504-451a-b52f-037142e3088f")
+	)
+	(fp_line
+		(start 0 6.45)
+		(end 1.2 5.25)
+		(stroke
+			(width 0.25)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "3bd1b2ad-bab3-4d80-86d3-770cf109fe0e")
+	)
+	(fp_rect
+		(start -3.55 -6.47)
+		(end 3.55 6.47)
+		(stroke
+			(width 0.25)
+			(type default)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "107a0d75-f843-4431-9c49-203442988305")
+	)
+	(fp_rect
+		(start -3.93 -6.85)
+		(end 3.93 6.85)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "13319d05-f127-45c2-872e-aa7637a4295b")
+	)
+	(fp_rect
+		(start -3.43 -6.35)
+		(end 3.43 6.35)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "79517639-d915-4846-9923-fec3c5ae2aee")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 3.175 0)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "9f363218-8603-43ef-a843-69c57ec41e16")
+	)
+	(pad "1" thru_hole roundrect
+		(at 0 4.7)
+		(size 3.8 2.6)
+		(drill oval 2.3 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.2)
+		(uuid "c1077f8f-590a-4eaf-850c-75299a45f064")
+	)
+	(pad "2" thru_hole oval
+		(at 0 0)
+		(size 3.8 2.6)
+		(drill oval 2.3 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "3898b8e3-3072-4c57-855c-a0598bd7a337")
+	)
+	(pad "3" thru_hole oval
+		(at 0 -4.7)
+		(size 3.8 2.6)
+		(drill oval 2.3 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "6566da45-26c5-4dd6-94bc-33221cbc449a")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/library/3dmodels/7101SYZQE.stp"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)
