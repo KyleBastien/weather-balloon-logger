@@ -2,6 +2,18 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-16 — Re-lay-out the board for the revised schematic and reserve a 32 x 55 mm LightAPRS-W 2.0 module-mount zone per docs/SUBSYSTEMS.md section 6. Place the mating headers J2 (11-pin host interface), J6 (VHF) and J7 (HF) INSIDE that zone, positioned to align with the module's 2.54 mm edge header and its bottom opposite-corner HF/VHF pins so the module plugs directly onto them; add corner standoff mounting holes in the zone. Place all OTHER components (J1 pack input, SW1, A1 OpenLog, U1 PCF8574T + C3, J3/J4 SMA jacks, Q1 cutdown plus D1/R1/R2/R3/C1/C2) OUTSIDE the module footprint so they cannot collide with the module body, honoring the >=5 mm SMA keepouts. Update docs/LAYOUT.md and the board, then re-run DRC.
+
+- Change: relayout-revised-lightaprs-module-zone
+- Files: weather-balloon-logger.kicad_pcb, docs/LAYOUT.md, docs/SUBSYSTEMS.md, docs/CHANGELOG.md, docs\DECISIONS.md
+- Verification: ERC clean, DRC clean
+
+## 2026-09-16 — Re-layout revised LightAPRS module zone
+
+- Change: relayout-revised-lightaprs-module-zone
+- Files: weather-balloon-logger.kicad_pcb, docs/LAYOUT.md, docs/SUBSYSTEMS.md, docs/CHANGELOG.md, docs/DECISIONS.md, .copperhead/constraints.json
+- Verification: revised 18-refdes board synchronized to the schematic; 32 × 55 mm module zone with J2/J6/J7 and four approximate standoff holes; all other components outside; separate SMA envelopes retained; DRC clean; fabrication remains blocked on exact module geometry, footprints, RF, thermal, and part qualification
+
 ## 2026-09-16 — Revise the host interface and add an I2C LED expander to match the verified LightAPRS-W 2.0 module (docs/SUBSYSTEMS.md section 6). Final pin plan: A1/PB08 = OpenLog UART TX one-way (host TX to OpenLog RXI, no host RX); A2/PB09 = cutdown gate on a direct GPIO (keep R2 series gate resistor and R3 gate pulldown for default-off at power-up); write LED and future GPS-status LEDs on a PCF8574 I2C GPIO expander. (1) Change J2 to the module's 11-position 2.54mm edge header using an installed 11-pin connector symbol Connector_Generic:Conn_01x11, pin order RAW, GND, A1(PB08), A2(PB09), 3V3, GND, SCL, SDA, SCK, MISO, MOSI; wire PACK_SW switched pack+ to RAW, board 3V3 rail from 3V3, GND to the GND pins, A1 to OpenLog RXI, A2 to the cutdown gate network. (2) Add a PCF8574 I2C GPIO expander using an installed KiCad symbol powered from 3V3/GND with a 100nF decoupling cap, address pins strapped for 0x20, SDA/SCL on the module's exposed I2C bus; drive write LED D1 active-low from output P0 (expander output to D1 cathode, D1 anode to 3V3 via R1); leave P1..P7 available for future GPS-satellite-status LEDs as no-connect. (3) Move the cutdown gate source from A0 to A2/PB09, keeping the intentional pulldown so it is default-off. (4) Represent RF as two single contacts HF and VHF at the module opposite bottom corners: VHF to J3 (RF_APRS), HF to J4 (RF_WSPR); replace the 2-pin J6 with the two corner contacts. (5) Update docs/PINOUT.md, docs/BOM.md, docs/SUBSYSTEMS.md and the schematic; keep 3.3V logic and all leakage/idle budgets. Run ERC.
 
 - Change: revise-lightaprs-host-and-i2c-led-expander

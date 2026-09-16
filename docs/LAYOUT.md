@@ -1,58 +1,61 @@
-# First-draft layout — Weather Balloon Logger harness
+# Revised layout — Weather Balloon Logger harness
 
-> **Superseded interface warning:** the existing PCB still contains the former 7-pin J2, two-pin J6, UART-sunk D1, and A0 cutdown routing. It has no J7, U1, C3, I2C LED path, or A2/PB09 cutdown route. The PCB and existing `outputs/` package are therefore obsolete and must not be fabricated; a later layout revision must import the revised schematic before placement/routing review.
+The coordinate-level PCB draft is synchronized to the revised schematic: J2 is the 11-position LightAPRS-W interface, J6 and J7 are separate VHF/HF contacts, U1/C3 implement the I2C LED path, D1 is on `LED_N`, and cutdown uses A2/PB09 on `CUTDOWN_CTRL`. The board outline remains 80 mm × 70 mm, from (100,100) to (180,170) mm in KiCad coordinates.
 
-Stage 5 records a coordinate-level KiCad PCB draft derived from the former stage-4 schematic. The board outline is 80 mm × 70 mm, from (100,100) to (180,170) mm in KiCad coordinates. All footprint references and electrical net names remain identical to the schematic.
+A 32 × 55 mm LightAPRS-W 2.0 body reservation occupies (124,101) to (156,156). Only the direct-mating contacts J2, J6, J7 and four approximate M2 standoff holes are inside this zone. Every other electrical component is outside the body projection. The hole pattern, header-to-module alignment, component-height clearance, and module orientation still require confirmation against a physical LightAPRS-W board before fabrication. All `CopperheadDraft_*` land patterns remain non-fabrication-ready placeholders, and the existing `outputs/` package is stale until explicitly regenerated after footprint qualification.
 
 ## Placement
 
 | Refdes | Position (mm) | Rotation | Placement rationale |
 | --- | ---: | ---: | --- |
-| J1 | (103,115) | 90° | Battery input on left edge; separated from both RF envelopes. |
-| SW1 | (115,115) | 0° | Adjacent to J1 so PACK_IN is short and the switch still breaks pack positive. |
-| J2 | (135,103) | 0° | Host interface on top edge. |
-| A1 | (135,120) | 0° | OpenLog immediately below J2 for short 3V3/GND/UART connections. |
-| C2 | (142,113.5) | 0° | 100 nF bypass beside the A1 supply pins. |
-| C1 | (142,116.5) | 0° | 4.7 µF bulk bypass beside the A1 supply pins. |
-| R1 | (150.6,109) | 0° | LED limiter beside D1 and the host UART breakout. |
-| D1 | (149,112) | 0° | Visible activity LED in the top-side logic cluster. |
-| J5 | (103,142) | 90° | Nichrome connector on left edge, outside both SMA clearance envelopes. |
-| R2 | (116,140) | 0° | Gate series resistor near the cutdown power cluster. |
-| Q1 | (124,145) | 0° | Cutdown FET kept near J5 to minimize the high-current drain run. |
-| R3 | (124,150) | 180° | Gate pulldown next to Q1, arranged to clear the drain neck. |
-| J6 | (145,154) | 0° | Host RF header centered between the two antenna branches. |
-| J3 | (130,162) | 0° | APRS SMA at the payload-facing bottom edge. |
-| J4 | (160,162) | 0° | WSPR SMA at the payload-facing bottom edge. |
+| J1 | (103,108) | 90° | Pack input remains on the left edge, outside the module and RF zones. |
+| SW1 | (112,108) | 0° | Adjacent to J1; PACK_IN stays short and SW1 still breaks pack positive. |
+| J2 | (125.5,112) | 270° | Inside the module zone along its left long edge; 11 pads at 2.54 mm pitch directly mate the verified host row. |
+| A1 | (162,110) | 0° | OpenLog is outside the module's right edge with short UART and 3V3 access. |
+| C2 | (164,114) | 0° | OpenLog high-frequency bypass immediately below A1. |
+| C1 | (168,114) | 0° | OpenLog bulk bypass immediately below A1. |
+| U1 | (166,128) | 0° | PCF8574T is outside the module zone on the right-side logic corridor. |
+| C3 | (172,124) | 0° | Local U1 decoupling beside VDD/GND. |
+| R1 | (162,137) | 0° | LED limiter outside the module zone beside U1/D1. |
+| D1 | (166,137) | 180° | Visible active-low LED beside U1 P0, isolated from UART_TX. |
+| J5 | (103,141) | 90° | Nichrome connector remains on the left edge and outside both RF envelopes. |
+| R2 | (116,135) | 0° | Gate series resistor in the left-side cutdown cluster. |
+| Q1 | (116,141) | 0° | FET remains close to J5 to minimize the high-current drain neck. |
+| R3 | (116,147) | 0° | Intentional default-off pulldown remains adjacent to Q1. |
+| J6 | (126,154) | 0° | VHF/APRS single contact inside the module's lower-left corner. |
+| J7 | (154,154) | 0° | HF/WSPR single contact inside the module's lower-right corner. |
+| J3 | (112,162) | 0° | APRS SMA on the downward-facing bottom-left edge, directly outward from J6. |
+| J4 | (168,162) | 0° | WSPR SMA on the downward-facing bottom-right edge, directly outward from J7. |
+| H1/H2 | (128.5,105) / (151.5,105) | — | Approximate top M2 standoff reservations inside the module zone. |
+| H3/H4 | (128.5,150) / (151.5,150) | — | Approximate bottom M2 standoff reservations, separated from J6/J7. |
 
-The APRS envelope is drawn from (120,152) to (140,170); the WSPR envelope is drawn from (150,152) to (170,170). Each reaches 5 mm beyond the 10 mm-diameter draft SMA body, contains only its connector and intended RF/shield copper, and contains no battery or nichrome hardware. Reserved ESD areas are drawn near J1 and J5, but no ESD device is electrically present because stage 4 contains no ESD symbol or BOM row.
+The on-board APRS clearance envelope is drawn from (102,152) to (122,170); the WSPR envelope is drawn from (158,152) to (178,170). Each reserves 5 mm laterally and above the 10 mm-diameter draft SMA body; the required lower clearance continues beyond the board edge, where no PCB copper or parts exist. Only the intended SMA, RF trace, and shield-ground copper occupy each envelope. Battery, OpenLog, expander, LED, and nichrome hardware remain outside both. Reserved ESD areas remain drawings only because no protection device is captured in the schematic or BOM.
 
 ## Routing rules used
 
-- PACK_IN, the main PACK_SW feed, and the main CUTDOWN_DRAIN run use 1.5 mm copper; the drain narrows to 0.6 mm only at Q1's SOT-23 pad. Rationale: maximize first-draft copper for the assumed 2 A, 30 s cutdown pulse while acknowledging the device-pad bottleneck.
-- Ground distribution uses 1.0–1.5 mm B.Cu trunks, with local 0.4 mm bypass branches. Rationale: keep the high-current return away from top-side signal crossings.
-- PACK_SW uses paired 1.8/0.8 mm vias for two short B.Cu crossings. Rationale: preserve the 1.5 mm power path without crossing PACK_IN or CUTDOWN_DRAIN.
-- 3V3 is 0.5 mm on the host/OpenLog trunk and 0.4 mm for local branches. UART_TX, LED_A, CUTDOWN_CTRL, and CUTDOWN_GATE use 0.3 mm.
-- RF_APRS and RF_WSPR are 0.5 mm first-draft traces with one 45° approach each from J6 to its SMA. Rationale: keep both stubs short and simple pending an impedance-controlled stackup.
-- Every connected net on this small harness was treated as critical enough to route: power/ground, both RF paths, OpenLog power/UART/decoupling, LED activity, and cutdown control/gate/drain. Therefore no ratsnest remains after DRC closure; a later specialist may rip up noncritical logic traces while replacing the draft land patterns.
+- PACK_IN, the main PACK_SW path, and CUTDOWN_DRAIN use 1.5 mm copper except the 0.6 mm Q1 drain neck. Rationale: retain first-draft margin for the assumed 2 A, 30 s cutdown pulse while acknowledging the SOT-23 bottleneck.
+- Ground uses a 1.0 mm B.Cu perimeter/bottom trunk with 0.4–1.0 mm local branches. Rationale: keep returns continuous while clearing the direct-mating header and revised signal corridors.
+- 3V3 uses 0.5 mm on the host trunk and 0.4 mm local branches; the short U1-to-C3 connection changes layer through local vias to clear SCL. Rationale: keep both OpenLog and U1 bypass connections short without copper collisions.
+- UART_TX, I2C_SCL, I2C_SDA, LED_A, LED_N, CUTDOWN_CTRL, and CUTDOWN_GATE use 0.3 mm. SCL and SDA use controlled layer changes where necessary to reach U1 without crossing address straps or supply copper.
+- RF_APRS and RF_WSPR use separate 0.5 mm first-draft traces directly outward from J6/J7 to J3/J4. Rationale: preserve physical channel separation and short launches pending a real 50 Ω stackup calculation.
+- Every schematic-connected net is routed and the revised board has no ratsnest or DRC violation. Copper under the module zone is limited to required mating-contact fanout and shared routing; no non-mating component body is placed there.
 
 ## Draft quality
 
-Fine for a first-draft placement/routing study:
+The revised coordinate study is internally consistent and DRC-clean:
 
-- The KiCad board parses, renders, and passes `run_drc` with no reported violations after the final routing pass.
-- All 15 schematic refdes are placed at explicit coordinates, external connectors are on the top/left/bottom edges, and J5/battery hardware remain outside the two RF clearance envelopes.
-- C1/C2 are adjacent to the OpenLog supply pins; R2/R3/Q1 form a local default-off cutdown cluster; R1/D1 form a local UART activity cluster.
-- PACK_IN, PACK_SW, CUTDOWN_DRAIN, ground, RF, decoupling, UART, LED, and gate/control nets are electrically continuous and DRC-clean.
-- The RF branches are short, symmetric in intent, separated from the power/cutdown cluster, and contain no unrelated component or copper inside the marked 5 mm clearance envelopes.
+- All 18 schematic refdes are present with exact revised net names; J2 has 11 contacts, J6/J7 are separate, and U1/C3 plus `I2C_SCL`, `I2C_SDA`, and `LED_N` are routed.
+- The 32 × 55 mm module zone is explicit. J2/J6/J7 and H1–H4 are inside; J1, SW1, A1, U1, C3, J3, J4, J5, Q1, D1, R1–R3, and C1/C2 are outside.
+- The APRS and WSPR branches leave opposite module corners toward separate bottom-edge SMA envelopes; unrelated parts do not enter those envelopes.
+- OpenLog bypassing, U1 bypassing, active-low LED control, reset-default-off cutdown hardware, power, ground, UART, I2C, and both RF paths are routed with no DRC violations.
 
-A human or specialist tool must redo or verify before fabrication:
+A human or specialist must still close these fabrication holds:
 
-- Replace every `CopperheadDraft_*` board-local land pattern with the exact verified KiCad/manufacturer footprint, then repeat placement and DRC. The board-local pads are electrically useful placeholders, not procurement-approved land patterns; in particular SW1 and both SMA footprints were not found under the BOM's named library identifiers.
-- Convert the two drawn RF clearance envelopes into enforceable KiCad rule areas after the exact SMA dielectric geometry is known. The current geometry is visibly honored but is not an automatic copper/footprint prohibition.
-- Re-route J6→J3/J4 using a confirmed PCB stackup and a 50 Ω microstrip or grounded coplanar calculation; add the return-via fence and tune launch geometry with an RF specialist. The present 0.5 mm width is only a DRC-clean drafting width, not an impedance claim.
-- Select and capture actual ESD/protection parts in the schematic and BOM before placing them. The current board reserves connector-adjacent space but intentionally does not invent unsynchronized devices. RF protection must satisfy insertion-loss/capacitance needs; power/control protection must meet 7.2 V, leakage, and cutdown-current constraints.
-- Verify the physical downward-mating SMA orientation, connector shell clearance, payload wall penetration, cable bend radius, battery-metal separation, and J1/J5 mating access with 3D models or a mechanical mock-up.
-- Recalculate the complete 2 A for 30 s cutdown path using verified copper weight, ambient/altitude conditions, connector/contact resistance, SOT-23 thermal data, and AO3400A safe operating area. Widen or pour PACK_SW/GND/CUTDOWN_DRAIN and multiply vias as required.
-- Verify OpenLog peak current and LightAPRS 3V3 regulator margin; this layout does not close the existing 1.95 mA maximum-idle-current qualification hold.
-- Add mounting holes, panelization/tooling strategy, fiducials, test points, polarity labels, RF labels on production silkscreen, and enclosure clearances. None are implied by this first draft.
-- Run full fabrication review after replacing footprints: courtyard, paste/mask, annular ring, drill tolerances, creepage, solderability, assembly access, return-current continuity, thermal reliefs, and manufacturer rules.
+- Verify the physical LightAPRS-W board against the 32 × 55 mm reservation, J2 orientation/order, J6/J7 corner locations, USB access, underside component heights, and all four approximate standoff coordinates. The hole pattern is not published and is not claimed exact.
+- Replace every `CopperheadDraft_*` land pattern with the exact verified manufacturer/library footprint and repeat placement, mechanical review, ERC, and DRC.
+- Convert both drawn SMA envelopes into enforceable rule areas after exact connector geometry is known; calculate 50 Ω launches from the released stackup and add the required return-via strategy. The 0.5 mm RF widths are drafting widths only.
+- Verify downward SMA mating, enclosure penetration, cable bend radius, battery-metal separation, and connector access with a 3D/mechanical mock-up.
+- Recalculate and test the complete 2 A for 30 s cutdown path using released copper, connectors, AO3400A maximum RDS(on), SOA, and thermal data.
+- Verify OpenLog maximum idle current ≤1.85 mA, U1 maximum idle current ≤100 µA, the LightAPRS 3V3 regulator margin, and all leakage budgets over temperature.
+- Capture and qualify any ESD/protection parts before placement; reserved drawings do not authorize unbudgeted components.
+- Add production mounting/tooling, fiducials, test points, polarity/RF labels, enclosure clearances, and full fabrication review. Regenerate `outputs/` only after those holds are resolved.

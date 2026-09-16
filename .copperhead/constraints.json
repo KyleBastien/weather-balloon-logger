@@ -210,5 +210,14 @@
       "docs/DEVPLAN.md",
       "power.pack"
     ]
+  },
+  "mechanical.lightaprs_module_zone": {
+    "value": "32 x 55 mm zone; only J2, J6, J7 and approximate standoff holes inside; all other electrical components outside",
+    "source": "docs/SUBSYSTEMS.md section 6 and docs/LAYOUT.md",
+    "affects": [
+      "weather-balloon-logger.kicad_pcb",
+      "docs/LAYOUT.md",
+      "docs/SUBSYSTEMS.md"
+    ]
   }
 }
