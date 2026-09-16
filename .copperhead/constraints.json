@@ -103,9 +103,6 @@
       "docs/SPEC.md",
       "docs/PINOUT.md",
       "docs/BOM.md"
-    ],
-    "deferred": [
-      "docs/PINOUT.md"
     ]
   },
   "openlog.vcc_V": {
@@ -154,9 +151,6 @@
       "docs/SPEC.md",
       "docs/PINOUT.md",
       "power.pack"
-    ],
-    "deferred": [
-      "docs/PINOUT.md"
     ]
   },
   "antenna.keepout_mm": {
@@ -165,6 +159,15 @@
     "affects": [
       "docs/SPEC.md",
       "docs/BOM.md"
+    ]
+  },
+  "host.free_gpio": {
+    "value": "A0 and A1/PB08 only; A2 is not assumed exposed; occupied GPS/radio/I2C/SPI pins forbidden",
+    "source": "docs/PINOUT.md Host interface J2; docs/SPEC.md §6; docs/SUBSYSTEMS.md §2",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/SUBSYSTEMS.md",
+      "docs/PINOUT.md"
     ]
   }
 }

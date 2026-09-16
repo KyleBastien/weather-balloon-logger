@@ -60,8 +60,8 @@ This vehicle is **GPS-on for the whole powered flight**; there is **no in-flight
 | --- | --- | --- |
 | GPIO / LED / FET gate | **3.3 V** logic, sourced from LightAPRS-W 3V3 (or equivalent regulated 3.3 V), not raw pack | ATSAMD21G18, 3.3 V |
 | OpenLog VCC | **3.3–12 V** allowed by module; **tie to 3.3 V** unless current share on the 3V3 LDO is exceeded | Stated range; 3.3 V tie ASSUMED |
-| OpenLog UART | 3.3 V TX/RX; no 5 V shifter | ASSUMED |
-| LED | 3.3 V GPIO → series resistor → LED → GND. Flash **only on SD write**. | Stated behavior; resistor **ASSUMED 1 kΩ**, If **≤ 3 mA** |
+| OpenLog UART | 3.3 V one-way host TX → OpenLog RXI; OpenLog TXO is intentionally unused; no 5 V shifter | Stage-4 pin-budget decision |
+| LED | 3V3 → **1 kΩ** → LED → UART_TX. UART idle-high is OFF; low UART bits sink **≤ 3 mA**, so each transmitted log record visibly flashes without a third GPIO. | Stage-4 pin-budget decision; activity proxy is not physical SD-commit proof |
 
 Do **not** feed OpenLog or the LED from unregulated 4s (~7.2 V fresh) if a 3.3 V rail already exists — extra dissipation and LED overstress.
 
@@ -80,9 +80,9 @@ Do **not** feed OpenLog or the LED from unregulated 4s (~7.2 V fresh) if a 3.3 V
 | Item | Requirement |
 | --- | --- |
 | Module | SparkFun OpenLog with headers (ATmega328, preprogrammed), example Amazon B0BHL56BP5 |
-| Interface | UART: host TX → OpenLog RX, host RX optional (OpenLog TX) for commands; GND common |
+| Interface | One-way UART: host A1/PB08 SERCOM4 TX → OpenLog RXI; OpenLog TXO is intentionally no-connect; GND common |
 | Power | OpenLog VCC within 3.3–12 V; see §2.4 |
-| Write LED | On **this** board (not only module LEDs). Illuminates/flashes **each time data is written** to SD. Rationale: visual check in the field. Firmware or OpenLog “write” activity line may drive it; if no dedicated pin, **ASSUMED** host GPIO toggled in the same code path as the log write |
+| Write LED | On **this** board (not only module LEDs). 3V3 → 1 kΩ → LED → UART_TX makes UART idle-high the OFF state and flashes on low bits of every transmitted log record. This preserves the requested visual activity check with the two confirmed free GPIOs; it is intentionally a transmit proxy rather than proof of physical SD commit |
 | Absence of USB-serial bridge on this PCB | **Intentional** — OpenLog is the logger; programming the ATSAMD21G18 stays on LightAPRS-W 2.0 |
 
 ## 5. Cutdown (nichrome)
@@ -105,10 +105,11 @@ LightAPRS-W 2.0 (ATSAMD21G18 / ARM Cortex-M0) breaks out only "I2C, SPI, 2× Ana
 - **Occupied (do not reuse):** D0/D1 GPS UART, D3 VHF PTT, D4 Si4463 SDN, D7 GPS power, D8 Si4463 nSEL, D9 Si4463 nIRQ, A3 Si5351 power, A4 TCXO power, A5 battery sense; SDA/SCL (I2C: BMP180 + Si5351); MOSI/MISO/SCK (SPI: Si4463).
 - **Available (extension header):** A0, A1 free GPIO/analog (A1=PB08 SERCOM4-capable, A2=PB09 if broken out), plus the shared I2C and SPI buses.
 - **Cutdown default-off** via gate pulldown is still required (a floating gate can false-fire nichrome on reset).
-- OpenLog UART must be a firmware SERCOM UART on exposed pins (e.g., A1/A2); do not steal the GPS UART (D0/D1).
+- OpenLog uses one-way firmware SERCOM4 UART TX on exposed A1/PB08; do not steal the GPS UART (D0/D1), and do not assume A2 is exposed.
+- A0 drives CUTDOWN_CTRL through R2; the intentional R3 pulldown keeps Q1 off during reset. UART_TX also sinks the write LED, so the design uses exactly the two confirmed free GPIOs.
 - RTC: **not required** on this carrier (host RTC/GPS time is sufficient). Absence of a carrier RTC is **intentional**.
 
-Pin table will live in `docs/PINOUT.md` when schematic exists. Until then: no GPIO is assigned.
+The authoritative connector and component pin table is `docs/PINOUT.md`; J2 pins 5–6 and A1 pins 1, 4, and 6 are intentional no-connects.
 
 ## 7. Mechanical / environment
 

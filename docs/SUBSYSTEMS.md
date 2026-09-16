@@ -1,16 +1,16 @@
 # Subsystems — Weather Balloon Logger harness
 
-Carrier PCB only. Firmware, GPS, and radios live on LightAPRS-W 2.0. This document freezes the block diagram and per-subsystem budgets before schematic. No GPIO is assigned until the LightAPRS-W 2.0 (ATSAMD21G18) occupied-pin map is checked (`docs/PINOUT.md` does not exist yet; that absence is intentional).
+Carrier PCB only. Firmware, GPS, and radios live on LightAPRS-W 2.0. This document freezes the block diagram and per-subsystem budgets. Stage 4 checked the LightAPRS-W 2.0 (ATSAMD21G18) occupied-pin map and records the final two-GPIO allocation in `docs/PINOUT.md`.
 
 ## Prose block diagram
 
-Energizer L91 AA cells in a **3s baseline** holder (4s only if host VIN/UVLO cannot run to 3s EOD 3.0 V) feed pack+ through a mechanical switch **SW1 that breaks pack positive**. Switched pack+ goes to LightAPRS-W 2.0 **VIN**. The tracker’s regulated **3V3** fans out on this board to OpenLog VCC, the write-activity LED (GPIO → 1 kΩ → LED → GND), and the cutdown MOSFET gate (GPIO → gate, **intentional pulldown** to GND so nichrome cannot false-fire on reset). Cutdown is a **low-side** FET: nichrome 2-pin jack between switched pack+ and FET drain; source to GND. Host UART TX (and optional RX) go to OpenLog RX/TX with common GND. Two **50 Ω SMA jacks** on this board, mates pointing **downward**, take APRS and WSPR RF from the tracker’s bottom **VHF** (APRS) and **HF** (WSPR) pins via a 2-pin host RF header **J6** (VHF→SMA_APRS J3, HF→SMA_WSPR J4) (short RF path; **≥ 5 mm** keepout from SMA dielectric; no battery metal in the near field). No second MCU, no carrier RTC, no USB-serial bridge, no L91 charger, no 5 V USB as a flight source.
+Energizer L91 AA cells in a **3s baseline** holder (4s only if host VIN/UVLO cannot run to 3s EOD 3.0 V) feed pack+ through a mechanical switch **SW1 that breaks pack positive**. Switched pack+ goes to LightAPRS-W 2.0 **VIN**. The tracker’s regulated **3V3** powers OpenLog and feeds the write-activity path 3V3 → 1 kΩ → LED → UART_TX; UART idle-high is OFF and low transmitted bits sink the LED. A0 drives the cutdown MOSFET gate through R2 with an **intentional pulldown** to GND so nichrome cannot false-fire on reset. Cutdown is a **low-side** FET: nichrome 2-pin jack between switched pack+ and FET drain; source to GND. A1/PB08 provides one-way SERCOM4 UART TX to OpenLog RXI with common GND; OpenLog TXO is intentionally unused. Two **50 Ω SMA jacks** on this board, mates pointing **downward**, take APRS and WSPR RF from the tracker’s bottom **VHF** (APRS) and **HF** (WSPR) pins via a 2-pin host RF header **J6** (VHF→SMA_APRS J3, HF→SMA_WSPR J4) (short RF path; **≥ 5 mm** keepout from SMA dielectric; no battery metal in the near field). No second MCU, no carrier RTC, no USB-serial bridge, no L91 charger, no 5 V USB as a flight source.
 
 ```text
-L91 3s (4s iff UVLO) --pack+--> SW1 --VIN--> LightAPRS-W 2.0 --3V3--> OpenLog, LED, FET gate
+L91 3s (4s iff UVLO) --pack+--> SW1 --VIN--> LightAPRS-W 2.0 --3V3--> OpenLog + LED anode path
                                       GND common
-Host UART TX/RX <------------------> OpenLog RX/TX
-Host GPIO (unassigned) ------------> LED + series R; FET gate + pulldown
+Host A1/PB08 SERCOM4 TX -----------> OpenLog RXI + active-low LED sink
+Host A0 ----------------------------> FET gate + pulldown
 Pack+ --nichrome jack--> FET drain; FET source --> GND
 LightAPRS-W VHF/HF pins --(J6 RF hdr)--> SMA_APRS (VHF,J3) + SMA_WSPR (HF,J4) (downward, 50 Ω)
 ```
@@ -42,14 +42,14 @@ LightAPRS-W 2.0 (QRP Labs, **ATSAMD21G18** / ARM Cortex-M0, 3.3 V) is the **only
 - **RTC on this carrier:** not required; host RTC/GPS time is sufficient. Absence is intentional.
 - **Boot / strapping (ATSAMD21G18):** the SAMD21 boots from internal flash with **no ESP32-style GPIO boot straps**; its bootloader is entered by a double-tap on RESET, and SWDIO/SWCLK/RESET are programming pins not broken out to the extension header. The governing constraint is therefore the *occupied-pin* map below plus keeping cutdown default-off (gate pulldown), not ESP32 strap avoidance.
 - **Verified host pin map** (from LightAPRS-W-2.0 firmware source + qrp-labs.com). Occupied — do NOT reuse: `D0/D1` GPS UART (Serial1), `D3` VHF PTT, `D4` Si4463 SDN, `D7` GPS power, `D8` Si4463 nSEL (SPI CS), `D9` Si4463 nIRQ, `A3` Si5351 power, `A4` TCXO power, `A5` battery sense; `SDA/SCL` I2C bus (BMP180 + Si5351); `MOSI/MISO/SCK` SPI bus (Si4463). Exposed on the extension header ("I2C, SPI, 2× Analog"): the only free dedicated GPIO are **A0 and A1** (A1 = PB08, SERCOM4-capable; A2 = PB09 if broken out), plus the shared I2C and SPI buses.
-- **UART for OpenLog:** the one hardware UART (`Serial`/D0–D1) is taken by GPS, so OpenLog TX/RX must be a firmware SERCOM UART on exposed pins (e.g., SERCOM4 on A1/A2). Do not steal the GPS UART.
-- **Pin budget note:** only A0/A1 (± A2) are free versus write-LED + cutdown + OpenLog TX/RX. Free a pin by driving the write LED from OpenLog's own STAT (SD-write) output instead of a host GPIO, or confirm A2 is exposed. Stage 4 records the final assignment in `docs/PINOUT.md`.
+- **UART for OpenLog:** the one hardware UART (`Serial`/D0–D1) is taken by GPS, so stage 4 assigns one-way SERCOM4 TX on exposed A1/PB08 to OpenLog RXI. OpenLog TXO is intentionally unused; do not steal the GPS UART or assume A2 is exposed.
+- **Pin budget decision:** A0 drives cutdown and A1/PB08 drives UART_TX. The write LED is 3V3-fed and sunk by UART_TX, so low transmitted bits flash it without a third GPIO. This uses exactly the two confirmed free dedicated GPIOs; `docs/PINOUT.md` is authoritative.
 
 ## 3. Connectivity
 
 ### 3.1 UART SD logger
 
-SparkFun OpenLog (ATmega328, headers). Host TX → OpenLog RX; host RX optional for commands; GND common. UART is 3.3 V; no 5 V shifter. Absence of a USB-serial bridge on this PCB is intentional — programming the ATSAMD21G18 stays on LightAPRS-W 2.0 (native USB).
+SparkFun OpenLog (ATmega328, headers). Host A1/PB08 SERCOM4 TX → OpenLog RXI; OpenLog TXO is intentionally no-connect; GND common. UART is 3.3 V; no 5 V shifter. Absence of a USB-serial bridge on this PCB is intentional — programming the ATSAMD21G18 stays on LightAPRS-W 2.0 (native USB).
 
 OpenLog idle current counts toward **board-added ≤ 2 mA**. If 3V3 LDO current share cannot cover OpenLog, stop and revisit the 3V3 tie rather than silently moving OpenLog to raw pack (especially 4s fresh 7.2 V).
 
@@ -62,7 +62,7 @@ The tracker feeds RF from its two bottom-edge pins — **VHF** (APRS) and **HF**
 ## 4. UI (operator)
 
 - **SW1:** mechanical pack on/off; breaks pack+. Required by brief.
-- **Write LED:** on **this** board (not only OpenLog module LEDs). 3.3 V GPIO → series **1 kΩ** (ASSUMED) → LED → GND; If **≤ 3 mA**. Flashes only on SD write (firmware or OpenLog write-activity line; if no dedicated pin, host GPIO toggled in the same code path as the log write). Do not hang the LED on unregulated pack. OFF leakage ≤ 1 µA.
+- **Write LED:** on **this** board (not only OpenLog module LEDs). 3V3 → series **1 kΩ** → LED → UART_TX; UART idle-high is OFF and low bits sink **≤ 3 mA**, visibly marking every transmitted log record without a third GPIO. This is intentionally a log-transmit activity proxy, not proof of physical SD commit. Do not hang the LED on unregulated pack. OFF leakage ≤ 1 µA.
 
 No other user LEDs this stage (extra Iq).
 
@@ -90,7 +90,7 @@ SMA perpendicular to board, mates pointing down. Temperature **ASSUMED −40 °C
 | L91 charger | Primary cells |
 | 5 V USB as flight source | Pack is the flight source; switch-off budget is 0 µA on pack+ |
 | IRLZ44N / 3.3 V relay | Vgs/Iq not proven; pick a FET specified on at 2.5–3.3 V Vgs later |
-| GPIO assignments / PINOUT.md | Strapping table not yet applied |
+| Host RX / third GPIO | Only A0 and A1 are confirmed free; one-way UART and UART_TX LED sinking avoid assuming A2 or reusing occupied buses |
 | On-board GPS, APRS PA | Those are the LightAPRS-W 2.0 module |
 | High-side cutdown | Not decided |
 | Cell paralleling | Not in brief; not assumed |
