@@ -2,9 +2,10 @@
 
 Date: 2026-09-16
 
-This audit is the input for the next Copperhead placement and routing pass. The
-current PCB still contains `CopperheadDraft_*` placeholders; Copperhead has not
-been run as part of this audit.
+This audit records the completed staged Copperhead placement and routing work.
+The PCB now contains the full target set of real library/project footprints and
+no draft footprint placeholders; the remaining holds are qualification tasks,
+not footprint-substitution work.
 
 ## Assembly constraint
 
@@ -98,14 +99,8 @@ Rationale: moving A1 9 mm right and extending only the top edge is the smallest 
 
 Rationale: centerline entry clears the real shield holes while the short symmetric shield fanout provides complete first-pass return connectivity with the minimum bounded routing change. This does not release the RF geometry for fabrication: trace width/spacing and the final return-via strategy still require released-stackup calculation, and both launches require VNA validation.
 
-## Required next Copperhead pass
+## Completed substitution state and remaining fabrication holds
 
-1. Replace every remaining `CopperheadDraft_*` board footprint with the target map above.
-2. Retain the qualified A1/C1/C2 cluster and top-edge microSD access unless later enclosure measurements require an explicit mechanical revision.
-3. Keep both vertical SMA connectors on the bottom and preserve the extra RF and
-   cable keepouts.
-4. Re-place and reroute after real courtyard substitution; do not preserve draft
-   coordinates when they conflict with the real envelopes.
-5. Run ERC, DRC, courtyard-overlap review, 3D/mechanical review, and regenerate
-   `outputs/` only after the physical LightAPRS header/hole measurements are
-   confirmed.
+All target-map substitutions are complete: the board contains 22 real library or project footprints and no `CopperheadDraft_*` footprint names. J2's stock footprint is stored at 0° because its library-local pad row is vertical; the old placeholder used 270° to produce the same physical row direction from different local axes.
+
+The design is not fabrication-ready until the physical LightAPRS module, hole pattern, header alignment, exact purchased MPNs, and all connector orientations pass a 1:1 print and mechanical mock-up. The released stackup must be used to calculate the two 50 Ω launches, finalize the return-via strategy, and support VNA validation. The 2 A/30 s cutdown path still requires copper, connector, MOSFET SOA, and thermal qualification. Enclosure, cable, microSD, switch, and SMA access must be checked in the payload assembly. Run final ERC, DRC, courtyard, 3D/mechanical, and fabrication review and regenerate `outputs/` only after those holds are closed.
