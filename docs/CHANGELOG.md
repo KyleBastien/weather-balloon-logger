@@ -2,6 +2,18 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-16 — create pipeline stage: layout-draft
+
+- Change: layout-draft-weather-balloon-logger
+- Files: weather-balloon-logger.kicad_pcb, LAYOUT.md, docs/CHANGELOG.md, docs\DECISIONS.md
+- Verification: ERC clean, DRC clean
+
+## 2026-09-16 — create pipeline stage: layout-draft
+
+- Change: layout-draft-weather-balloon-logger
+- Files: weather-balloon-logger.kicad_pcb, LAYOUT.md, docs/CHANGELOG.md, docs/DECISIONS.md
+- Verification: 80 × 70 mm coordinate-level board draft; all 15 refdes placed; critical power, ground, RF, decoupling, UART/LED, and cutdown nets routed; dual SMA clearance envelopes and ESD reservation areas documented; DRC clean; board SVG exported; board-local draft land patterns explicitly require verified-footprint replacement before fabrication
+
 ## 2026-09-16 — create pipeline stage: schematic
 
 - Change: schematic-weather-balloon-logger
