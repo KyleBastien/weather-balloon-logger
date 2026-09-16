@@ -1,6 +1,6 @@
 # Weather Balloon Logger
 
-I want to build a board that brings together some off the shelf parts to log data for my Weather Balloon project. The main part and brains of the operation will be LightAPRS-W 2.0 tracker (https://qrp-labs.com/lightaprsw2.html) this uses an ESP32 based chip so that will be host the main firmware to control everything. I'll be running a APRS and WSPR antenna for the entire flight, so we'll need hookups for the antenas on the board, facing downards so we can run them through the payload using an SMA connector for the antennas.
+I want to build a board that brings together some off the shelf parts to log data for my Weather Balloon project. The main part and brains of the operation will be LightAPRS-W 2.0 tracker (https://qrp-labs.com/lightaprsw2.html) this uses an ATSAMD21G18 (ARM Cortex-M0) based chip so that will be host the main firmware to control everything. I'll be running a APRS and WSPR antenna for the entire flight, so we'll need hookups for the antenas on the board, facing downards so we can run them through the payload using an SMA connector for the antennas.
 
 I also need to be able to hook up a battery array to that with an on/off switch for controlling when it is on/off. The battery array needs to be able to support continious GPS usage for the entire ~4 hour flight using L91 Energizer Ultimate Lithium AA batteries. I'm thinking something like a 3AA Battery Cases with AAA Battery Adapters – Triple Battery Holder (https://www.amazon.com/dp/B07M7WYZ32?th=1) but maybe bigger if needed.
 
