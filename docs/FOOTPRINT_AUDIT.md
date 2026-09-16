@@ -46,7 +46,7 @@ extra RF, cable, service, or enclosure clearance.
 | J5 | `Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal` | 8.40 x 12.51 mm | Stock KiCad footprint; 3 A family provides margin over the 2 A cutdown pulse. Place at edge with wire-service clearance. |
 | Q1 | `Package_TO_SOT_SMD:SOT-23` | 3.86 x 3.40 mm | Stock KiCad footprint; matches AO3400A package. |
 | J6, J7 | `Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical` | 3.54 x 3.54 mm each | Stock footprint for the LightAPRS VHF/HF contacts. Preserve the measured module-corner locations. |
-| J3, J4 | `Connector_Coaxial:SMA_Amphenol_132134_Vertical` | 8.34 x 8.34 mm each | Stock KiCad footprint. Place on `B.Cu` so the connectors point downward; retain RF launch and cable keepouts beyond the component courtyard. |
+| J3, J4 | `Connector_Coaxial:SMA_Amphenol_132134_Vertical` | 8.34 x 8.34 mm each | Exact stock KiCad footprints fixed at J3 (168,162) and J4 (112,162), rotation 0°. Pad 1 is the RF center; four through-hole pads numbered 2 are the GND shield tabs. Retain the existing RF/mechanical and cable reservations beyond the component courtyard and verify downward mating in the mechanical mock-up. |
 | H1-H4 | `MountingHole:MountingHole_2.2mm_M2` | 4.90 mm diameter | Stock non-plated hole. Verify the physical LightAPRS hole diameter and center locations before fabrication. |
 
 ## Module and non-courtyard envelopes
@@ -88,6 +88,15 @@ Rationale: J1 and J5 already fit when their rotated courtyards are evaluated cor
 - Only the stale A1 GND and UART_TX route ends plus the local A1 3V3/bypass feed were repaired. The fixed LightAPRS interface, bottom RF layout, all unrelated routes, and the six exact H3/J7 and H4/J6 exclusions remain unchanged.
 
 Rationale: moving A1 9 mm right and extending only the top edge is the smallest coherent change that clears the fixed LightAPRS body reservation, contains the real OpenLog courtyard, and provides edge access without disturbing the RF or power layout.
+
+## SMA routing pass — final first-pass fanout
+
+- J3 remains fixed at (168,162), rotation 0°, with J6 `RF_APRS` routed on 0.5 mm F.Cu to center pad 1 along the footprint centerline between the upper shield tabs.
+- J4 remains fixed at (112,162), rotation 0°, with J7 `RF_WSPR` routed on 0.5 mm F.Cu to center pad 1 along the footprint centerline between the upper shield tabs.
+- On each connector, all four through-hole pad-2 shield tabs are joined by a symmetric 1.0 mm B.Cu U-fanout and tied at the connector centerline to the existing 1.0 mm bottom GND trunk. The two dangling placeholder ground stubs are gone.
+- All footprints, orientations, board edges, RF/mechanical reservation drawings, unrelated copper, and the six exact H3/J7 and H4/J6 exclusions remain unchanged.
+
+Rationale: centerline entry clears the real shield holes while the short symmetric shield fanout provides complete first-pass return connectivity with the minimum bounded routing change. This does not release the RF geometry for fabrication: trace width/spacing and the final return-via strategy still require released-stackup calculation, and both launches require VNA validation.
 
 ## Required next Copperhead pass
 
