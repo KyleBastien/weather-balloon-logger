@@ -8,11 +8,11 @@ This Stage-7 scaffold targets the LightAPRS-W 2.0 ATSAMD21G18 with the Arduino S
 python firmware/tools/generate_pins.py
 ```
 
-The generator fails closed unless J2 pin 4 remains `UART_TX` on A1/PB08 and J2 pin 7 remains `CUTDOWN_CTRL` on A0. It claims no A2, GPS UART, I2C, SPI, RESET, or SWD pin.
+The generator fails closed unless J2 pin 3 remains `UART_TX` on A1/PB08 and J2 pin 4 remains `CUTDOWN_CTRL` on A2/PB09. It claims no GPS UART, SPI, RESET, or SWD pin; J2 SCL/SDA are reserved for the PCF8574T LED expander.
 
 ## Happy path
 
-`WeatherBalloonLogger.ino` first drives cutdown OFF, initializes a polling TX-only SERCOM4 UART on PB08/PAD0, then sends a CSV heading and one deterministic safe telemetry row to OpenLog. Low UART bits also sink the board activity LED, matching the schematic. OpenLog TXO is unused.
+`WeatherBalloonLogger.ino` first drives cutdown OFF on A2/PB09, initializes a polling TX-only SERCOM4 UART on PB08/PAD0, then sends a CSV heading and one deterministic safe telemetry row to OpenLog. OpenLog TXO is unused. The revised board LED is on PCF8574T P0 at 0x20; this scaffold does not yet implement the I2C LED transaction and must not claim visible write indication until that firmware is added and tested.
 
 ## Boundaries
 

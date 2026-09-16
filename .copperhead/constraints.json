@@ -162,12 +162,14 @@
     ]
   },
   "host.free_gpio": {
-    "value": "A0 and A1/PB08 only; A2 is not assumed exposed; occupied GPS/radio/I2C/SPI pins forbidden",
-    "source": "docs/PINOUT.md Host interface J2; docs/SPEC.md §6; docs/SUBSYSTEMS.md §2",
+    "value": "J2.3 A1/PB08 is one-way OpenLog UART_TX; J2.4 A2/PB09 is direct CUTDOWN_CTRL; A0 is unused; shared J2.7/J2.8 I2C serves U1; occupied GPS/radio/SPI pins remain forbidden",
+    "source": "docs/PINOUT.md Host interface J2; docs/SUBSYSTEMS.md §2 and §6",
     "affects": [
       "docs/SPEC.md",
       "docs/SUBSYSTEMS.md",
-      "docs/PINOUT.md"
+      "docs/PINOUT.md",
+      "firmware/include/pins.h",
+      "firmware/tools/generate_pins.py"
     ]
   },
   "firmware.cutdown_boot_state": {
@@ -185,6 +187,28 @@
     "affects": [
       "firmware/include/pins.h",
       "firmware/DEVPLAN.md"
+    ]
+  },
+  "power.openlog_idle_mA": {
+    "max": 1.85,
+    "source": "docs/SPEC.md §2.3 allocation after adding U1; docs/BOM.md budget notes",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md",
+      "docs/SUBSYSTEMS.md",
+      "docs/DEVPLAN.md",
+      "firmware/DEVPLAN.md"
+    ]
+  },
+  "power.led_expander_idle_uA": {
+    "max": 100,
+    "source": "docs/SPEC.md §2.3 allocation and docs/BOM.md U1 acceptance limit",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md",
+      "docs/SUBSYSTEMS.md",
+      "docs/DEVPLAN.md",
+      "power.pack"
     ]
   }
 }

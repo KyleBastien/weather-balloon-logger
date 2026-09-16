@@ -1,20 +1,24 @@
 # Pinout — Weather Balloon Logger harness
 
-Stage-4 authoritative pin and net assignment. The LightAPRS-W 2.0 occupied-pin map leaves only A0 and A1 as confirmed free dedicated GPIOs. J2 therefore uses A1/PB08 for one-way SERCOM4 UART_TX and A0 for cutdown. The write LED is 3V3-fed and sunk by UART_TX; no A2 breakout or occupied I2C/SPI/GPS/radio pin is assumed. All logic is 3.3 V.
+Authoritative LightAPRS-W 2.0 carrier assignment. J2 now matches the verified 11-position 2.54 mm module edge header. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is the direct cutdown GPIO; the exposed I2C bus drives a PCF8574T at address 0x20 for the write LED and future GPS-status LEDs. All logic is 3.3 V.
 
 ## Host interface J2
 
 | Refdes | Pin | Net | Host mapping / rationale |
 | --- | --- | --- | --- |
-| J2 | 1 | PACK_SW | Switched pack positive to LightAPRS-W VIN; SW1 physically opens this rail when OFF. |
-| J2 | 2 | GND | Common return. |
-| J2 | 3 | 3V3 | Regulated 3.3 V from the tracker; powers OpenLog and the LED anode path. |
-| J2 | 4 | UART_TX | LightAPRS A1/PB08, firmware SERCOM4 TX; drives OpenLog RXI and sinks D1 on low bits. |
-| J2 | 5 | NC | Intentional: no host RX; OpenLog TXO is unused to conserve the confirmed two-pin GPIO budget. |
-| J2 | 6 | NC | Intentional spare; no unverified A2 breakout or occupied shared-bus pin is assumed. |
-| J2 | 7 | CUTDOWN_CTRL | LightAPRS A0 output through R2 to Q1 gate; R3 guarantees reset-time default-off. |
+| J2 | 1 | PACK_SW | RAW/VBAT input from switched pack positive; SW1 physically opens this rail when OFF. |
+| J2 | 2 | GND | First module ground. |
+| J2 | 3 | UART_TX | A1/PB08, SERCOM4/PAD0 TX to OpenLog RXI; no host RX is assigned. |
+| J2 | 4 | CUTDOWN_CTRL | A2/PB09 direct GPIO through R2 to Q1 gate; R3 guarantees reset-time default-off. |
+| J2 | 5 | 3V3 | Regulated module rail powering OpenLog, U1, and the LED anode path. |
+| J2 | 6 | GND | Second module ground. |
+| J2 | 7 | I2C_SCL | Exposed SCL/PA23 shared with the module's existing I2C devices; no duplicate carrier pull-up is populated pending measured bus resistance. |
+| J2 | 8 | I2C_SDA | Exposed SDA/PA22 shared with the module's existing I2C devices; connects to U1 SDA. |
+| J2 | 9 | NC | Physical SCK/PB11 contact is present but intentionally unused by this carrier. |
+| J2 | 10 | NC | Physical MISO/PA12 contact is present but intentionally unused by this carrier. |
+| J2 | 11 | NC | Physical MOSI/PB10 contact is present but intentionally unused by this carrier. |
 
-A0 and A1/PB08 have no ESP32-style boot-strap role on ATSAMD21G18. The only added static GPIO path is R3 to GND: 0 µA when cutdown is low and 3.3 µA only while commanded, below the 50 µA strap-leakage ceiling. UART_TX idles high, leaving D1 unbiased and meeting the 1 µA LED-off target subject to the selected LED leakage qualification.
+PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the only static cutdown GPIO path: 0 µA when cutdown is low and 3.3 µA only while commanded. U1 address pins A0/A1/A2 are strapped low for 0x20; its quasi-bidirectional ports power up high, so P0 leaves D1 off until firmware explicitly drives it low.
 
 ## Complete schematic pin/net table
 
@@ -25,13 +29,17 @@ A0 and A1/PB08 have no ESP32-style boot-strap role on ATSAMD21G18. The only adde
 | SW1 | 1 | PACK_SW | Selected ON throw. |
 | SW1 | 2 | PACK_IN | Switch common. |
 | SW1 | 3 | NC | Intentional unused throw implements ON/OFF. |
-| J2 | 1 | PACK_SW | Host VIN. |
-| J2 | 2 | GND | Host ground. |
-| J2 | 3 | 3V3 | Host regulated output. |
-| J2 | 4 | UART_TX | A1/PB08 SERCOM4 TX and LED sink. |
-| J2 | 5 | NC | Intentional host-RX omission. |
-| J2 | 6 | NC | Intentional spare. |
-| J2 | 7 | CUTDOWN_CTRL | A0 cutdown command. |
+| J2 | 1 | PACK_SW | RAW/VBAT input. |
+| J2 | 2 | GND | Module ground. |
+| J2 | 3 | UART_TX | A1/PB08 SERCOM4 TX. |
+| J2 | 4 | CUTDOWN_CTRL | A2/PB09 direct cutdown command. |
+| J2 | 5 | 3V3 | Module regulated output. |
+| J2 | 6 | GND | Module ground. |
+| J2 | 7 | I2C_SCL | Shared host I2C clock. |
+| J2 | 8 | I2C_SDA | Shared host I2C data. |
+| J2 | 9 | NC | SCK contact intentionally unused. |
+| J2 | 10 | NC | MISO contact intentionally unused. |
+| J2 | 11 | NC | MOSI contact intentionally unused. |
 | A1 | 1 | NC | BLK/FTDI orientation pin intentionally unused. |
 | A1 | 2 | GND | OpenLog ground. |
 | A1 | 3 | 3V3 | OpenLog VCC. |
@@ -42,11 +50,29 @@ A0 and A1/PB08 have no ESP32-style boot-strap role on ATSAMD21G18. The only adde
 | C1 | 2 | GND | Bypass return. |
 | C2 | 1 | 3V3 | OpenLog high-frequency bypass. |
 | C2 | 2 | GND | Bypass return. |
+| U1 | 1 | GND | A0 address strap low. |
+| U1 | 2 | GND | A1 address strap low. |
+| U1 | 3 | GND | A2 address strap low; address is 0x20. |
+| U1 | 4 | LED_N | P0 active-low write LED sink. |
+| U1 | 5 | NC | P1 reserved for future GPS-status LED. |
+| U1 | 6 | NC | P2 reserved for future GPS-status LED. |
+| U1 | 7 | NC | P3 reserved for future GPS-status LED. |
+| U1 | 8 | GND | Expander ground. |
+| U1 | 9 | NC | P4 reserved for future GPS-status LED. |
+| U1 | 10 | NC | P5 reserved for future GPS-status LED. |
+| U1 | 11 | NC | P6 reserved for future GPS-status LED. |
+| U1 | 12 | NC | P7 reserved for future GPS-status LED. |
+| U1 | 13 | NC | INT intentionally unused. |
+| U1 | 14 | I2C_SCL | Shared I2C clock. |
+| U1 | 15 | I2C_SDA | Shared I2C data. |
+| U1 | 16 | 3V3 | Expander VDD. |
+| C3 | 1 | 3V3 | U1 local decoupling. |
+| C3 | 2 | GND | U1 decoupling return. |
 | R1 | 1 | 3V3 | LED current-limiter supply. |
 | R1 | 2 | LED_A | D1 anode feed. |
-| D1 | 1 | UART_TX | Cathode; active-low UART activity sink. |
+| D1 | 1 | LED_N | Cathode; U1 P0 active-low sink. |
 | D1 | 2 | LED_A | Anode from R1. |
-| R2 | 1 | CUTDOWN_CTRL | Series gate input. |
+| R2 | 1 | CUTDOWN_CTRL | A2/PB09 series gate input. |
 | R2 | 2 | CUTDOWN_GATE | Q1 gate node. |
 | R3 | 1 | CUTDOWN_GATE | Intentional default-off pulldown. |
 | R3 | 2 | GND | Pulldown return. |
@@ -55,8 +81,8 @@ A0 and A1/PB08 have no ESP32-style boot-strap role on ATSAMD21G18. The only adde
 | Q1 | 3 | CUTDOWN_DRAIN | Drain to nichrome low side. |
 | J5 | 1 | PACK_SW | Nichrome high side. |
 | J5 | 2 | CUTDOWN_DRAIN | Nichrome switched low side. |
-| J6 | 1 | RF_APRS | LightAPRS VHF output. |
-| J6 | 2 | RF_WSPR | LightAPRS HF output. |
+| J6 | 1 | RF_APRS | Single LightAPRS VHF corner contact. |
+| J7 | 1 | RF_WSPR | Single LightAPRS HF corner contact. |
 | J3 | 1 | RF_APRS | APRS SMA center. |
 | J3 | 2 | GND | APRS SMA shield. |
 | J4 | 1 | RF_WSPR | WSPR SMA center. |
@@ -64,7 +90,9 @@ A0 and A1/PB08 have no ESP32-style boot-strap role on ATSAMD21G18. The only adde
 
 ## Intentional absences
 
-- No host RX path: OpenLog TXO is not needed for flight logging, and omitting it preserves the cutdown output within the confirmed GPIO budget.
-- No dedicated LED GPIO: UART_TX low bits provide the visible log-transmit indication while UART idle-high guarantees OFF.
-- No A2 assumption and no reuse of GPS UART, I2C, SPI, radio, power-control, battery-sense, RESET, or SWD pins.
-- No pull-up is added to either host GPIO; R3 is the required cutdown pulldown and does not create idle leakage when A0 is low.
+- No host RX path: OpenLog TXO remains unused.
+- No UART-sunk LED: D1 is isolated from UART_TX and is controlled by U1 P0.
+- P1–P7 are reserved but intentionally no-connect until future GPS-status LEDs are specified and budgeted.
+- U1 INT is unused; firmware may poll or write the expander without consuming another host pin.
+- No added I2C pull-ups are populated until the existing LightAPRS-W bus pull-ups and effective resistance are verified.
+- SCK, MISO, and MOSI are present on J2 but intentionally unused by this carrier.

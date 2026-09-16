@@ -1,6 +1,8 @@
 # First-draft layout — Weather Balloon Logger harness
 
-Stage 5 records a coordinate-level KiCad PCB draft derived from the authoritative stage-4 schematic. The board outline is 80 mm × 70 mm, from (100,100) to (180,170) mm in KiCad coordinates. All footprint references and electrical net names remain identical to the schematic.
+> **Superseded interface warning:** the existing PCB still contains the former 7-pin J2, two-pin J6, UART-sunk D1, and A0 cutdown routing. It has no J7, U1, C3, I2C LED path, or A2/PB09 cutdown route. The PCB and existing `outputs/` package are therefore obsolete and must not be fabricated; a later layout revision must import the revised schematic before placement/routing review.
+
+Stage 5 records a coordinate-level KiCad PCB draft derived from the former stage-4 schematic. The board outline is 80 mm × 70 mm, from (100,100) to (180,170) mm in KiCad coordinates. All footprint references and electrical net names remain identical to the schematic.
 
 ## Placement
 

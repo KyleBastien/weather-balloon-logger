@@ -52,7 +52,7 @@ This vehicle is **GPS-on for the whole powered flight**; there is **no in-flight
 | Write LED OFF leakage | **≤ 1 µA** (no bleed path that looks like a glow) | ASSUMED |
 | Pull-ups/downs on host GPIOs | Must not violate LightAPRS-W 2.0 strapping; extra leakage through straps **≤ 50 µA** total | ASSUMED — **check MCU strapping table before any pin** |
 
-**A part that fits voltage/package but blows Iq is a bug.** Gate pulldown on the cutdown FET is **intentional** (missing pulldown looks like a mistake but a floating gate can false-fire nichrome).
+**A part that fits voltage/package but blows Iq is a bug.** With U1 added, the 2.00 mA board-added ceiling is allocated as OpenLog maximum 1.85 mA + PCF8574T maximum 0.10 mA + 0.05 mA for passive/FET/LED-off leakage. Gate pulldown on the cutdown FET is **intentional** (missing pulldown looks like a mistake but a floating gate can false-fire nichrome).
 
 ### 2.4 Logic and rails on this board
 
@@ -61,7 +61,7 @@ This vehicle is **GPS-on for the whole powered flight**; there is **no in-flight
 | GPIO / LED / FET gate | **3.3 V** logic, sourced from LightAPRS-W 3V3 (or equivalent regulated 3.3 V), not raw pack | ATSAMD21G18, 3.3 V |
 | OpenLog VCC | **3.3–12 V** allowed by module; **tie to 3.3 V** unless current share on the 3V3 LDO is exceeded | Stated range; 3.3 V tie ASSUMED |
 | OpenLog UART | 3.3 V one-way host TX → OpenLog RXI; OpenLog TXO is intentionally unused; no 5 V shifter | Stage-4 pin-budget decision |
-| LED | 3V3 → **1 kΩ** → LED → UART_TX. UART idle-high is OFF; low UART bits sink **≤ 3 mA**, so each transmitted log record visibly flashes without a third GPIO. | Stage-4 pin-budget decision; activity proxy is not physical SD-commit proof |
+| LED / I2C expander | 3V3 → **1 kΩ** → D1 → U1 P0 (`LED_N`). PCF8574T address pins are low for 0x20; P0 is active-low and powers up high/off. P1–P7 are reserved for future GPS-status LEDs. | U1 maximum idle current ≤ 100 µA; activity indication is not physical SD-commit proof |
 
 Do **not** feed OpenLog or the LED from unregulated 4s (~7.2 V fresh) if a 3.3 V rail already exists — extra dissipation and LED overstress.
 
@@ -82,7 +82,7 @@ Do **not** feed OpenLog or the LED from unregulated 4s (~7.2 V fresh) if a 3.3 V
 | Module | SparkFun OpenLog with headers (ATmega328, preprogrammed), example Amazon B0BHL56BP5 |
 | Interface | One-way UART: host A1/PB08 SERCOM4 TX → OpenLog RXI; OpenLog TXO is intentionally no-connect; GND common |
 | Power | OpenLog VCC within 3.3–12 V; see §2.4 |
-| Write LED | On **this** board (not only module LEDs). 3V3 → 1 kΩ → LED → UART_TX makes UART idle-high the OFF state and flashes on low bits of every transmitted log record. This preserves the requested visual activity check with the two confirmed free GPIOs; it is intentionally a transmit proxy rather than proof of physical SD commit |
+| Write LED | On **this** board. 3V3 → 1 kΩ → D1 → PCF8574T P0; firmware drives P0 low for activity and high/off otherwise. P0 powers up high, so reset defaults the LED off. This is an activity proxy rather than proof of physical SD commit; P1–P7 are reserved for future GPS-status LEDs. |
 | Absence of USB-serial bridge on this PCB | **Intentional** — OpenLog is the logger; programming the ATSAMD21G18 stays on LightAPRS-W 2.0 |
 
 ## 5. Cutdown (nichrome)
@@ -103,13 +103,14 @@ LightAPRS-W 2.0 (ATSAMD21G18 / ARM Cortex-M0) breaks out only "I2C, SPI, 2× Ana
 
 - **MCU is ATSAMD21G18, not ESP32:** the SAMD21 has no ESP32-style GPIO boot straps (no GPIO0/2/12/15 rules). It boots from internal flash; the bootloader is a double-tap on RESET; SWDIO/SWCLK/RESET are not on the extension header. The governing rule is the verified occupied-pin map, not strap avoidance.
 - **Occupied (do not reuse):** D0/D1 GPS UART, D3 VHF PTT, D4 Si4463 SDN, D7 GPS power, D8 Si4463 nSEL, D9 Si4463 nIRQ, A3 Si5351 power, A4 TCXO power, A5 battery sense; SDA/SCL (I2C: BMP180 + Si5351); MOSI/MISO/SCK (SPI: Si4463).
-- **Available (extension header):** A0, A1 free GPIO/analog (A1=PB08 SERCOM4-capable, A2=PB09 if broken out), plus the shared I2C and SPI buses.
+- **Verified edge header:** J2 is the 11-position row RAW, GND, A1/PB08, A2/PB09, 3V3, GND, SCL, SDA, SCK, MISO, MOSI.
 - **Cutdown default-off** via gate pulldown is still required (a floating gate can false-fire nichrome on reset).
-- OpenLog uses one-way firmware SERCOM4 UART TX on exposed A1/PB08; do not steal the GPS UART (D0/D1), and do not assume A2 is exposed.
-- A0 drives CUTDOWN_CTRL through R2; the intentional R3 pulldown keeps Q1 off during reset. UART_TX also sinks the write LED, so the design uses exactly the two confirmed free GPIOs.
+- OpenLog uses one-way firmware SERCOM4 UART TX on J2.3 A1/PB08; the occupied GPS UART remains untouched and OpenLog TXO remains unused.
+- J2.4 A2/PB09 drives CUTDOWN_CTRL through R2; R3 keeps Q1 off during reset. A0 is not claimed.
+- J2.7/J2.8 share SCL/SDA with U1 PCF8574T at 0x20. U1 P0 sinks D1 active-low; P1–P7 and INT are intentional no-connects. SCK/MISO/MOSI are physically present on J2 but unused by the carrier.
 - RTC: **not required** on this carrier (host RTC/GPS time is sufficient). Absence of a carrier RTC is **intentional**.
 
-The authoritative connector and component pin table is `docs/PINOUT.md`; J2 pins 5–6 and A1 pins 1, 4, and 6 are intentional no-connects.
+The authoritative connector and component pin table is `docs/PINOUT.md`; J2 pins 9–11, A1 pins 1/4/6, U1 P1–P7, and U1 INT are intentional no-connects.
 
 ## 7. Mechanical / environment
 
@@ -140,6 +141,8 @@ The authoritative connector and component pin table is `docs/PINOUT.md`; J2 pins
 | `power.flight_energy_mAh` | min usable 1600 after derate (2× 800 mAh) |
 | `power.switch_off_current_uA` | max 0 (ideal; switch breaks pack+) |
 | `power.board_added_idle_mA` | max 2 (excluding LightAPRS-W 2.0) |
+| `power.openlog_idle_mA` | max 1.85 after adding U1 |
+| `power.led_expander_idle_uA` | max 100 for U1 |
 | `power.cutdown_off_leakage_uA` | max 50 |
 | `power.led_off_leakage_uA` | max 1 |
 | `power.gpio_logic_V` | 3.3 |

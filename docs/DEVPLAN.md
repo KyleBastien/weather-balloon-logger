@@ -10,7 +10,7 @@ The locations below are accessible component pads or connector pins, not populat
 
 - Current-limited bench supply covering 3.0–7.2 V, two DMMs with µA/mA/A ranges, oscilloscope, logic analyzer or 3.3 V UART decoder, and a temperature probe or thermal camera.
 - Fused nonflammable dummy load for cutdown tests, then a guarded fire-resistant nichrome fixture outdoors or in a suitable enclosure. Keep personnel, cord, batteries, and antennas away from the hot wire.
-- Verified 50 Ω cables, terminations, and a VNA or RF specialist setup for J6-to-J3/J4 qualification. Never transmit APRS/WSPR into an open connector or an unqualified load.
+- Verified 50 Ω cables, terminations, and a VNA or RF specialist setup for separate J6-VHF-to-J3 and J7-HF-to-J4 qualification. Never transmit APRS/WSPR into an open connector or an unqualified load.
 - ESD-safe bench, magnification, 1:1 footprint print, exact mating connectors, exact LightAPRS-W 2.0 and OpenLog modules, and the manufacturer datasheets for every ordered suffix.
 - A written test log recording board serial, installed MPNs, instrument IDs, ambient temperature, supply voltage/current limit, measured values, and pass/fail disposition.
 
@@ -22,13 +22,14 @@ The locations below are accessible component pads or connector pins, not populat
 | Switched pack | SW1.1 or J2.1/J5.1 `PACK_SW` to `GND` | Zero with SW1 OFF; approximately `PACK_IN` with SW1 ON. |
 | Ground continuity | J1.2, J2.2, A1.2, Q1.2, J3.2, J4.2 | Common return; verify before live tests. |
 | Host 3.3 V | J2.3, A1.3, C1.1, C2.1, or R1.1 `3V3` to `GND` | Regulated host rail, never raw pack. |
-| Logger UART | J2.4 or A1.5 `UART_TX` to `GND` | 3.3 V idle-high, 9600 baud scaffold default pending installed OpenLog confirmation. |
-| LED anode | R1.2 or D1.2 `LED_A` to `GND` | Current-limited LED feed; pulses during low UART bits. |
-| Cutdown command | J2.7 or R2.1 `CUTDOWN_CTRL` to `GND` | Must be low before other application initialization. |
+| Logger UART | J2.3 or A1.5 `UART_TX` to `GND` | A1/PB08, 3.3 V idle-high, 9600 baud scaffold default pending installed OpenLog confirmation. |
+| I2C expander | J2.7 `I2C_SCL`, J2.8 `I2C_SDA`, U1.14/U1.15 | Shared module I2C bus; U1 address 0x20, verify effective pull-ups before operation. |
+| LED anode / cathode | R1.2 or D1.2 `LED_A`; D1.1 or U1.4 `LED_N` | LED is off when P0 is high and on when P0 is driven low. |
+| Cutdown command | J2.4 or R2.1 `CUTDOWN_CTRL` to `GND` | A2/PB09; must be low before other application initialization. |
 | FET gate | R2.2, R3.1, or Q1.1 `CUTDOWN_GATE` to Q1.2 `GND` | Held low by R3 at reset; about 3.3 V only when armed/firing. |
 | FET drain | Q1.3 or J5.2 `CUTDOWN_DRAIN` to `GND` | Load low side; near ground only when Q1 is commanded on. |
-| APRS RF path | J6.1 to J3.1 `RF_APRS`; J3.2 shield | Continuity/RF path only; no DC connection to the center conductor is expected elsewhere. |
-| WSPR RF path | J6.2 to J4.1 `RF_WSPR`; J4.2 shield | Continuity/RF path only; no DC connection to the center conductor is expected elsewhere. |
+| APRS RF path | J6.1 VHF to J3.1 `RF_APRS`; J3.2 shield | Separate VHF corner contact; no DC connection to the center conductor is expected elsewhere. |
+| WSPR RF path | J7.1 HF to J4.1 `RF_WSPR`; J4.2 shield | Separate HF corner contact; no DC connection to the center conductor is expected elsewhere. |
 
 ## Bring-up sequence
 
@@ -49,7 +50,7 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 3. With SW1 OFF, verify J1.1 `PACK_IN` is open from J2.1/J5.1 `PACK_SW`. With SW1 ON, verify low resistance from `PACK_IN` to `PACK_SW`; exercise the switch and reject intermittent contacts.
 4. Measure resistance from `PACK_IN`, `PACK_SW`, `3V3`, `CUTDOWN_DRAIN`, `CUTDOWN_GATE`, `RF_APRS`, and `RF_WSPR` to `GND`. Investigate any unexpected short before applying power. Capacitors may cause a momentary charging indication on `3V3`.
 5. Verify R3 measures approximately 1 MΩ from `CUTDOWN_GATE` to `GND`, R2 approximately 100 Ω from `CUTDOWN_CTRL` to `CUTDOWN_GATE`, and the LED path has the expected diode polarity through R1.
-6. Check RF center-to-center continuity from J6.1 to J3.1 and J6.2 to J4.1, shield-to-ground continuity, isolation between APRS/WSPR centers, and no center-to-shield short.
+6. Check RF center-to-center continuity from J6.1 VHF to J3.1 and J7.1 HF to J4.1, shield-to-ground continuity, isolation between APRS/WSPR centers, and no center-to-shield short.
 
 ### 3. Bare carrier power-path test
 
@@ -61,7 +62,7 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 
 1. Connect only the verified LightAPRS-W interface at J2; leave OpenLog and nichrome disconnected and disable RF transmission or attach qualified 50 Ω loads. Start at a known-safe host input voltage, using the host datasheet/current profile to set a protective limit above verified inrush.
 2. Power on and meter `PACK_SW` first, then J2.3 `3V3`. Stop if raw pack appears on `3V3`, if the rail is outside the verified host tolerance, or if the supply current is unexplained.
-3. Verify host startup, GPS, APRS, WSPR, I2C, and SPI remain functional. Confirm A0/A1 assignments do not collide with occupied pins.
+3. Verify host startup, GPS, APRS, WSPR, I2C, and SPI remain functional. Confirm A1/PB08 UART, A2/PB09 cutdown, and shared SCL/SDA do not collide with upstream firmware or existing I2C addresses.
 4. Determine the real LightAPRS-W VIN/UVLO behavior from 5.4 V down toward 3.0 V under representative load. Use 3s only if operation through the required end-of-discharge range is demonstrated; otherwise use the allowed 4s pack. Do not add series cells for amp-hours.
 5. Measure host-only current at defined modes to establish the baseline used for the board-added-current subtraction and the ≤200 mA mean-flight budget.
 
@@ -74,17 +75,17 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 
 ### 6. OpenLog power-budget and UART test
 
-1. Verify the installed OpenLog configuration and voltage requirements independently. Confirm its maximum idle current is no greater than 1.95 mA over required voltage and temperature; a typical-only 2 mA claim fails the present ≤2 mA board-added limit.
+1. Verify the installed OpenLog configuration and voltage requirements independently. Confirm its maximum idle current is no greater than 1.85 mA over required voltage and temperature; U1 may use no more than 100 µA and all remaining idle leakage no more than 50 µA under the existing 2 mA board-added ceiling.
 2. Connect A1 with power off. Power on and meter `3V3` at A1.3 first; confirm the LightAPRS 3V3 regulator supports OpenLog startup/write peaks without droop, reset, or overheating. Do not move A1 to raw pack to hide a regulator-margin failure.
 3. Measure carrier-plus-OpenLog idle current relative to the host-only baseline with D1 off and Q1 off. It must be ≤2 mA beyond the LightAPRS module. Separately confirm Q1/off-path leakage ≤50 µA at the maximum qualified pack voltage.
 4. Decode `UART_TX`: idle must be high, logic levels must be 3.3 V compatible, and the baud/configuration must match the installed OpenLog. The scaffold default is 9600 baud, 8-N-1, not a verified flight setting.
-5. Transmit a uniquely numbered record. Verify D1 flashes during low UART bits and is dark at idle; LED-off leakage must be ≤1 µA. Remove the SD card safely and confirm the exact record is present. The LED is only a transmit proxy, not proof of media commit.
+5. Initialize U1 at 0x20 with all ports high, transmit a uniquely numbered record, and explicitly pulse P0 low/high around the intended write indication. Verify D1 lights only while P0 is low and is dark otherwise; LED-off leakage must be ≤1 µA. Remove the SD card safely and confirm the exact record is present. The LED remains an activity proxy, not proof of media commit.
 6. Repeat logging while GPS and both radio functions operate into qualified loads, watching for rail droop, UART corruption, resets, and current-budget violations.
 
 ### 7. RF and mechanical qualification
 
 1. With power off, repeat RF continuity/isolation checks after assembly. Inspect launch soldering and verify SMA mates point downward through the payload without cable, enclosure, or battery interference.
-2. Using the actual stackup and qualified 50 Ω equipment, measure each J6-to-SMA path for return loss, insertion loss, channel isolation, and unintended resonance across the applicable APRS and WSPR bands. A DRC-clean 0.5 mm draft trace is not a 50 Ω proof.
+2. Using the actual stackup and qualified 50 Ω equipment, measure J6-VHF-to-J3 and J7-HF-to-J4 for return loss, insertion loss, channel isolation, and unintended resonance across the applicable APRS and WSPR bands. A DRC-clean draft trace is not a 50 Ω proof.
 3. Verify the ≥5 mm SMA dielectric keepouts, return-current path/via fence, reserved protection strategy, cable bend radius, and absence of battery metal or nichrome hardware in the near field.
 4. Perform conducted/radiated system checks only with suitable loads/antennas and regulatory controls; confirm simultaneous subsystem operation does not corrupt GPS or logging.
 
@@ -109,7 +110,7 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 | Draft footprints or wrong connector pin order | Exact MPN datasheets, 1:1 print, mating-part inspection, updated PCB and DRC | No PCB order while any `CopperheadDraft_*` footprint remains. |
 | UNVERIFIED part sourcing or cold rating | Manufacturer-authorized source, exact suffix, lifecycle and −40 °C data | Reject substitutions; keep procurement hold. |
 | 3s host brownout near 3.0 V | Measured LightAPRS VIN/UVLO under representative load and cold | Use allowed 4s only if voltage testing requires it; verify 7.2 V maxima. |
-| OpenLog exceeds the 2 mA board-added idle budget | Maximum idle-current measurement over voltage/temperature plus host-only subtraction | Stop and replace/re-architect; do not accept a typical-only 2 mA claim. |
+| OpenLog/U1 exceed the 2 mA board-added idle budget | Verify OpenLog ≤1.85 mA, U1 ≤100 µA, and all remaining idle leakage ≤50 µA over voltage/temperature | Stop and replace/re-architect; do not accept typical-only current claims. |
 | Host 3V3 regulator lacks OpenLog peak margin | Startup/write waveform and regulator thermal/current data | Revisit architecture explicitly; do not silently power OpenLog from raw pack. |
 | Cutdown false-fire at reset/brownout | Scope captures at `CUTDOWN_CTRL` and `CUTDOWN_GATE`, repeated fault tests | R3 stays fitted; firmware initializes low first; no nichrome testing until clean. |
 | Q1/trace/connector overheats at 2 A for 30 s | Verified RDS(on)/SOA, measured VDS/drop/temperature, actual copper calculation | Widen/pour/multiply vias or change qualified parts and repeat schematic/layout review. |
