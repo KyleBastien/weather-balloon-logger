@@ -2,6 +2,12 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-16 — Apply the measured LightAPRS-W 2.0 coordinates from docs/SUBSYSTEMS.md section 6 (Measured coordinate transcription) to the board. (1) Place the four module standoff holes as ~M2 (2.2 mm) holes at H1 (125.9,115.35), H2 (154.1,115.35), H3 (125.9,153.52), H4 (154.1,153.52), forming a 28.18 x 38.16 mm rectangle. (2) Keep J2 (11-pin, 2.548 mm pitch, 270 deg) along the right edge at about x=154.9, centered vertically over the rectangular body, spanning about y=121.7 to 147.2. (3) Keep J7 HF at the module bottom-left and J6 VHF at the module bottom-right, positioned clear of the H3/H4 standoff holes. (4) Keep every other component outside the 32.77 x 54.80 mm module zone and honor the >=5 mm SMA keepouts. Update docs/LAYOUT.md and re-run DRC; iterate placement and routing until DRC is clean.
+
+- Change: apply-measured-lightaprs-module-coordinates
+- Files: weather-balloon-logger.kicad_pcb, docs/LAYOUT.md, docs\DECISIONS.md
+- Verification: ERC clean, DRC clean
+
 ## 2026-09-16 — Correct the module-mount layout to the exact verified LightAPRS-W 2.0 geometry and FACE-UP orientation in docs/SUBSYSTEMS.md section 6. (1) Resize the module-mount zone to exactly 32.77 x 54.80 mm with the long axis vertical. (2) The module mounts FACE UP, so carrier pads must match the module top view with NO left-right mirror: place J2 (11-pin header) on the zone edge that matches the module's header edge, and place the RF corner contacts as HF bottom-left = J7 and VHF bottom-right = J6, which reverses the previous mirrored placement. (3) Keep RF nets VHF/J6 -> J3 (RF_APRS) and HF/J7 -> J4 (RF_WSPR); the two SMA jacks are edge-mounted facing down, so move J3 toward the VHF/right side and J4 toward the HF/left side for short launches. (4) Place four approximate M2 standoff holes on the dimensioned pattern with about a 42.73 mm outer horizontal span. (5) Keep J1, SW1, A1, U1, C3, Q1 and all passives outside the module zone and honor the >=5 mm SMA keepouts. Update docs/LAYOUT.md and the board, then re-run DRC.
 
 - Change: correct-face-up-lightaprs-module-layout

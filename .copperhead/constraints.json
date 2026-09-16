@@ -212,8 +212,8 @@
     ]
   },
   "mechanical.lightaprs_module_zone": {
-    "value": "exact 32.77 x 54.80 mm zone, long axis vertical; FACE-UP top-view geometry with no left-right mirror; J2 on matching right long edge; J7 HF bottom-left and J6 VHF bottom-right; vendor drawing 42.73 mm long-axis hole span rotates to PCB vertical",
-    "source": "docs/SUBSYSTEMS.md section 6 and docs/LAYOUT.md",
+    "value": "exact 32.77 x 54.80 mm FACE-UP zone at x=123.615..156.385, y=101..155.8; H1/H2=(125.9/154.1,115.35), H3/H4=(125.9/154.1,153.52), approximate 2.2 mm holes; J2 x=154.9 at 270 deg with 2.548 mm pitch and y=121.72..147.20; J7 HF=(123.7,155.0) and J6 VHF=(156.3,155.0) clear the lower holes; all non-mating components outside",
+    "source": "docs/SUBSYSTEMS.md section 6 Measured coordinate transcription and docs/LAYOUT.md DRC-adjusted placement",
     "affects": [
       "weather-balloon-logger.kicad_pcb",
       "docs/LAYOUT.md",
