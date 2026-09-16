@@ -2,6 +2,18 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-16 — create pipeline stage: outputs
+
+- Change: outputs-weather-balloon-logger
+- Files: outputs/, outputs/BOM.csv, outputs/README.md, docs\DECISIONS.md, docs/CHANGELOG.md
+- Verification: ERC clean, DRC clean
+
+## 2026-09-16 — create pipeline stage: outputs
+
+- Change: outputs-weather-balloon-logger
+- Files: outputs/ Gerbers and drill, outputs/outline.dxf, outputs/board.step, outputs/board.svg, outputs/schematic.svg, outputs/BOM.csv, outputs/README.md, docs/CHANGELOG.md, docs/DECISIONS.md
+- Verification: every requested export succeeded; ERC clean; DRC clean; drift clean; schematic legibility 0 errors with one low-utilization advisory; output package remains explicitly blocked from fabrication and procurement because CopperheadDraft footprints and all MPNs are UNVERIFIED
+
 ## 2026-09-16 — create pipeline stage: layout-draft
 
 - Change: layout-draft-weather-balloon-logger
