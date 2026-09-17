@@ -2,6 +2,13 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-17 — Implement split-power PCB
+
+- Placed direct-solder A2 at (106,121), 270°, and R4 at (159.8,113.3), 90°, without moving any existing footprint or changing the outline.
+- Routed A2 VIN/SHDN directly from `PACK_SW`, GND to the pack return, and fixed `LOGGER_5V` to A1/C1/C2; the cutdown and LightAPRS feeds remain direct `PACK_SW` branches.
+- Replaced the direct UART trace with `UART_TX` → R4 → `OPENLOG_RXI` and moved the board label to (110,96) for module access.
+- Verification: normal KiCad DRC has zero violations and zero unconnected items; Copperhead ERC, DRC, drift, and constraints are clean.
+
 ## 2026-09-17 — Capture split-power schematic
 
 - Added A2 Pololu S7V8F5 with SHDN/VIN on `PACK_SW`, GND common, and VOUT on new `LOGGER_5V`.

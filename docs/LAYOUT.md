@@ -4,7 +4,7 @@ The coordinate-level PCB draft is synchronized to the verified FACE-UP LightAPRS
 
 The exact 32.77 × 54.80 mm LightAPRS-W 2.0 body reservation occupies (123.615,101) to (156.385,155.8), with the 54.80 mm long axis vertical. Only direct-mating contacts J2, J6, J7 and four approximate 2.2 mm M2 standoff holes are inside this zone. The measured transcription places H1–H4 at (125.9,115.35), (154.1,115.35), (125.9,153.52), and (154.1,153.52), forming a 28.20 mm measured-X by 38.17 mm measured-Y rectangle (nominal drawing transcription 28.18 × 38.16 mm; coordinate rounding accounts for the 0.02/0.01 mm difference). The stock J2 footprint is stored at 0° because its library-local pad row is vertical; its pads remain at x=154.9 spanning y=121.72–147.20. The former 270° value described the differently drawn placeholder's local axes, not a physical rotation of the connector. J7/HF and J6/VHF remain at the bottom-left and bottom-right respectively, shifted outward and downward to (123.7,155.0) and (156.3,155.0) to clear H3/H4 while preserving the measured corner intent. Every other electrical component is outside the body projection. All target-map substitutions are complete and the PCB contains no `CopperheadDraft_*` footprints. The LightAPRS coordinates still require confirmation against the vendor drawing and a physical module before fabrication, and the existing `outputs/` package remains stale until all fabrication holds are closed.
 
-The front silkscreen includes the horizontal, right-reading board label `JAVAS Logger` centered at (114.5, 118.0) mm with 1.8 mm text height and 0.30 mm stroke. It occupies the open left-center area above the reserved ESD drawing, remains left of the LightAPRS-W module zone, and clears all components, pads, traces, mounting holes, and both SMA keepout envelopes. Rationale: this location keeps the requested board identity readable without consuming a functional or mechanically reserved area.
+The front silkscreen includes the horizontal, right-reading board label `JAVAS Logger` centered at (110,96) mm with 1.8 mm text height and 0.30 mm stroke. It was moved to the open upper-left area so the A2 module body, solder joints, and hand-assembly access remain unobstructed while the label stays outside the LightAPRS and RF reservations.
 
 ## Placement
 
@@ -12,10 +12,12 @@ The front silkscreen includes the horizontal, right-reading board label `JAVAS L
 | --- | ---: | ---: | --- |
 | J1 | (103,108) | 90° | Real side-entry JST-PH footprint remains at the left edge; its rotated full courtyard is inside the outline and its mating opening is edge-accessible. |
 | SW1 | (114,108) | 0° | Exact 7101SYZQE direct-solder slot footprint shifted right for J1 courtyard clearance; top-side toggle actuation remains unobstructed and SW1 still breaks pack positive. |
+| A2 | (106,121) | 270° | Exact Pololu S7V8F5 top-side direct-solder carrier in the left power area. Its full body/courtyard clears SW1, J1, J5, R2, the LightAPRS body, and both RF reservations; VIN/SHDN face the nearby switched-pack trunk. |
 | J2 | (154.9,121.72) | 0° | Stock footprint library orientation; its vertical 11-pad row at 2.548 mm pitch spans y=121.72–147.20 and matches the FACE-UP module without mirroring. The old placeholder required 270° because its local axes differed. |
 | A1 | (171,110) | 0° | Exact top-side solder-down OpenLog carrier shifted 9 mm right so its full body/courtyard is outside the fixed LightAPRS zone; its microSD end faces the newly extended top edge for direct home-assembly access. |
 | C2 | (164,114) | 0° | OpenLog high-frequency bypass retained close below A1's 3V3/GND header pins; only its local connection is reconciled. |
 | C1 | (168,114) | 0° | OpenLog bulk bypass retained close below A1's supply pins and inside the unchanged right-side logic corridor. |
+| R4 | (159.8,113.3) | 90° | UART back-power limiter placed immediately before A1 RXI while remaining outside the fixed LightAPRS body zone. |
 | U1 | (166,128) | 0° | PCF8574T is outside the module zone on the right-side logic corridor. |
 | C3 | (172,124) | 0° | Local U1 decoupling beside VDD/GND. |
 | R1 | (162,137) | 0° | LED limiter outside the module zone beside U1/D1. |
@@ -37,8 +39,9 @@ The on-board WSPR clearance envelope is drawn from (102,152) to (122,170) around
 
 - PACK_IN, the main PACK_SW path, and CUTDOWN_DRAIN use 1.5 mm copper except the 0.6 mm Q1 drain neck. Rationale: retain first-draft margin for the assumed 2 A, 30 s cutdown pulse while acknowledging the SOT-23 bottleneck.
 - Ground uses a 1.0 mm B.Cu perimeter/bottom trunk with 0.4–1.0 mm local branches. At J3 and J4, 1.0 mm symmetric B.Cu U-fanouts join all four through-hole shield tabs and connect at the footprint centerline to that bottom trunk. Rationale: keep returns continuous, eliminate the placeholder dangling stubs, and give both first-pass RF launches short balanced shield connections.
-- 3V3 uses 0.5 mm on the host trunk and 0.4 mm local branches; the short U1-to-C3 connection changes layer through local vias to clear SCL. Rationale: keep both OpenLog and U1 bypass connections short without copper collisions.
-- UART_TX, I2C_SCL, I2C_SDA, LED_A, LED_N, CUTDOWN_CTRL, and CUTDOWN_GATE use 0.3 mm. SCL and SDA use controlled layer changes where necessary to reach U1 without crossing address straps or supply copper.
+- 3V3 uses 0.5 mm on the host trunk and 0.4 mm local branches; the short U1-to-C3 connection changes layer through local vias to clear SCL. OpenLog is no longer on this rail.
+- A2 VIN/SHDN use a short 0.8 mm B.Cu branch from the existing `PACK_SW` trunk; A2 GND uses 0.6 mm B.Cu to J1 ground. `LOGGER_5V` uses 0.5 mm F.Cu along the board top to A1/C1/C2, outside the LightAPRS body reservation. The cutdown feed remains independently connected directly to `PACK_SW`.
+- UART_TX, OPENLOG_RXI, I2C_SCL, I2C_SDA, LED_A, LED_N, CUTDOWN_CTRL, and CUTDOWN_GATE use 0.3 mm. R4 separates UART_TX from OPENLOG_RXI beside A1; SCL and SDA use controlled layer changes where necessary to reach U1 without crossing address straps or supply copper.
 - RF_WSPR uses a separate 0.5 mm first-draft trace from bottom-left J7/HF to J4 pad 1; RF_APRS runs from bottom-right J6/VHF to J3 pad 1. Each trace now approaches its center pad along the connector centerline between the two upper shield tabs, with DRC clearance to every pad-2 shield. Rationale: preserve the electrical mappings and remove the real-footprint shorts without moving either connector. The 0.5 mm width is not a 50 Ω qualification.
 - Every schematic-connected net is routed and the revised board has no ratsnest or DRC violation. Copper under the module zone is limited to required mating-contact fanout and shared routing; no non-mating component body is placed there.
 
@@ -46,7 +49,7 @@ The on-board WSPR clearance envelope is drawn from (102,152) to (122,170) around
 
 The revised coordinate study is internally consistent and DRC-clean:
 
-- All 18 schematic refdes are present with exact revised net names; J2 has 11 contacts, J6/J7 are separate, and U1/C3 plus `I2C_SCL`, `I2C_SDA`, and `LED_N` are routed.
+- All 20 schematic refdes are present with exact revised net names; A2/R4 and `LOGGER_5V`/`OPENLOG_RXI` are routed, J2 has 11 contacts, J6/J7 are separate, and U1/C3 plus `I2C_SCL`, `I2C_SDA`, and `LED_N` are routed.
 - The exact 32.77 × 54.80 mm FACE-UP module zone is explicit. J2/J6/J7 and H1–H4 are inside; J1, SW1, A1, U1, C3, J3, J4, J5, Q1, D1, R1–R3, and C1/C2 are outside.
 - The HF/WSPR branch leaves bottom-left J7 toward left-side J4, while VHF/APRS leaves bottom-right J6 toward right-side J3; unrelated parts do not enter either ≥5 mm SMA envelope.
 - OpenLog bypassing, U1 bypassing, active-low LED control, reset-default-off cutdown hardware, power, ground, UART, I2C, and both RF paths are routed with no DRC violations.
@@ -58,6 +61,6 @@ A human or specialist must still close these fabrication holds:
 - Convert both drawn SMA envelopes into enforceable rule areas, calculate the center-trace geometry from the released stackup, design and verify the final return-via strategy, and validate both launches with VNA measurements. The DRC-clean 0.5 mm traces and through-hole-tab B.Cu fanouts are first-pass connectivity geometry only and are not a 50 Ω qualification.
 - Verify downward SMA mating, enclosure penetration, cable bend radius, battery-metal separation, and connector access with a 3D/mechanical mock-up.
 - Recalculate and test the complete 2 A for 30 s cutdown path using released copper, connectors, AO3400A maximum RDS(on), SOA, and thermal data.
-- The schematic now captures A2 S7V8F5 item 2123, `LOGGER_5V`, and R4 on `OPENLOG_RXI`; the PCB still requires the final A2/R4 placement and local power/UART reroute. LightAPRS RAW/J2.1 and J5.1 must remain direct `PACK_SW`. Qualify OpenLog ≤7 mA idle and ≤25 mA write, regulator Iq <0.2 mA, board-added ≤8 mA idle and ≤30 mA active peak, U1 ≤100 µA, reverse-polarity handling, and cold operation.
+- Qualify the implemented A2/R4 split-power path: LightAPRS RAW/J2.1 and J5.1 remain direct `PACK_SW`; verify OpenLog ≤7 mA idle and ≤25 mA write, regulator Iq <0.2 mA, board-added ≤8 mA idle and ≤30 mA active peak, U1 ≤100 µA, reverse-polarity handling, UART integrity through R4, and cold operation.
 - Capture and qualify any ESD/protection parts before placement; reserved drawings do not authorize unbudgeted components.
 - Add production mounting/tooling, fiducials, test points, polarity/RF labels, enclosure clearances, and full fabrication review. Regenerate `outputs/` only after those holds are resolved.
