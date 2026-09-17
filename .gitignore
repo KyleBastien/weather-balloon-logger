@@ -13,6 +13,10 @@ build/
 fab/
 gerbers/
 
+# Keep the checked-in fabrication drawing bundle under outputs.
+!outputs/gerbers/
+!outputs/gerbers/**
+
 node_modules/
 .DS_Store
 .env
