@@ -16,6 +16,13 @@
       "group": "1. Power"
     },
     {
+      "ref": "A2",
+      "libId": "Connector_Generic:Conn_01x04",
+      "value": "Pololu S7V8F5",
+      "footprint": "WeatherBalloon:Pololu_S7V8F5_Carrier",
+      "group": "1. Power"
+    },
+    {
       "ref": "J2",
       "libId": "Connector_Generic:Conn_01x11",
       "value": "Conn_01x11",
@@ -66,6 +73,13 @@
     },
     {
       "ref": "R1",
+      "libId": "Device:R",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "group": "3.1 UART SD logger"
+    },
+    {
+      "ref": "R4",
       "libId": "Device:R",
       "value": "1k",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
@@ -130,10 +144,15 @@
   ],
   "nets": [
     { "name": "PACK_IN", "pins": ["J1.1", "SW1.2"], "kind": "power" },
-    { "name": "PACK_SW", "pins": ["SW1.1", "J2.1", "J5.1"], "kind": "power" },
+    { "name": "PACK_SW", "pins": ["SW1.1", "A2.1", "A2.2", "J2.1", "J5.1"], "kind": "power" },
     {
       "name": "3V3",
-      "pins": ["J2.5", "A1.3", "C1.1", "C2.1", "U1.16", "C3.1", "R1.1"],
+      "pins": ["J2.5", "U1.16", "C3.1", "R1.1"],
+      "kind": "power"
+    },
+    {
+      "name": "LOGGER_5V",
+      "pins": ["A2.4", "A1.3", "C1.1", "C2.1"],
       "kind": "power"
     },
     {
@@ -142,6 +161,7 @@
         "J1.2",
         "J2.2",
         "J2.6",
+        "A2.3",
         "A1.2",
         "C1.2",
         "C2.2",
@@ -157,7 +177,8 @@
       ],
       "kind": "power"
     },
-    { "name": "UART_TX", "pins": ["J2.3", "A1.5"] },
+    { "name": "UART_TX", "pins": ["J2.3", "R4.1"] },
+    { "name": "OPENLOG_RXI", "pins": ["R4.2", "A1.5"] },
     { "name": "I2C_SCL", "pins": ["J2.7", "U1.14"] },
     { "name": "I2C_SDA", "pins": ["J2.8", "U1.15"] },
     { "name": "LED_A", "pins": ["R1.2", "D1.2"] },

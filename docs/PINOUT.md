@@ -1,6 +1,6 @@
 # Pinout — Weather Balloon Logger harness
 
-Authoritative LightAPRS-W 2.0 carrier assignment. J2 matches the verified 11-position 2.54 mm module edge header. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is the direct cutdown GPIO; the exposed I2C bus drives a PCF8574T at address 0x20 for the write LED and future GPS-status LEDs. Logic remains 3.3 V, while the approved OpenLog VCC target is dedicated fixed `LOGGER_5V` from a Pololu S7V8F5 item 2123. This documentation-only pass intentionally leaves schematic and PCB implementation for a later hardware change.
+Authoritative LightAPRS-W 2.0 carrier assignment. J2 matches the verified 11-position 2.54 mm module edge header. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is the direct cutdown GPIO; the exposed I2C bus drives a PCF8574T at address 0x20 for the write LED and future GPS-status LEDs. Logic remains 3.3 V. The captured schematic now uses dedicated fixed `LOGGER_5V` from Pololu S7V8F5 item 2123 for OpenLog, with the corresponding PCB placement and routing still pending.
 
 ## Host interface J2
 
@@ -29,6 +29,10 @@ PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the only
 | SW1 | 1 | PACK_SW | Selected ON throw. |
 | SW1 | 2 | PACK_IN | Switch common. |
 | SW1 | 3 | NC | Intentional unused throw implements ON/OFF. |
+| A2 | 1 | PACK_SW | SHDN tied high to the switched pack for deterministic enable. |
+| A2 | 2 | PACK_SW | VIN from the switched 3S pack. |
+| A2 | 3 | GND | Regulator return. |
+| A2 | 4 | LOGGER_5V | Fixed 5 V output for OpenLog only. |
 | J2 | 1 | PACK_SW | RAW/VBAT input. |
 | J2 | 2 | GND | Module ground. |
 | J2 | 3 | UART_TX | A1/PB08 SERCOM4 TX. |
@@ -42,13 +46,13 @@ PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the only
 | J2 | 11 | NC | MOSI contact intentionally unused. |
 | A1 | 1 | NC | BLK/FTDI orientation pin intentionally unused. |
 | A1 | 2 | GND | OpenLog ground. |
-| A1 | 3 | 3V3 | Current captured schematic net only; superseded by the approved `LOGGER_5V` target from S7V8F5 fixed 5 V output. Schematic and PCB implementation are intentionally deferred beyond this documentation-only pass. |
+| A1 | 3 | LOGGER_5V | OpenLog VCC from S7V8F5 fixed 5 V output. |
 | A1 | 4 | NC | TXO intentionally unused; logger is receive-only. |
-| A1 | 5 | UART_TX | RXI receives host log bytes. |
+| A1 | 5 | OPENLOG_RXI | RXI receives host log bytes through R4. |
 | A1 | 6 | NC | GRN/FTDI orientation pin intentionally unused. |
-| C1 | 1 | 3V3 | OpenLog bulk bypass. |
+| C1 | 1 | LOGGER_5V | OpenLog bulk bypass. |
 | C1 | 2 | GND | Bypass return. |
-| C2 | 1 | 3V3 | OpenLog high-frequency bypass. |
+| C2 | 1 | LOGGER_5V | OpenLog high-frequency bypass. |
 | C2 | 2 | GND | Bypass return. |
 | U1 | 1 | GND | A0 address strap low. |
 | U1 | 2 | GND | A1 address strap low. |
@@ -72,6 +76,8 @@ PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the only
 | R1 | 2 | LED_A | D1 anode feed. |
 | D1 | 1 | LED_N | Cathode; U1 P0 active-low sink. |
 | D1 | 2 | LED_A | Anode from R1. |
+| R4 | 1 | UART_TX | Host transmit side of the back-power-limiting resistor. |
+| R4 | 2 | OPENLOG_RXI | OpenLog receive side. |
 | R2 | 1 | CUTDOWN_CTRL | A2/PB09 series gate input. |
 | R2 | 2 | CUTDOWN_GATE | Q1 gate node. |
 | R3 | 1 | CUTDOWN_GATE | Intentional default-off pulldown. |

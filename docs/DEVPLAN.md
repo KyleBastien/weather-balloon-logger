@@ -21,8 +21,9 @@ The locations below are accessible component pads or connector pins, not populat
 | Pack input | J1.1 `PACK_IN` to J1.2 `GND` | Unswitched pack voltage. |
 | Switched pack | SW1.1 or J2.1/J5.1 `PACK_SW` to `GND` | Zero with SW1 OFF; approximately `PACK_IN` with SW1 ON. |
 | Ground continuity | J1.2, J2.2, A1.2, Q1.2, J3.2, J4.2 | Common return; verify before live tests. |
-| Host 3.3 V | J2.3, A1.3, C1.1, C2.1, or R1.1 `3V3` to `GND` | Regulated host rail, never raw pack. |
-| Logger UART | J2.3 or A1.5 `UART_TX` to `GND` | A1/PB08, 3.3 V idle-high, 9600 baud scaffold default pending installed OpenLog confirmation. |
+| Host 3.3 V | J2.5, U1.16, C3.1, or R1.1 `3V3` to `GND` | Regulated host rail, never raw pack. |
+| Logger 5 V | A2.4, A1.3, C1.1, or C2.1 `LOGGER_5V` to `GND` | Dedicated fixed 5 V logger rail. |
+| Logger UART | J2.3 `UART_TX` or A1.5 `OPENLOG_RXI` to `GND` | A1/PB08, 3.3 V idle-high through R4, 9600 baud scaffold default pending installed OpenLog confirmation. |
 | I2C expander | J2.7 `I2C_SCL`, J2.8 `I2C_SDA`, U1.14/U1.15 | Shared module I2C bus; U1 address 0x20, verify effective pull-ups before operation. |
 | LED anode / cathode | R1.2 or D1.2 `LED_A`; D1.1 or U1.4 `LED_N` | LED is off when P0 is high and on when P0 is driven low. |
 | Cutdown command | J2.4 or R2.1 `CUTDOWN_CTRL` to `GND` | A2/PB09; must be low before other application initialization. |

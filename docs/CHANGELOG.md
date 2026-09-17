@@ -2,6 +2,14 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-17 — Capture split-power schematic
+
+- Added A2 Pololu S7V8F5 with SHDN/VIN on `PACK_SW`, GND common, and VOUT on new `LOGGER_5V`.
+- Moved A1/C1/C2 from `3V3` to `LOGGER_5V` in the captured schematic.
+- Added R4 1 kΩ between `UART_TX` and new `OPENLOG_RXI` to limit startup/brownout back-power.
+- Preserved direct `PACK_SW` feeds to LightAPRS J2.1 and cutdown J5.1; PCB placement and routing remain the next bounded pass.
+- Verification: Copperhead ERC, DRC, drift, and constraints clean; schematic legibility has zero errors and one unchanged low-utilization advisory.
+
 ## 2026-09-17 — Resume and complete the already proposed bounded add-pololu-s7v8f5-carrier-footprint pass. The exact new project-local footprint file WeatherBalloon:Pololu_S7V8F5_Carrier has now been created because the previous Copperhead run could not create a new KiCad file. Audit it against the validated OpenSpec proposal and official data: top-side direct-solder, 11.43 x 16.51 mm body, 1.02 mm official holes represented by 1.0 mm drills, 2.54 mm pitch, row centered and 1.27 mm from edge, top-view left-to-right pads 4 VOUT, 3 GND, 2 VIN, 1 SHDN. Make only necessary corrections to that footprint. Update library/README.md, docs/BOM.md, docs/FOOTPRINT_AUDIT.md, and this run's OpenSpec tasks to reserve A2 and correct C1/C2 future LOGGER_5V/current-limit prose. Do not modify schematic, PCB, schematic.intent.json, constraints, outputs, firmware, or historical proposals. Run ERC, DRC, drift, and commit this bounded footprint pass only if clean.
 
 - Change: add-pololu-s7v8f5-carrier-footprint
