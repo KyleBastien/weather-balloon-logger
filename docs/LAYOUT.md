@@ -6,6 +6,8 @@ The exact 32.77 × 54.80 mm LightAPRS-W 2.0 body reservation occupies (123.615,1
 
 The front silkscreen includes the horizontal, right-reading board label `JAVAS Logger` centered at (110,96) mm with 1.8 mm text height and 0.30 mm stroke. It was moved to the open upper-left area so the A2 module body, solder joints, and hand-assembly access remain unobstructed while the label stays outside the LightAPRS and RF reservations.
 
+Functional F.SilkS labels use compact 1.0–1.2 mm text with 0.18–0.20 mm strokes. Connector names, J1/J5 polarity, power control, regulator/logger, host/expander/driver, cutdown, LED, RF contacts, and both SMA functions are identified next to their existing hardware; edge labels are rotated where useful. Labels remain outside pad solder-mask openings, component bodies/courtyards, and the LightAPRS mating area, and all original reference designators remain unchanged. Rationale: readable field wiring and assembly cues reduce polarity and port-selection errors without changing any electrical or mechanical design object.
+
 ## Placement
 
 | Refdes | Position (mm) | Rotation | Placement rationale |
