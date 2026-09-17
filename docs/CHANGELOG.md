@@ -2,6 +2,12 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-17 — Export-only refresh from the current committed design. Do not modify the schematic, PCB, schematic.intent.json, footprint libraries, constraints, firmware, BOM, or design documentation. Regenerate the current PCB SVG in .copperhead/renders and refresh outputs/board.svg using Copperhead's export_svg/export_outputs tools; bundled deterministic export artifacts may be refreshed as required by export_outputs. Preserve all existing fabrication qualification holds. Then run ERC, DRC, drift, schematic legibility, and constraint/spec validation. Finish only if the exports reflect the current weather-balloon-logger.kicad_pcb and checks are clean. Do not make layout or electrical changes.
+
+- Change: refresh-current-pcb-exports
+- Files: outputs/
+- Verification: ERC clean, DRC clean
+
 ## 2026-09-17 — Replace R4 with leaded through-hole part
 
 - Replaced R4's 0603 land pattern with `Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal`.
