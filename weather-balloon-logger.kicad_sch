@@ -4990,7 +4990,7 @@
 		(property "Value" "1k" (at 95.25 158.496 90)
 			(effects (font (size 1.27 1.27)))
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 95.25 154.94 0)
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" (at 95.25 154.94 0)
 			(effects (font (size 1.27 1.27)) hide)
 		)
 		(property "Datasheet" "~" (at 95.25 154.94 0)

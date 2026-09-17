@@ -82,7 +82,7 @@
       "ref": "R4",
       "libId": "Device:R",
       "value": "1k",
-      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",
       "group": "3.1 UART SD logger"
     },
     {

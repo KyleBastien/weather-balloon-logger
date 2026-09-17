@@ -17,7 +17,7 @@ The front silkscreen includes the horizontal, right-reading board label `JAVAS L
 | A1 | (171,110) | 0° | Exact top-side solder-down OpenLog carrier shifted 9 mm right so its full body/courtyard is outside the fixed LightAPRS zone; its microSD end faces the newly extended top edge for direct home-assembly access. |
 | C2 | (164,114) | 0° | OpenLog high-frequency bypass retained close below A1's 3V3/GND header pins; only its local connection is reconciled. |
 | C1 | (168,114) | 0° | OpenLog bulk bypass retained close below A1's supply pins and inside the unchanged right-side logic corridor. |
-| R4 | (159.8,113.3) | 90° | UART back-power limiter placed immediately before A1 RXI while remaining outside the fixed LightAPRS body zone. |
+| R4 | (166.62,118) | 180° | Leaded 1/4 W axial through-hole UART back-power limiter on 7.62 mm pitch. It clears A1/C1/C2/U1 and the fixed LightAPRS body zone while remaining close to A1 RXI. |
 | U1 | (166,128) | 0° | PCF8574T is outside the module zone on the right-side logic corridor. |
 | C3 | (172,124) | 0° | Local U1 decoupling beside VDD/GND. |
 | R1 | (162,137) | 0° | LED limiter outside the module zone beside U1/D1. |
@@ -41,7 +41,7 @@ The on-board WSPR clearance envelope is drawn from (102,152) to (122,170) around
 - Ground uses a 1.0 mm B.Cu perimeter/bottom trunk with 0.4–1.0 mm local branches. At J3 and J4, 1.0 mm symmetric B.Cu U-fanouts join all four through-hole shield tabs and connect at the footprint centerline to that bottom trunk. Rationale: keep returns continuous, eliminate the placeholder dangling stubs, and give both first-pass RF launches short balanced shield connections.
 - 3V3 uses 0.5 mm on the host trunk and 0.4 mm local branches; the short U1-to-C3 connection changes layer through local vias to clear SCL. OpenLog is no longer on this rail.
 - A2 VIN/SHDN use a short 0.8 mm B.Cu branch from the existing `PACK_SW` trunk; A2 GND uses 0.6 mm B.Cu to J1 ground. `LOGGER_5V` uses 0.5 mm F.Cu along the board top to A1/C1/C2, outside the LightAPRS body reservation. The cutdown feed remains independently connected directly to `PACK_SW`.
-- UART_TX, OPENLOG_RXI, I2C_SCL, I2C_SDA, LED_A, LED_N, CUTDOWN_CTRL, and CUTDOWN_GATE use 0.3 mm. R4 separates UART_TX from OPENLOG_RXI beside A1; SCL and SDA use controlled layer changes where necessary to reach U1 without crossing address straps or supply copper.
+- UART_TX, OPENLOG_RXI, I2C_SCL, I2C_SDA, LED_A, LED_N, CUTDOWN_CTRL, and CUTDOWN_GATE use 0.3 mm. The leaded through-hole R4 separates UART_TX from OPENLOG_RXI beside A1; local GND and SCL B.Cu paths detour around its drilled pads while preserving clearance.
 - RF_WSPR uses a separate 0.5 mm first-draft trace from bottom-left J7/HF to J4 pad 1; RF_APRS runs from bottom-right J6/VHF to J3 pad 1. Each trace now approaches its center pad along the connector centerline between the two upper shield tabs, with DRC clearance to every pad-2 shield. Rationale: preserve the electrical mappings and remove the real-footprint shorts without moving either connector. The 0.5 mm width is not a 50 Ω qualification.
 - Every schematic-connected net is routed and the revised board has no ratsnest or DRC violation. Copper under the module zone is limited to required mating-contact fanout and shared routing; no non-mating component body is placed there.
 

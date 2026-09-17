@@ -2,6 +2,13 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-17 — Replace R4 with leaded through-hole part
+
+- Replaced R4's 0603 land pattern with `Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal`.
+- R4 now uses two 0.8 mm drilled holes, mounts horizontally at (166.62,118), and is soldered from the underside.
+- Rerouted only local UART, GND, and I2C copper needed for the through-hole leads.
+- Verification: normal KiCad DRC has zero violations and zero unconnected items; Copperhead ERC, DRC, drift, and constraints are clean.
+
 ## 2026-09-17 — Implement split-power PCB
 
 - Placed direct-solder A2 at (106,121), 270°, and R4 at (159.8,113.3), 90°, without moving any existing footprint or changing the outline.

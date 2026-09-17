@@ -44,7 +44,8 @@ extra RF, cable, service, or enclosure clearance.
 | C1-C3 | `Capacitor_SMD:C_0603_1608Metric` | 2.96 x 1.46 mm each | Stock KiCad footprint; selected MPNs are 0603. |
 | U1 | `Package_SO:SOIC-16_3.9x9.9mm_P1.27mm` | 7.40 x 10.40 mm | Stock KiCad footprint; matches PCF8574T SO16 package. |
 | D1 | `LED_SMD:LED_0603_1608Metric` | 2.965 x 1.47 mm | Stock KiCad footprint; matches LTST-C190KGKT 0603 package. |
-| R1-R4 | `Resistor_SMD:R_0603_1608Metric` | 2.96 x 1.46 mm each | Stock KiCad footprint. R4 is the UART back-power limiter. |
+| R1-R3 | `Resistor_SMD:R_0603_1608Metric` | 2.96 x 1.46 mm each | Existing stock KiCad footprints. |
+| R4 | `Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal` | 9.72 x 3.00 mm courtyard | Stock KiCad 1/4 W axial through-hole footprint with two 0.8 mm drilled holes on 7.62 mm pitch. It is installed through the board and soldered from the underside; no SMD-only R4 pads remain. |
 | J5 | `Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal` | 8.40 x 12.51 mm | Stock KiCad footprint; 3 A family provides margin over the 2 A cutdown pulse. Place at edge with wire-service clearance. |
 | Q1 | `Package_TO_SOT_SMD:SOT-23` | 3.86 x 3.40 mm | Stock KiCad footprint; matches AO3400A package. |
 | J6, J7 | `Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical` | 3.54 x 3.54 mm each | Stock footprint for the LightAPRS VHF/HF contacts. Preserve the measured module-corner locations. |
@@ -88,7 +89,7 @@ Rationale: J1 and J5 already fit when their rotated courtyards are evaluated cor
 - A1 `WeatherBalloon:SparkFun_OpenLog_DEV-13712_Carrier` is at (171,110) mm, rotation 0°, top-side and direct-soldered. Its official 15.24 × 19.05 mm body and 16.24 × 20.05 mm courtyard lie outside the fixed LightAPRS body zone. The BLK-through-GRN pad order and pad geometry are unchanged; pads 2/3/5 are now GND/LOGGER_5V/OPENLOG_RXI and pins 1/4/6 remain intentionally unconnected.
 - C2 remains at (164,114) mm, rotation 0°, and C1 remains at (168,114) mm, rotation 0°. Both bypass capacitors remain close to A1 and are now routed to `LOGGER_5V`; verify leakage within the approved board-added idle ≤8 mA and active/write peak ≤30 mA limits.
 - The outline is (100,91.5)–(180,170) mm, 80 × 78.5 mm. Only the top edge moved, by 8.5 mm; A1's microSD end faces that edge so the card and solder-down header remain accessible for home assembly.
-- A2 is at (106,121), rotation 270°, and R4 is at (159.8,113.3), rotation 90°. A2 pads 1/2 connect directly to `PACK_SW`, pad 3 to GND, and pad 4 to `LOGGER_5V`; R4 separates `UART_TX` from `OPENLOG_RXI`. The fixed LightAPRS interface, direct cutdown feed, bottom RF layout, all unrelated routes, and the six exact H3/J7 and H4/J6 exclusions remain unchanged.
+- A2 is at (106,121), rotation 270°, and leaded through-hole R4 is at (166.62,118), rotation 180°. A2 pads 1/2 connect directly to `PACK_SW`, pad 3 to GND, and pad 4 to `LOGGER_5V`; R4 separates `UART_TX` from `OPENLOG_RXI`. The fixed LightAPRS interface, direct cutdown feed, bottom RF layout, all unrelated routes, and the six exact H3/J7 and H4/J6 exclusions remain unchanged.
 
 Rationale: moving A1 9 mm right and extending only the top edge is the smallest coherent change that clears the fixed LightAPRS body reservation, contains the real OpenLog courtyard, and provides edge access without disturbing the RF or power layout.
 
