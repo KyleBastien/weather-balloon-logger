@@ -4,11 +4,14 @@ Carrier PCB only. Firmware, GPS, and radios live on LightAPRS-W 2.0. This docume
 
 ## Prose block diagram
 
-Energizer L91 AA cells in a **3s baseline** holder (4s only if host VIN/UVLO cannot run to 3s EOD 3.0 V) feed pack+ through a mechanical switch **SW1 that breaks pack positive**. Switched pack+ goes to LightAPRS-W 2.0 **RAW** on J2.1. The tracker’s regulated **3V3** powers OpenLog, U1 PCF8574T, and the write-activity path 3V3 → 1 kΩ → LED → U1 P0; P0 is active-low and powers up high/off. A2/PB09 drives the cutdown MOSFET gate through R2 with an **intentional pulldown** to GND so nichrome cannot false-fire on reset. A1/PB08 provides one-way SERCOM4 UART TX to OpenLog RXI; OpenLog TXO is intentionally unused. J2.7/J2.8 expose the shared SCL/SDA bus to U1 at address 0x20; P1–P7 are reserved no-connect outputs for future GPS-status LEDs. Two **50 Ω SMA jacks** take RF from separate opposite-corner module contacts: J6 VHF→J3 APRS and J7 HF→J4 WSPR. No second MCU, carrier RTC, USB-serial bridge, L91 charger, or 5 V flight source is added.
+Exactly three series Energizer L91 AA cells (3.0–5.4 V) feed pack+ through a mechanical switch **SW1 that breaks pack positive**. Switched `PACK_SW` goes directly to LightAPRS-W 2.0 **RAW** on J2.1 and directly to cutdown J5.1; neither path may pass through a regulator. A dedicated Pololu S7V8F5 item 2123 takes VIN and SHDN from `PACK_SW`, shares GND, and creates fixed `LOGGER_5V` from VOUT for OpenLog A1 VCC only. The tracker’s regulated **3V3** continues to power U1 PCF8574T and the write-activity path 3V3 → 1 kΩ → LED → U1 P0; P0 is active-low and powers up high/off. A2/PB09 drives the cutdown MOSFET gate through R2 with an **intentional pulldown** to GND so nichrome cannot false-fire on reset. A1/PB08 provides one-way SERCOM4 UART TX to OpenLog RXI; OpenLog TXO is intentionally unused. J2.7/J2.8 expose the shared SCL/SDA bus to U1 at address 0x20; P1–P7 are reserved no-connect outputs for future GPS-status LEDs. Two **50 Ω SMA jacks** take RF from separate opposite-corner module contacts: J6 VHF→J3 APRS and J7 HF→J4 WSPR. No second MCU, carrier RTC, USB-serial bridge, L91 charger, or 5 V flight source is added.
 
 ```text
-L91 3s (4s iff UVLO) --pack+--> SW1 --VIN--> LightAPRS-W 2.0 --3V3--> OpenLog + LED anode path
-                                      GND common
+L91 exactly 3s --pack+--> SW1 --PACK_SW--> LightAPRS-W RAW/J2.1 (continuous GPS)
+                                      +---------> J5.1 cutdown high side
+                                      +---------> S7V8F5 VIN+SHDN --LOGGER_5V--> OpenLog A1 VCC
+LightAPRS 3V3 ----------------------------------> U1 + LED anode path
+GND common
 Host A1/PB08 SERCOM4 TX -----------> OpenLog RXI (one-way)
 Host A2/PB09 -----------------------> FET gate + pulldown
 Host SCL/SDA -----------------------> PCF8574T @ 0x20; P0 sinks write LED, P1–P7 reserved
@@ -21,18 +24,21 @@ LightAPRS-W VHF J6 / HF J7 --------> SMA_APRS J3 / SMA_WSPR J4 (downward, 50 Ω)
 | Item | Value | Why |
 | --- | --- | --- |
 | Chemistry | L91 AA Li-FeS2 | SPEC §2.1; alkaline forbidden (cold); LiPo 1S forbidden |
-| Topology | 3s baseline, 4s only for VIN/UVLO | Series does not add mAh; 3s meets ≥1600 mAh usable vs 800 mAh flight load |
-| Pack voltage | 3s 3.0–5.4 V; 4s 4.0–7.2 V | Fresh ≤1.8 V/cell, EOD ≥1.0 V/cell; combined bound 3.0–7.2 V |
-| Host VIN | ASSUMED 3.5–12 V class | **Unconfirmed** from LightAPRS-W 2.0 docs; if 3s EOD 3.0 V is below UVLO, use 4s — do not add cells for amp-hours |
+| Topology | Exactly 3 series L91 cells | Fixed approved architecture; series cells do not add mAh |
+| Pack voltage | 3.0–5.4 V | Fixed 3s EOD–fresh range |
+| Host and cutdown feeds | LightAPRS RAW/J2.1 and cutdown J5.1 directly on switched `PACK_SW` | Continuous GPS and the 2 A cutdown path must not pass through the logger regulator |
+| Logger supply | Pololu S7V8F5 item 2123, 2.7–11.8 V input, fixed 5 V output | VIN+SHDN on `PACK_SW`, VOUT=`LOGGER_5V`, GND common; OpenLog only |
 | Mean pack current | ≤ 200 mA over 4 h | GPS on + ATSAMD21G18 + OpenLog + APRS/WSPR TX duty; peaks do not relax the mean |
-| Flight energy | 800 mAh @ 4 h; usable pack ≥ 1600 mAh after ASSUMED 50% cold derate | 2× margin; 3s L91 meets capacity |
+| Flight energy | Four-hour demand ≤800 mAh; usable pack ≥1600 mAh under the actual cold/load profile | Fixed 3s L91 requires measured capacity qualification at the real temperature and mission load |
 | Switch OFF | **0 µA** (ideal) except holder/switch leakage | SW1 **must break pack+**; any always-on divider on pack+ is a budget bug |
-| Board-added idle | ≤ **2 mA** beyond LightAPRS-W 2.0 | Switch ON, cutdown OFF, LED off, OpenLog idle |
+| Board-added idle | ≤ **8 mA** beyond LightAPRS-W 2.0 | Includes OpenLog idle ≤7 mA, U1 ≤100 µA, S7V8F5 Iq <0.2 mA, and leakage margin |
+| Board-added active/write peak | ≤ **30 mA** beyond LightAPRS-W 2.0 | Includes OpenLog write ≤25 mA and regulator/U1/margin |
 | Cutdown OFF leakage | ≤ **50 µA** at max pack V | FET Idss / relay off |
 | LED OFF leakage | ≤ **1 µA** | No bleed path that looks like a glow |
 | Strap leakage | ≤ **50 µA** total extra | Pull-ups/downs on host GPIOs |
 | Logic rail | **3.3 V** from tracker 3V3, not raw pack | GPIO, LED, FET gate |
-| OpenLog VCC | Module 3.3–12 V; **tie to 3V3** unless 3V3 LDO current share is exceeded | Do not feed OpenLog from unregulated 4s (~7.2 V fresh) |
+| OpenLog VCC | Fixed **5 V** on `LOGGER_5V` from S7V8F5 | Dedicated OpenLog-only rail; A1 no longer loads LightAPRS 3V3 |
+| S7V8F5 module | 0.1-inch four-pin direct-solder straight header; no reverse-polarity protection; temperature rating unverified | Enforce pack polarity and require cold qualification |
 
 A part that fits voltage/package but blows Iq is a bug. No paralleling cells without per-string fusing (not in brief; not assumed).
 
@@ -53,7 +59,7 @@ LightAPRS-W 2.0 (QRP Labs, **ATSAMD21G18** / ARM Cortex-M0, 3.3 V) is the **only
 
 SparkFun OpenLog (ATmega328, headers). Host A1/PB08 SERCOM4 TX → OpenLog RXI; OpenLog TXO is intentionally no-connect; GND common. UART is 3.3 V; no 5 V shifter. Absence of a USB-serial bridge on this PCB is intentional — programming the ATSAMD21G18 stays on LightAPRS-W 2.0 (native USB).
 
-OpenLog idle current counts toward **board-added ≤ 2 mA** and is now limited to a verified maximum of 1.85 mA so U1 may use at most 0.10 mA and all other idle leakage may use at most 0.05 mA. If 3V3 LDO current share cannot cover OpenLog plus U1, stop and revisit the architecture rather than silently moving either load to raw pack.
+OpenLog is powered only from `LOGGER_5V` and is limited to ≤7 mA idle and ≤25 mA during writes. The S7V8F5 must remain below 0.2 mA quiescent current; board-added current is limited to ≤8 mA idle and ≤30 mA active/write peak beyond LightAPRS. U1 remains on LightAPRS 3V3 with its ≤100 µA limit, and all existing safety leakage limits remain in force. The regulator module has no reverse-polarity protection and an unverified temperature rating, so polarity control and cold qualification are mandatory.
 
 ### 3.2 Antennas
 
@@ -125,13 +131,16 @@ The schematic/BOM now match the verified model: one 11-position J2 edge header p
 | --- | --- | --- |
 | `flight.duration_h` | min 4 | Continuous GPS + radios; no in-flight deep-sleep budget |
 | `power.pack_chemistry` | L91 AA Li-FeS2 | Holder and pack net only |
-| `power.series_cells` | min 3, max 4 | 3s unless UVLO forces 4s |
-| `power.pack_voltage_V` | 3.0–7.2 V | VIN, FET Vds, OpenLog must not sit on raw 4s if 3V3 exists |
+| `power.series_cells` | exactly 3 | Fixed 3s architecture |
+| `power.pack_voltage_V` | 3.0–5.4 V | LightAPRS RAW and J5.1 remain directly on `PACK_SW`; S7V8F5 input is compatible |
 | `power.mean_flight_current_mA` | max 200 | Mean energy; TX peaks allowed |
 | `power.flight_energy_mAh` | min 1600 usable | Do not upsize cell count for mAh |
 | `power.switch_off_current_uA` | max 0 | SW1 breaks pack+ |
-| `power.board_added_idle_mA` | max 2 | OpenLog ≤1.85 mA + U1 ≤0.10 mA + other leakage ≤0.05 mA |
-| `power.openlog_idle_mA` | max 1.85 | Tightened after adding U1 |
+| `power.board_added_idle_mA` | max 8 | OpenLog idle ≤7 mA + U1 ≤0.10 mA + S7V8F5 Iq <0.2 mA + margin |
+| `power.board_added_active_peak_mA` | max 30 | Logger active/write peak beyond LightAPRS |
+| `power.openlog_idle_mA` | max 7 | Dedicated `LOGGER_5V` load |
+| `power.openlog_write_mA` | max 25 | OpenLog write qualification |
+| `power.logger_regulator_iq_mA` | max 0.2 | S7V8F5 quiescent-current ceiling |
 | `power.led_expander_idle_uA` | max 100 | PCF8574T selection and qualification |
 | `power.cutdown_off_leakage_uA` | max 50 | FET selection |
 | `power.led_off_leakage_uA` | max 1 | LED circuit |

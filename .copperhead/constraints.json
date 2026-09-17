@@ -24,22 +24,27 @@
   },
   "power.series_cells": {
     "min": 3,
-    "max": 4,
-    "source": "docs/SPEC.md §2.1 Topology: 3 cells baseline, 4 cells allowed only if host VIN/UVLO requires it",
+    "max": 3,
+    "value": "exactly 3 series Energizer L91 cells",
+    "source": "docs/SPEC.md §2.1 fixed approved split-power architecture",
     "affects": [
       "docs/SPEC.md",
-      "power.pack",
-      "docs/BOM.md"
+      "docs/SUBSYSTEMS.md",
+      "docs/BOM.md",
+      "docs/DEVPLAN.md",
+      "power.pack"
     ]
   },
   "power.pack_voltage_V": {
     "min": 3,
-    "max": 7.2,
-    "source": "docs/SPEC.md §2.1 Pack voltage 3s 3.0–5.4 V and 4s 4.0–7.2 V (EOD–fresh); combined bound 3.0–7.2 V",
+    "max": 5.4,
+    "source": "docs/SPEC.md §2.1 fixed 3s L91 EOD–fresh range",
     "affects": [
       "docs/SPEC.md",
-      "power.pack",
-      "docs/BOM.md"
+      "docs/SUBSYSTEMS.md",
+      "docs/BOM.md",
+      "docs/DEVPLAN.md",
+      "power.pack"
     ]
   },
   "power.mean_flight_current_mA": {
@@ -53,9 +58,11 @@
   },
   "power.flight_energy_mAh": {
     "min": 1600,
-    "source": "docs/SPEC.md §2.2 Design margin: usable pack capacity ≥ 2× flight energy → ≥ 1600 mAh vs 800 mAh load after ASSUMED cold derate",
+    "source": "docs/SPEC.md §2.2 usable fixed-3s capacity must be ≥1600 mAh under the actual cold/load profile while four-hour demand remains ≤800 mAh",
     "affects": [
       "docs/SPEC.md",
+      "docs/SUBSYSTEMS.md",
+      "docs/DEVPLAN.md",
       "power.pack",
       "docs/BOM.md"
     ]
@@ -70,12 +77,14 @@
     ]
   },
   "power.board_added_idle_mA": {
-    "max": 2,
-    "source": "docs/SPEC.md §2.3 Switch ON, cutdown OFF: board-added Iq (LED off, MOSFET off, OpenLog idle) ≤ 2 mA beyond LightAPRS-W 2.0",
+    "max": 8,
+    "source": "docs/SPEC.md §2.3 approved split-power idle budget",
     "affects": [
       "docs/SPEC.md",
-      "power.pack",
-      "docs/BOM.md"
+      "docs/BOM.md",
+      "docs/SUBSYSTEMS.md",
+      "docs/DEVPLAN.md",
+      "power.pack"
     ]
   },
   "power.cutdown_off_leakage_uA": {
@@ -106,13 +115,16 @@
     ]
   },
   "openlog.vcc_V": {
-    "min": 3.3,
-    "max": 12,
-    "source": "docs/SPEC.md §2.4 / §4 OpenLog VCC 3.3–12 V (module); tie to 3.3 V unless 3V3 LDO current share is exceeded",
+    "min": 5,
+    "max": 5,
+    "value": "fixed LOGGER_5V from Pololu S7V8F5 item 2123",
+    "source": "docs/SPEC.md §2.4 approved split-power architecture",
     "affects": [
       "docs/SPEC.md",
       "docs/BOM.md",
-      "power.pack"
+      "docs/SUBSYSTEMS.md",
+      "docs/PINOUT.md",
+      "docs/DEVPLAN.md"
     ]
   },
   "antenna.connector": {
@@ -190,14 +202,13 @@
     ]
   },
   "power.openlog_idle_mA": {
-    "max": 1.85,
-    "source": "docs/SPEC.md §2.3 allocation after adding U1; docs/BOM.md budget notes",
+    "max": 7,
+    "source": "docs/SPEC.md §2.3 approved OpenLog idle qualification limit",
     "affects": [
       "docs/SPEC.md",
       "docs/BOM.md",
       "docs/SUBSYSTEMS.md",
-      "docs/DEVPLAN.md",
-      "firmware/DEVPLAN.md"
+      "docs/DEVPLAN.md"
     ]
   },
   "power.led_expander_idle_uA": {
@@ -218,6 +229,60 @@
       "weather-balloon-logger.kicad_pcb",
       "docs/LAYOUT.md",
       "docs/SUBSYSTEMS.md"
+    ]
+  },
+  "power.board_added_active_peak_mA": {
+    "max": 30,
+    "source": "docs/SPEC.md §2.3 approved logger active/write peak budget",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md",
+      "docs/SUBSYSTEMS.md",
+      "docs/DEVPLAN.md",
+      "power.pack"
+    ]
+  },
+  "power.openlog_write_mA": {
+    "max": 25,
+    "source": "docs/SPEC.md §2.3 approved OpenLog write-current qualification limit",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md",
+      "docs/SUBSYSTEMS.md",
+      "docs/DEVPLAN.md"
+    ]
+  },
+  "power.logger_regulator_iq_mA": {
+    "max": 0.2,
+    "source": "docs/SPEC.md §2.3 and §2.4 Pololu S7V8F5 item 2123 selection limit",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md",
+      "docs/SUBSYSTEMS.md",
+      "docs/DEVPLAN.md"
+    ]
+  },
+  "power.split_architecture": {
+    "value": "LightAPRS RAW/J2.1 and cutdown J5.1 direct on PACK_SW; S7V8F5 VIN and SHDN on PACK_SW, GND common, VOUT LOGGER_5V to OpenLog A1 VCC only",
+    "source": "docs/SPEC.md §2.1 and §2.4",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/SUBSYSTEMS.md",
+      "docs/BOM.md",
+      "docs/PINOUT.md",
+      "docs/DEVPLAN.md",
+      "weather-balloon-logger.kicad_sch",
+      "weather-balloon-logger.kicad_pcb"
+    ]
+  },
+  "power.logger_regulator_module": {
+    "value": "Pololu S7V8F5 item 2123; 2.7–11.8 V input; fixed 5 V; 0.1-inch four-pin direct-solder straight header; no reverse-polarity protection; temperature rating unverified and cold qualification required",
+    "source": "docs/SPEC.md §2.4 and docs/BOM.md approved off-board logger regulator",
+    "affects": [
+      "docs/SPEC.md",
+      "docs/BOM.md",
+      "docs/SUBSYSTEMS.md",
+      "docs/DEVPLAN.md"
     ]
   }
 }

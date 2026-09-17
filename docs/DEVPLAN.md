@@ -60,11 +60,11 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 
 ### 4. Host-only power and 3V3 qualification
 
-1. Connect only the verified LightAPRS-W interface at J2; leave OpenLog and nichrome disconnected and disable RF transmission or attach qualified 50 Ω loads. Start at a known-safe host input voltage, using the host datasheet/current profile to set a protective limit above verified inrush.
-2. Power on and meter `PACK_SW` first, then J2.3 `3V3`. Stop if raw pack appears on `3V3`, if the rail is outside the verified host tolerance, or if the supply current is unexplained.
-3. Verify host startup, GPS, APRS, WSPR, I2C, and SPI remain functional. Confirm A1/PB08 UART, A2/PB09 cutdown, and shared SCL/SDA do not collide with upstream firmware or existing I2C addresses.
-4. Determine the real LightAPRS-W VIN/UVLO behavior from 5.4 V down toward 3.0 V under representative load. Use 3s only if operation through the required end-of-discharge range is demonstrated; otherwise use the allowed 4s pack. Do not add series cells for amp-hours.
-5. Measure host-only current at defined modes to establish the baseline used for the board-added-current subtraction and the ≤200 mA mean-flight budget.
+1. Connect only the verified LightAPRS-W interface at J2; leave OpenLog and nichrome disconnected and disable RF transmission or attach qualified 50 Ω loads. Use the fixed 3s range of 3.0–5.4 V and a protective current limit above verified inrush.
+2. Power on and meter `PACK_SW` first, then J2.5 `3V3`. Confirm LightAPRS RAW/J2.1 is directly on `PACK_SW`; stop if raw pack appears on `3V3`, if the rail is outside tolerance, or if current is unexplained.
+3. Verify host startup, continuous GPS, APRS, WSPR, I2C, and SPI remain functional. Confirm A1/PB08 UART, A2/PB09 cutdown, and shared SCL/SDA do not collide with upstream firmware or existing I2C addresses.
+4. Demonstrate LightAPRS operation from 5.4 V down through the fixed 3.0 V end-of-discharge limit under representative load and cold conditions. A 4s substitution is not permitted; failure requires an explicit architecture review.
+5. Measure host-only current at defined modes to establish the baseline used for board-added-current subtraction and the ≤200 mA mean-flight budget.
 
 ### 5. Default-off cutdown control before installing a load
 
@@ -75,9 +75,9 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 
 ### 6. OpenLog power-budget and UART test
 
-1. Verify the installed OpenLog configuration and voltage requirements independently. Confirm its maximum idle current is no greater than 1.85 mA over required voltage and temperature; U1 may use no more than 100 µA and all remaining idle leakage no more than 50 µA under the existing 2 mA board-added ceiling.
-2. Connect A1 with power off. Power on and meter `3V3` at A1.3 first; confirm the LightAPRS 3V3 regulator supports OpenLog startup/write peaks without droop, reset, or overheating. Do not move A1 to raw pack to hide a regulator-margin failure.
-3. Measure carrier-plus-OpenLog idle current relative to the host-only baseline with D1 off and Q1 off. It must be ≤2 mA beyond the LightAPRS module. Separately confirm Q1/off-path leakage ≤50 µA at the maximum qualified pack voltage.
+1. Verify the installed OpenLog and Pololu S7V8F5 item 2123 independently. Confirm S7V8F5 input rating 2.7–11.8 V, fixed 5 V output, Iq <0.2 mA, 0.1-inch four-pin direct-solder straight-header interface, and absence of reverse-polarity protection. Its temperature rating is unverified, so cold qualification is mandatory.
+2. With power off, verify VIN and SHDN go to `PACK_SW`, GND to GND, VOUT to `LOGGER_5V`, and A1.3 VCC to `LOGGER_5V`. Confirm LightAPRS RAW/J2.1 and J5.1 remain direct `PACK_SW` paths. Power on and meter `LOGGER_5V` at A1.3 before enabling logging.
+3. Measure board-added idle and write currents relative to the host-only baseline with D1 off and Q1 off. OpenLog must be ≤7 mA idle and ≤25 mA writing; total board-added current must be ≤8 mA idle and ≤30 mA active/write peak. U1 remains ≤100 µA, and Q1/off-path leakage remains ≤50 µA.
 4. Decode `UART_TX`: idle must be high, logic levels must be 3.3 V compatible, and the baud/configuration must match the installed OpenLog. The scaffold default is 9600 baud, 8-N-1, not a verified flight setting.
 5. Initialize U1 at 0x20 with all ports high, transmit a uniquely numbered record, and explicitly pulse P0 low/high around the intended write indication. Verify D1 lights only while P0 is low and is dark otherwise; LED-off leakage must be ≤1 µA. Remove the SD card safely and confirm the exact record is present. The LED remains an activity proxy, not proof of media commit.
 6. Repeat logging while GPS and both radio functions operate into qualified loads, watching for rail droop, UART corruption, resets, and current-budget violations.
@@ -100,7 +100,7 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 
 1. Only after the dummy-load test passes, fit the intended nichrome geometry in a guarded fire-resistant fixture with a sacrificial representative cord. Use the real connector/harness and a fused supply.
 2. Demonstrate clean separation at worst-case pack/end-of-discharge and cold conditions without exceeding 2 A or 30 s. Record current, voltage, time-to-cut, Q1 VDS, and temperatures. Repeat enough times to establish margin; a single successful burn is not qualification.
-3. Repeat power, logging, reset/brownout, RF, leakage, and cutdown checks across the intended −40 °C to +40 °C environment or a justified test envelope. Recalculate the 4 h energy budget from measured mode durations and currents; mean pack current must remain ≤200 mA and usable capacity margin must remain ≥1600 mAh after the assumed derate.
+3. Repeat power, logging, reset/brownout, RF, leakage, regulator cold-start, and cutdown checks across the intended −40 °C to +40 °C environment or a justified test envelope. Recalculate the 4 h energy budget from measured mode durations and currents; demand must remain ≤800 mAh, mean pack current must remain ≤200 mA, and the fixed 3s pack must demonstrate ≥1600 mAh usable capacity under the actual cold/load profile.
 4. Complete a four-hour end-to-end mission rehearsal with continuous GPS, representative APRS/WSPR duty, OpenLog logging, correct LED activity, and a safely simulated or controlled cutdown event. Confirm file integrity and no unexplained resets.
 
 ## Risk register
@@ -109,9 +109,9 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 | --- | --- | --- |
 | Draft footprints or wrong connector pin order | Exact MPN datasheets, 1:1 print, mating-part inspection, updated PCB and DRC | No PCB order while any `CopperheadDraft_*` footprint remains. |
 | UNVERIFIED part sourcing or cold rating | Manufacturer-authorized source, exact suffix, lifecycle and −40 °C data | Reject substitutions; keep procurement hold. |
-| 3s host brownout near 3.0 V | Measured LightAPRS VIN/UVLO under representative load and cold | Use allowed 4s only if voltage testing requires it; verify 7.2 V maxima. |
-| OpenLog/U1 exceed the 2 mA board-added idle budget | Verify OpenLog ≤1.85 mA, U1 ≤100 µA, and all remaining idle leakage ≤50 µA over voltage/temperature | Stop and replace/re-architect; do not accept typical-only current claims. |
-| Host 3V3 regulator lacks OpenLog peak margin | Startup/write waveform and regulator thermal/current data | Revisit architecture explicitly; do not silently power OpenLog from raw pack. |
+| Fixed 3s host brownout near 3.0 V | Measured LightAPRS VIN/UVLO under representative load and cold | Stop and revisit the architecture explicitly; a 4s substitution is not permitted. |
+| Logger exceeds split-power budgets | Verify OpenLog ≤7 mA idle and ≤25 mA write, S7V8F5 Iq <0.2 mA, board-added idle ≤8 mA, active/write peak ≤30 mA, and U1 ≤100 µA | Stop and replace or re-architect; do not accept typical-only current claims. |
+| S7V8F5 polarity or cold failure | Polarity-controlled harness inspection plus cold startup/load data; module temperature rating remains unverified | No flight until reverse-polarity risk is controlled and cold qualification passes. |
 | Cutdown false-fire at reset/brownout | Scope captures at `CUTDOWN_CTRL` and `CUTDOWN_GATE`, repeated fault tests | R3 stays fitted; firmware initializes low first; no nichrome testing until clean. |
 | Q1/trace/connector overheats at 2 A for 30 s | Verified RDS(on)/SOA, measured VDS/drop/temperature, actual copper calculation | Widen/pour/multiply vias or change qualified parts and repeat schematic/layout review. |
 | Cutdown OFF leakage exceeds 50 µA | Maximum-voltage and temperature measurement of complete path | Reject Q1/contamination/assembly and correct before flight. |

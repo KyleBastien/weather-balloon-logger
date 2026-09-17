@@ -20,14 +20,14 @@ Carrier board that integrates a LightAPRS-W 2.0 tracker with flight-pack power, 
 | Parameter | Value | Status |
 | --- | --- | --- |
 | Chemistry | Energizer L91 Ultimate Lithium AA (Li-FeS2) | Stated |
-| Topology | Series string, **3 cells baseline**, **4 cells allowed** if host VIN or regulator dropout needs it | 3-cell holder is brief intent; “maybe bigger if needed” → 4-cell is the only upsizing path |
-| Holder | 3AA case (e.g. Amazon B07M7WYZ32 class) or 4AA if voltage requires it | Stated / ASSUMED size |
+| Topology | **Exactly 3 series cells**; no 4-cell option in the approved architecture | Fixed requirement; series cells do not add amp-hours |
+| Holder | Fixed 3AA holder for Energizer L91 cells | Approved architecture |
 | Per-cell voltage | Fresh ≤ **1.8 V**, nominal **1.5 V**, end-of-discharge **≥ 1.0 V** (do not discharge L91 into reversal) | ASSUMED from L91 datasheet class |
-| Pack voltage **3s** | **3.0–5.4 V** (EOD–fresh) | ASSUMED |
-| Pack voltage **4s** | **4.0–7.2 V** (EOD–fresh) | ASSUMED |
-| Host VIN | Must accept the chosen pack range without exceeding LightAPRS-W 2.0 absolute max. **ASSUMED 3.5–12 V** class input on the tracker; **if 3s EOD 3.0 V is below tracker UVLO, use 4s**. | ASSUMED — confirm from LightAPRS-W 2.0 docs before layout |
+| Pack voltage | **3.0–5.4 V** (3s EOD–fresh) | Fixed requirement |
+| Host feed | LightAPRS-W 2.0 RAW/J2.1 remains directly on switched `PACK_SW`; its continuous-GPS load is never routed through the logger regulator. | Approved split-power architecture |
+| Cutdown feed | J5.1 remains directly on switched `PACK_SW`; the nichrome path must never be routed through a regulator. | Approved split-power architecture |
 
-**Forbidden:** alkaline AA/AAA, LiPo 1S as the flight pack (brief specifies L91), and paralleling cells without per-string fusing (not in brief; not assumed).
+**Forbidden:** alkaline AA/AAA, LiPo 1S, a 4-cell flight pack, routing LightAPRS RAW or J5.1 through the logger regulator, and paralleling cells without per-string fusing.
 
 ### 2.2 Energy (continuous GPS, 4 h)
 
@@ -36,9 +36,9 @@ Carrier board that integrates a LightAPRS-W 2.0 tracker with flight-pack power, 
 | GPS mode | Continuous for the entire flight (not 1-Hz duty-cycled off) | Stated |
 | ASSUMED average pack current | **≤ 200 mA** mean over 4 h (GPS on + ATSAMD21G18 + OpenLog + APRS/WSPR TX duty). Peak TX may exceed this; peaks do not relax the mean. | ASSUMED |
 | Energy at 4 h | 200 mA × 4 h = **800 mAh** at pack current | Derived |
-| L91 usable capacity | **≥ 1500 mAh** after **ASSUMED 50% cold/high-altitude derate** from ~3000 mAh class | ASSUMED |
-| Design margin | Usable pack capacity **≥ 2×** flight energy → **≥ 1600 mAh** required vs 800 mAh load | ASSUMED budget |
-| Verdict | **3s L91 meets capacity** (series does not add mAh; 1500–3000 mAh >> 800 mAh). Upsize cell **count** only for **voltage**, not for amp-hours. | Decision |
+| L91 usable capacity | Must be demonstrated as **≥ 1600 mAh** under the actual cold temperature, load profile, and end-of-discharge limit | Qualification requirement |
+| Design margin | Four-hour demand remains **≤ 800 mAh**; usable pack capacity must be **≥ 1600 mAh** under the actual cold/load profile | Approved budget |
+| Verdict | Fixed 3s L91 is acceptable only after the measured cold/load profile demonstrates the required ≥1600 mAh usable capacity; series cell count is not an amp-hour adjustment. | Decision |
 
 ### 2.3 Quiescent / leakage (pre-flight and cutdown-off)
 
@@ -47,23 +47,27 @@ This vehicle is **GPS-on for the whole powered flight**; there is **no in-flight
 | Parameter | Value | Status |
 | --- | --- | --- |
 | Switch OFF pack current | **0 µA** except holder/switch leakage. Switch must **break the pack positive**. | ASSUMED |
-| Switch ON, radios idle, cutdown OFF, GPS as firmware sets | Board-added Iq (LED off, MOSFET off, OpenLog idle) **≤ 2 mA** beyond the LightAPRS-W 2.0 module itself | ASSUMED |
+| Switch ON, cutdown OFF, logger idle | Board-added idle current **≤ 8 mA** beyond the LightAPRS-W 2.0 module itself, including OpenLog, U1, regulator Iq, and leakage | Approved budget |
+| Logger active/write peak | Board-added active/write peak **≤ 30 mA** beyond LightAPRS-W 2.0 | Approved budget |
+| OpenLog current | Idle **≤ 7 mA**; write **≤ 25 mA** | Approved qualification limits |
+| Logger regulator quiescent current | Pololu S7V8F5 item 2123 **< 0.2 mA** | Approved selection limit |
 | Cutdown MOSFET/relay OFF leakage | **≤ 50 µA** at max pack voltage | ASSUMED |
 | Write LED OFF leakage | **≤ 1 µA** (no bleed path that looks like a glow) | ASSUMED |
 | Pull-ups/downs on host GPIOs | Must not violate LightAPRS-W 2.0 strapping; extra leakage through straps **≤ 50 µA** total | ASSUMED — **check MCU strapping table before any pin** |
 
-**A part that fits voltage/package but blows Iq is a bug.** With U1 added, the 2.00 mA board-added ceiling is allocated as OpenLog maximum 1.85 mA + PCF8574T maximum 0.10 mA + 0.05 mA for passive/FET/LED-off leakage. Gate pulldown on the cutdown FET is **intentional** (missing pulldown looks like a mistake but a floating gate can false-fire nichrome).
+**A part that fits voltage/package but blows Iq is a bug.** The approved split-power budget is OpenLog idle ≤7 mA, OpenLog write ≤25 mA, S7V8F5 quiescent current <0.2 mA, board-added idle ≤8 mA, and board-added active/write peak ≤30 mA. U1 remains limited to 100 µA, while the existing cutdown-off, LED-off, and host-strap leakage limits remain unchanged. Gate pulldown on the cutdown FET is **intentional** (missing pulldown looks like a mistake but a floating gate can false-fire nichrome).
 
 ### 2.4 Logic and rails on this board
 
 | Rail | Value | Status |
 | --- | --- | --- |
 | GPIO / LED / FET gate | **3.3 V** logic, sourced from LightAPRS-W 3V3 (or equivalent regulated 3.3 V), not raw pack | ATSAMD21G18, 3.3 V |
-| OpenLog VCC | **3.3–12 V** allowed by module; **tie to 3.3 V** unless current share on the 3V3 LDO is exceeded | Stated range; 3.3 V tie ASSUMED |
-| OpenLog UART | 3.3 V one-way host TX → OpenLog RXI; OpenLog TXO is intentionally unused; no 5 V shifter | Stage-4 pin-budget decision |
+| Logger regulator input | Pololu S7V8F5 item 2123 VIN and SHDN on switched `PACK_SW`, input rating **2.7–11.8 V**; no reverse-polarity protection | Selected dedicated OpenLog supply |
+| LOGGER_5V | S7V8F5 fixed **5 V** VOUT powers OpenLog A1 VCC only; GND is common | Approved split-power architecture |
+| OpenLog UART | 3.3 V one-way host TX → OpenLog RXI; OpenLog TXO is intentionally unused; verify 3.3 V input compatibility while A1 is powered at 5 V | Stage-4 pin-budget decision |
 | LED / I2C expander | 3V3 → **1 kΩ** → D1 → U1 P0 (`LED_N`). PCF8574T address pins are low for 0x20; P0 is active-low and powers up high/off. P1–P7 are reserved for future GPS-status LEDs. | U1 maximum idle current ≤ 100 µA; activity indication is not physical SD-commit proof |
 
-Do **not** feed OpenLog or the LED from unregulated 4s (~7.2 V fresh) if a 3.3 V rail already exists — extra dissipation and LED overstress.
+The S7V8F5 is a 0.1-inch four-pin module installed with a direct-solder straight header. Its module temperature rating is unverified and requires cold qualification. It has no reverse-polarity protection, so pack polarity must be enforced upstream. The LED and U1 remain on LightAPRS 3V3; only OpenLog moves to `LOGGER_5V`.
 
 ## 3. Antennas
 
@@ -81,7 +85,7 @@ Do **not** feed OpenLog or the LED from unregulated 4s (~7.2 V fresh) if a 3.3 V
 | --- | --- |
 | Module | SparkFun OpenLog with headers (ATmega328, preprogrammed), example Amazon B0BHL56BP5 |
 | Interface | One-way UART: host A1/PB08 SERCOM4 TX → OpenLog RXI; OpenLog TXO is intentionally no-connect; GND common |
-| Power | OpenLog VCC within 3.3–12 V; see §2.4 |
+| Power | OpenLog A1 VCC on dedicated fixed `LOGGER_5V` from Pololu S7V8F5 item 2123; see §2.4 |
 | Write LED | On **this** board. 3V3 → 1 kΩ → D1 → PCF8574T P0; firmware drives P0 low for activity and high/off otherwise. P0 powers up high, so reset defaults the LED off. This is an activity proxy rather than proof of physical SD commit; P1–P7 are reserved for future GPS-status LEDs. |
 | Absence of USB-serial bridge on this PCB | **Intentional** — OpenLog is the logger; programming the ATSAMD21G18 stays on LightAPRS-W 2.0 |
 
@@ -135,13 +139,16 @@ The authoritative connector and component pin table is `docs/PINOUT.md`; J2 pins
 | --- | --- |
 | `flight.duration_h` | min 4 |
 | `power.pack_chemistry` | L91 AA Li-FeS2 |
-| `power.series_cells` | min 3, max 4 |
-| `power.pack_voltage_V` | 3.0–7.2 (covers 3s and 4s) |
+| `power.series_cells` | exactly 3 |
+| `power.pack_voltage_V` | 3.0–5.4 (fixed 3s) |
 | `power.mean_flight_current_mA` | max 200 |
 | `power.flight_energy_mAh` | min usable 1600 after derate (2× 800 mAh) |
 | `power.switch_off_current_uA` | max 0 (ideal; switch breaks pack+) |
-| `power.board_added_idle_mA` | max 2 (excluding LightAPRS-W 2.0) |
-| `power.openlog_idle_mA` | max 1.85 after adding U1 |
+| `power.board_added_idle_mA` | max 8 (excluding LightAPRS-W 2.0) |
+| `power.board_added_active_peak_mA` | max 30 during logger activity/write |
+| `power.openlog_idle_mA` | max 7 |
+| `power.openlog_write_mA` | max 25 |
+| `power.logger_regulator_iq_mA` | max 0.2 for S7V8F5 |
 | `power.led_expander_idle_uA` | max 100 for U1 |
 | `power.cutdown_off_leakage_uA` | max 50 |
 | `power.led_off_leakage_uA` | max 1 |

@@ -1,6 +1,6 @@
 # Pinout — Weather Balloon Logger harness
 
-Authoritative LightAPRS-W 2.0 carrier assignment. J2 now matches the verified 11-position 2.54 mm module edge header. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is the direct cutdown GPIO; the exposed I2C bus drives a PCF8574T at address 0x20 for the write LED and future GPS-status LEDs. All logic is 3.3 V.
+Authoritative LightAPRS-W 2.0 carrier assignment. J2 matches the verified 11-position 2.54 mm module edge header. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is the direct cutdown GPIO; the exposed I2C bus drives a PCF8574T at address 0x20 for the write LED and future GPS-status LEDs. Logic remains 3.3 V, while the approved OpenLog VCC target is dedicated fixed `LOGGER_5V` from a Pololu S7V8F5 item 2123. This documentation-only pass intentionally leaves schematic and PCB implementation for a later hardware change.
 
 ## Host interface J2
 
@@ -42,7 +42,7 @@ PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the only
 | J2 | 11 | NC | MOSI contact intentionally unused. |
 | A1 | 1 | NC | BLK/FTDI orientation pin intentionally unused. |
 | A1 | 2 | GND | OpenLog ground. |
-| A1 | 3 | 3V3 | OpenLog VCC. |
+| A1 | 3 | 3V3 | Current captured schematic net only; superseded by the approved `LOGGER_5V` target from S7V8F5 fixed 5 V output. Schematic and PCB implementation are intentionally deferred beyond this documentation-only pass. |
 | A1 | 4 | NC | TXO intentionally unused; logger is receive-only. |
 | A1 | 5 | UART_TX | RXI receives host log bytes. |
 | A1 | 6 | NC | GRN/FTDI orientation pin intentionally unused. |
