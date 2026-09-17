@@ -2,6 +2,12 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-17 — Export-only refresh from the current verified design. Do not modify schematic or PCB sources. Regenerate all existing output artifacts, including .copperhead/renders/board.svg, .copperhead/renders/weather-balloon-logger.svg, outputs/board.svg, outputs/renders/board-full-color.svg, outputs/renders/weather-balloon-logger.svg, all Gerbers and drill files in outputs/gerbers, outputs/board.step, the outline DXF, and BOM artifacts. Preserve the current verified through-hole design and readable silkscreen exactly.
+
+- Change: refresh-all-verified-design-exports
+- Files: outputs/
+- Verification: ERC clean, DRC clean
+
 ## 2026-09-17 — Export-only refresh from the current verified design. Do not modify schematic, PCB, intent, libraries, constraints, firmware, BOM, or design docs. Regenerate .copperhead/renders/board.svg and weather-balloon-logger.svg plus outputs/board.svg, outputs/renders/weather-balloon-logger.svg, Gerbers, drill, STEP, outline DXF, and BOM artifacts from the current committed PCB/schematic state using deterministic export tools. Preserve the current zero-SMD all-through-hole design. Run ERC, DRC, drift, legibility, and constraints. Commit the already-synchronized documentation changes together with refreshed exports only if all checks are clean.
 
 - Change: refresh-verified-design-exports
