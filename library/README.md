@@ -22,3 +22,13 @@ module soldered into the carrier through its installed six-pin header. Unlike a
 generic header footprint, its courtyard covers the full 15.24 x 19.05 mm module
 body from SparkFun's official dimensional drawing. Pin 1 is BLK and pin 6 is GRN,
 matching the existing schematic numbering.
+
+## Pololu S7V8F5 logger regulator
+
+`WeatherBalloon:Pololu_S7V8F5_Carrier` models Pololu item 2123 mounted top-side
+and direct-soldered through its included straight 1x4 header. The footprint
+reserves the official 11.43 x 16.51 mm module body and uses four 1.0 mm drills
+for the official 1.02 mm holes. The 2.54 mm-pitch row is centered across the
+11.43 mm edge and lies 1.27 mm from that edge. With the body extending upward
+from the row in top view, pads read left-to-right as 4 VOUT, 3 GND, 2 VIN, and
+1 SHDN. Future schematic/PCB implementation reserves refdes A2 for this module.

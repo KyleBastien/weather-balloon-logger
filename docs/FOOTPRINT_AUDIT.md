@@ -40,6 +40,7 @@ extra RF, cable, service, or enclosure clearance.
 | SW1 | `WeatherBalloon:SW_CK_7101SYZQE` | 7.86 x 13.70 mm | Project-local direct-solder adaptation from C&K pages F-4/F-9: three 2.30 x 1.10 mm plated slots on 4.70 mm centers for the nominal 2.03 x 0.76 mm lugs. Matching STEP model attached. Pin 2 is common. |
 | J2 | `Connector_PinHeader_2.54mm:PinHeader_1x11_P2.54mm_Vertical` | 3.54 x 28.94 mm | Stock footprint for the LightAPRS installed header. Preserve the vendor module envelope and verify on the physical module before fabrication. |
 | A1 | `WeatherBalloon:SparkFun_OpenLog_DEV-13712_Carrier` | 16.24 x 20.05 mm | Project-local full-module footprint. Top-side module, header soldered downward into the carrier; pin 1 BLK through pin 6 GRN matches the schematic. |
+| Future A2 | `WeatherBalloon:Pololu_S7V8F5_Carrier` | 12.43 x 17.51 mm | Reserved project-local full-module footprint for Pololu S7V8F5 item 2123. Top-side direct-solder installation; official 11.43 x 16.51 mm body, four 1.0 mm drills for official 1.02 mm holes, 2.54 mm pitch, centered row 1.27 mm from the edge, and top-view left-to-right pads 4 VOUT, 3 GND, 2 VIN, 1 SHDN. A2 is intentionally not yet present in the schematic or PCB. |
 | C1-C3 | `Capacitor_SMD:C_0603_1608Metric` | 2.96 x 1.46 mm each | Stock KiCad footprint; selected MPNs are 0603. |
 | U1 | `Package_SO:SOIC-16_3.9x9.9mm_P1.27mm` | 7.40 x 10.40 mm | Stock KiCad footprint; matches PCF8574T SO16 package. |
 | D1 | `LED_SMD:LED_0603_1608Metric` | 2.965 x 1.47 mm | Stock KiCad footprint; matches LTST-C190KGKT 0603 package. |
@@ -56,6 +57,7 @@ extra RF, cable, service, or enclosure clearance.
 - LightAPRS mounting-hole center rectangle: nominal 28.18 x 38.16 mm; the
   current coordinate transcription is 28.20 x 38.17 mm because of rounding.
 - OpenLog body: 15.24 x 19.05 mm; included in A1's custom courtyard.
+- Future Pololu S7V8F5 A2 body: 11.43 x 16.51 mm; included in its 12.43 x 17.51 mm custom courtyard. Its 1x4 row is centered on the 11.43 mm edge, 1.27 mm from that edge, and uses 1.0 mm drills for the official 1.02 mm holes.
 - SMA clearance: keep the existing additional 5 mm RF/mechanical envelope and
   downward cable volume. The 8.34 mm KiCad courtyard alone is insufficient.
 - J1 and J5 require off-board cable exit and bend volume outside their listed
@@ -84,7 +86,7 @@ Rationale: J1 and J5 already fit when their rotated courtyards are evaluated cor
 ## OpenLog mechanical pass — final placement
 
 - A1 `WeatherBalloon:SparkFun_OpenLog_DEV-13712_Carrier` is at (171,110) mm, rotation 0°, top-side and direct-soldered. Its official 15.24 × 19.05 mm body and 16.24 × 20.05 mm courtyard lie outside the fixed LightAPRS body zone. The BLK-through-GRN pad order and pad geometry are unchanged; pads 2/3/5 remain GND/3V3/UART_TX and pins 1/4/6 remain intentionally unconnected.
-- C2 remains at (164,114) mm, rotation 0°, and C1 remains at (168,114) mm, rotation 0°. Both bypass capacitors remain close to A1's supply header while avoiding the module body and the fixed U1 corridor.
+- C2 remains at (164,114) mm, rotation 0°, and C1 remains at (168,114) mm, rotation 0°. Both bypass capacitors remain close to A1's supply header while avoiding the module body and the fixed U1 corridor. Their current PCB net is still 3V3; the later split-power hardware pass must move both to `LOGGER_5V` and verify leakage within the approved board-added idle ≤8 mA and active/write peak ≤30 mA limits.
 - The outline is (100,91.5)–(180,170) mm, 80 × 78.5 mm. Only the top edge moved, by 8.5 mm; A1's microSD end faces that edge so the card and solder-down header remain accessible for home assembly.
 - Only the stale A1 GND and UART_TX route ends plus the then-current local A1 3V3/bypass feed were repaired. The approved documentation now supersedes that supply with `LOGGER_5V` from S7V8F5 item 2123, but this bounded pass intentionally does not alter the schematic or PCB; a later hardware pass must implement the regulator and reroute A1 VCC. The fixed LightAPRS interface, bottom RF layout, all unrelated routes, and the six exact H3/J7 and H4/J6 exclusions remain unchanged.
 
