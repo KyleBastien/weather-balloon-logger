@@ -1,0 +1,138 @@
+** Drc report for weather-balloon-logger.kicad_pcb **
+** Created on 2026-09-16T21:30:04 **
+** Report includes: Errors, Warnings **
+
+** Found 30 DRC violations **
+[courtyards_overlap]: Courtyards overlap
+    Rule: board setup constraints courtyard; error
+    @(103.0000 mm, 141.0000 mm): Footprint J5
+    @(109.0000 mm, 138.0000 mm): Footprint C5
+[pth_inside_courtyard]: PTH inside courtyard
+    Local override; error
+    @(109.0000 mm, 138.0000 mm): PTH pad 1 [LOGGER_5V] of C5
+    @(103.0000 mm, 141.0000 mm): Footprint J5
+[pth_inside_courtyard]: PTH inside courtyard
+    Local override; error
+    @(109.0000 mm, 143.0800 mm): PTH pad 2 [GND] of C5
+    @(103.0000 mm, 141.0000 mm): Footprint J5
+[courtyards_overlap]: Courtyards overlap
+    Rule: board setup constraints courtyard; error
+    @(103.0000 mm, 141.0000 mm): Footprint J5
+    @(107.0000 mm, 133.0000 mm): Footprint C4
+[pth_inside_courtyard]: PTH inside courtyard
+    Local override; error
+    @(107.0000 mm, 135.5400 mm): PTH pad 2 [GND] of C4
+    @(103.0000 mm, 141.0000 mm): Footprint J5
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(166.0800 mm, 119.3700 mm): Segment of R4 on F.Silkscreen
+    @(164.8100 mm, 119.1700 mm): Reference field of U1
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(162.1600 mm, 120.1700 mm): Segment of U1 on F.Silkscreen
+    @(162.8100 mm, 120.3700 mm): Reference field of R4
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(163.8100 mm, 120.1700 mm): Segment of U1 on F.Silkscreen
+    @(162.8100 mm, 120.3700 mm): Reference field of R4
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(108.4700 mm, 132.1650 mm): Rectangle of C4 on F.Silkscreen
+    @(112.3100 mm, 135.9400 mm): Segment of J5 on F.Silkscreen
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(106.2000 mm, 138.7500 mm): Rectangle of J5 on F.Silkscreen
+    @(111.2350 mm, 137.8000 mm): Rectangle of C5 on F.Silkscreen
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(111.2350 mm, 137.8000 mm): Rectangle of C5 on F.Silkscreen
+    @(106.2000 mm, 141.2500 mm): Rectangle of J5 on F.Silkscreen
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(112.3500 mm, 140.5400 mm): Reference field of C5
+    @(106.2000 mm, 141.2500 mm): Rectangle of J5 on F.Silkscreen
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(112.3100 mm, 139.7500 mm): Segment of J5 on F.Silkscreen
+    @(112.3500 mm, 140.5400 mm): Reference field of C5
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(115.1600 mm, 141.9500 mm): Segment of U2 on F.Silkscreen
+    @(117.8100 mm, 141.6300 mm): Reference field of R3
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(118.2400 mm, 144.9000 mm): Reference field of Q1
+    @(114.5400 mm, 145.3700 mm): Segment of R3 on F.Silkscreen
+[silk_overlap]: Silkscreen clearance
+    Rule: board setup constraints silk; warning
+    @(121.2400 mm, 130.5250 mm): Segment of A2 on F.Silkscreen
+    @(117.8100 mm, 130.6700 mm): Reference field of U2
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(172.8000 mm, 112.7650 mm): Rectangle of C1 on F.Silkscreen
+    @(178.0800 mm, 115.0000 mm): PTH pad 2 [GND] of C1
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(172.8000 mm, 112.7650 mm): Rectangle of C1 on F.Silkscreen
+    @(173.0000 mm, 115.0000 mm): PTH pad 1 [LOGGER_5V] of C1
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(172.1650 mm, 119.5300 mm): Rectangle of C2 on F.Silkscreen
+    @(175.5400 mm, 121.0000 mm): PTH pad 2 [GND] of C2
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(172.1650 mm, 119.5300 mm): Rectangle of C2 on F.Silkscreen
+    @(173.0000 mm, 121.0000 mm): PTH pad 1 [LOGGER_5V] of C2
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(172.1650 mm, 130.5300 mm): Rectangle of C3 on F.Silkscreen
+    @(175.5400 mm, 132.0000 mm): PTH pad 2 [GND] of C3
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(172.1650 mm, 130.5300 mm): Rectangle of C3 on F.Silkscreen
+    @(173.0000 mm, 132.0000 mm): PTH pad 1 [3V3] of C3
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(112.3100 mm, 135.9400 mm): Segment of J5 on F.Silkscreen
+    @(107.0000 mm, 135.5400 mm): PTH pad 2 [GND] of C4
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(112.3100 mm, 143.5600 mm): Segment of J5 on F.Silkscreen
+    @(109.0000 mm, 143.0800 mm): PTH pad 2 [GND] of C5
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(106.2000 mm, 138.7500 mm): Rectangle of J5 on F.Silkscreen
+    @(109.0000 mm, 138.0000 mm): PTH pad 1 [LOGGER_5V] of C5
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(111.2350 mm, 137.8000 mm): Rectangle of C5 on F.Silkscreen
+    @(109.0000 mm, 138.0000 mm): PTH pad 1 [LOGGER_5V] of C5
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(111.2350 mm, 137.8000 mm): Rectangle of C5 on F.Silkscreen
+    @(109.0000 mm, 143.0800 mm): PTH pad 2 [GND] of C5
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(108.4700 mm, 132.1650 mm): Rectangle of C4 on F.Silkscreen
+    @(107.0000 mm, 133.0000 mm): PTH pad 1 [LOGGER_5V] of C4
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(108.4700 mm, 132.1650 mm): Rectangle of C4 on F.Silkscreen
+    @(107.0000 mm, 135.5400 mm): PTH pad 2 [GND] of C4
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(112.3500 mm, 140.5400 mm): Reference field of C5
+    @(114.0000 mm, 140.6200 mm): PTH pad 4 [GND] of U2
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** Ignored checks **
+    - Footprint has no courtyard defined
+    - Track endpoint not centered on via
+    - Tuning profile track geometries
+    - Footprint doesn't match symbol's footprint filters
+    - Footprint component type doesn't match footprint pads
+
+** End of Report **

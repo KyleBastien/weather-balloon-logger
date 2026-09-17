@@ -78,13 +78,13 @@ PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the only
 | D1 | 2 | LED_A | Anode from R1. |
 | R4 | 1 | UART_TX | Host transmit side of the back-power-limiting resistor. |
 | R4 | 2 | OPENLOG_RXI | OpenLog receive side. |
-| R2 | 1 | CUTDOWN_CTRL | A2/PB09 series gate input. |
+| R2 | 1 | CUTDOWN_DRIVE | Series gate input from the tied U2 outputs. |
 | R2 | 2 | CUTDOWN_GATE | Q1 gate node. |
 | R3 | 1 | CUTDOWN_GATE | Intentional default-off pulldown. |
 | R3 | 2 | GND | Pulldown return. |
 | Q1 | 1 | CUTDOWN_GATE | Gate. |
-| Q1 | 2 | GND | Source. |
-| Q1 | 3 | CUTDOWN_DRAIN | Drain to nichrome low side. |
+| Q1 | 2 | CUTDOWN_DRAIN | Drain to nichrome low side. |
+| Q1 | 3 | GND | Source. |
 | J5 | 1 | PACK_SW | Nichrome high side. |
 | J5 | 2 | CUTDOWN_DRAIN | Nichrome switched low side. |
 | J6 | 1 | RF_APRS | Single LightAPRS VHF corner contact. |

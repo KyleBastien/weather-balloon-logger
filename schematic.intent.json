@@ -40,42 +40,42 @@
       "ref": "C1",
       "libId": "Device:C",
       "value": "4.7uF",
-      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "footprint": "WeatherBalloon:KEMET_C322C475K5R5TA",
       "group": "3.1 UART SD logger"
     },
     {
       "ref": "C2",
       "libId": "Device:C",
       "value": "100nF",
-      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "footprint": "WeatherBalloon:KEMET_C315C104K5R5TA",
       "group": "3.1 UART SD logger"
     },
     {
       "ref": "U1",
-      "libId": "Interface_Expansion:PCF8574T",
-      "value": "PCF8574T",
-      "footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+      "libId": "Interface_Expansion:PCF8574P",
+      "value": "PCF8574N",
+      "footprint": "Package_DIP:DIP-16_W7.62mm",
       "group": "4. UI (operator)"
     },
     {
       "ref": "C3",
       "libId": "Device:C",
       "value": "100nF",
-      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "footprint": "WeatherBalloon:KEMET_C315C104K5R5TA",
       "group": "4. UI (operator)"
     },
     {
       "ref": "D1",
       "libId": "Device:LED",
-      "value": "LTST-C190KGKT",
-      "footprint": "LED_SMD:LED_0603_1608Metric",
+      "value": "WP710A10SGC",
+      "footprint": "LED_THT:LED_D3.0mm",
       "group": "3.1 UART SD logger"
     },
     {
       "ref": "R1",
       "libId": "Device:R",
       "value": "1k",
-      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",
       "group": "3.1 UART SD logger"
     },
     {
@@ -94,23 +94,44 @@
     },
     {
       "ref": "Q1",
-      "libId": "Transistor_FET:AO3400A",
-      "value": "AO3400A",
-      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "libId": "Transistor_FET:IRLZ44N",
+      "value": "IRLZ44NPBF",
+      "footprint": "Package_TO_SOT_THT:TO-220-3_Vertical",
       "group": "5. Cutdown"
     },
     {
       "ref": "R2",
       "libId": "Device:R",
       "value": "100R",
-      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",
       "group": "5. Cutdown"
     },
     {
       "ref": "R3",
       "libId": "Device:R",
       "value": "1M",
-      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",
+      "group": "5. Cutdown"
+    },
+    {
+      "ref": "U2",
+      "libId": "Driver_FET:TC4422",
+      "value": "TC4422AVPA",
+      "footprint": "Package_DIP:DIP-8_W7.62mm",
+      "group": "5. Cutdown"
+    },
+    {
+      "ref": "C4",
+      "libId": "Device:C",
+      "value": "100nF",
+      "footprint": "WeatherBalloon:KEMET_C315C104K5R5TA",
+      "group": "5. Cutdown"
+    },
+    {
+      "ref": "C5",
+      "libId": "Device:C",
+      "value": "4.7uF",
+      "footprint": "WeatherBalloon:KEMET_C322C475K5R5TA",
       "group": "5. Cutdown"
     },
     {
@@ -152,7 +173,7 @@
     },
     {
       "name": "LOGGER_5V",
-      "pins": ["A2.4", "A1.3", "C1.1", "C2.1"],
+      "pins": ["A2.4", "A1.3", "C1.1", "C2.1", "U2.1", "U2.8", "C4.1", "C5.1"],
       "kind": "power"
     },
     {
@@ -172,8 +193,12 @@
         "C3.2",
         "J3.2",
         "J4.2",
-        "Q1.2",
-        "R3.2"
+        "Q1.3",
+        "R3.2",
+        "U2.4",
+        "U2.5",
+        "C4.2",
+        "C5.2"
       ],
       "kind": "power"
     },
@@ -183,9 +208,10 @@
     { "name": "I2C_SDA", "pins": ["J2.8", "U1.15"] },
     { "name": "LED_A", "pins": ["R1.2", "D1.2"] },
     { "name": "LED_N", "pins": ["U1.4", "D1.1"] },
-    { "name": "CUTDOWN_CTRL", "pins": ["J2.4", "R2.1"] },
+    { "name": "CUTDOWN_CTRL", "pins": ["J2.4", "U2.2"] },
+    { "name": "CUTDOWN_DRIVE", "pins": ["U2.6", "U2.7", "R2.1"] },
     { "name": "CUTDOWN_GATE", "pins": ["R2.2", "Q1.1", "R3.1"] },
-    { "name": "CUTDOWN_DRAIN", "pins": ["Q1.3", "J5.2"], "kind": "power" },
+    { "name": "CUTDOWN_DRAIN", "pins": ["Q1.2", "J5.2"], "kind": "power" },
     { "name": "RF_APRS", "pins": ["J6.1", "J3.1"] },
     { "name": "RF_WSPR", "pins": ["J7.1", "J4.1"] }
   ],
@@ -204,7 +230,8 @@
     "U1.10",
     "U1.11",
     "U1.12",
-    "U1.13"
+    "U1.13",
+    "U2.3"
   ],
   "hints": {
     "groupOrder": [

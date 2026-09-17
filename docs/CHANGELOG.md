@@ -2,6 +2,12 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-17 — Final PCB mechanical/legend cleanup. Current electrical DRC is clean with zero unconnected pads. Do not change schematic, intent, BOM, scripts, outline, RF routes, or functional topology. Fix the remaining 30 DRC findings only: move C4 and C5 to eliminate both J5 courtyard overlaps and three PTH-inside-courtyard errors, rerouting only their LOGGER_5V/GND connections while preserving electrical cleanliness; adjust F.SilkS geometry in both project KEMET footprint library files and their embedded C1-C5 board footprints so silk does not cross their own pad solder-mask openings; reposition or hide only reference text and local silk strokes causing the listed U1/R4, J5/C4/C5, U2/R3/Q1, and A2/U2 silk collisions. Preserve fabrication/fab/courtyard dimensions and all pads. Finish with normal KiCad DRC zero violations and zero unconnected items. Do not commit.
+
+- Change: final-pcb-mechanical-legend-cleanup
+- Files: library/WeatherBalloon.pretty/KEMET_C315C104K5R5TA.kicad_mod, library/WeatherBalloon.pretty/KEMET_C322C475K5R5TA.kicad_mod, weather-balloon-logger.kicad_pcb, docs\DECISIONS.md, docs/PINOUT.md
+- Verification: ERC clean, DRC clean
+
 ## 2026-09-17 — Export-only refresh from the current committed design. Do not modify the schematic, PCB, schematic.intent.json, footprint libraries, constraints, firmware, BOM, or design documentation. Regenerate the current PCB SVG in .copperhead/renders and refresh outputs/board.svg using Copperhead's export_svg/export_outputs tools; bundled deterministic export artifacts may be refreshed as required by export_outputs. Preserve all existing fabrication qualification holds. Then run ERC, DRC, drift, schematic legibility, and constraint/spec validation. Finish only if the exports reflect the current weather-balloon-logger.kicad_pcb and checks are clean. Do not make layout or electrical changes.
 
 - Change: refresh-current-pcb-exports
