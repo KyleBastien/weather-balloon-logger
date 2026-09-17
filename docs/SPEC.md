@@ -65,7 +65,7 @@ This vehicle is **GPS-on for the whole powered flight**; there is **no in-flight
 | Logger regulator input | Pololu S7V8F5 item 2123 VIN and SHDN on switched `PACK_SW`, input rating **2.7–11.8 V**; no reverse-polarity protection | Selected dedicated OpenLog supply |
 | LOGGER_5V | S7V8F5 fixed **5 V** VOUT powers OpenLog A1 VCC only; GND is common | Approved split-power architecture |
 | OpenLog UART | 3.3 V one-way host TX → OpenLog RXI; OpenLog TXO is intentionally unused; verify 3.3 V input compatibility while A1 is powered at 5 V | Stage-4 pin-budget decision |
-| LED / I2C expander | 3V3 → **1 kΩ** → D1 → U1 P0 (`LED_N`). PCF8574T address pins are low for 0x20; P0 is active-low and powers up high/off. P1–P7 are reserved for future GPS-status LEDs. | U1 maximum idle current ≤ 100 µA; activity indication is not physical SD-commit proof |
+| LED / I2C expander | 3V3 → **1 kΩ** → D1 → U1 P0 (`LED_N`). PCF8574N address pins are low for 0x20; P0 is active-low and powers up high/off. P1–P7 are reserved. | U1 maximum standby current ≤ 100 µA; activity indication is not physical SD-commit proof |
 
 The S7V8F5 is a 0.1-inch four-pin module installed with a direct-solder straight header. Its module temperature rating is unverified and requires cold qualification. It has no reverse-polarity protection, so pack polarity must be enforced upstream. The LED and U1 remain on LightAPRS 3V3; only OpenLog moves to `LOGGER_5V`.
 
@@ -86,7 +86,7 @@ The S7V8F5 is a 0.1-inch four-pin module installed with a direct-solder straight
 | Module | SparkFun OpenLog with headers (ATmega328, preprogrammed), example Amazon B0BHL56BP5 |
 | Interface | One-way UART: host A1/PB08 SERCOM4 TX → OpenLog RXI; OpenLog TXO is intentionally no-connect; GND common |
 | Power | OpenLog A1 VCC on dedicated fixed `LOGGER_5V` from Pololu S7V8F5 item 2123; see §2.4 |
-| Write LED | On **this** board. 3V3 → 1 kΩ → D1 → PCF8574T P0; firmware drives P0 low for activity and high/off otherwise. P0 powers up high, so reset defaults the LED off. This is an activity proxy rather than proof of physical SD commit; P1–P7 are reserved for future GPS-status LEDs. |
+| Write LED | On **this** board. 3V3 → 1 kΩ → D1 → PCF8574N P0; firmware drives P0 low for activity and high/off otherwise. P0 powers up high, so reset defaults the LED off. |
 | Absence of USB-serial bridge on this PCB | **Intentional** — OpenLog is the logger; programming the ATSAMD21G18 stays on LightAPRS-W 2.0 |
 
 ## 5. Cutdown (nichrome)
@@ -96,7 +96,7 @@ The S7V8F5 is a 0.1-inch four-pin module installed with a direct-solder straight
 | Load | Nichrome wire heats and burns a cord at max altitude | Stated |
 | Switch | Low-side driver preferred: **logic-level MOSFET**, not a 3.3 V relay module, unless FET cannot be fully enhanced at 3.3 V Vgs | ASSUMED (relay coil Iq and vibration) |
 | Brief examples | IRLZ44N TO-220 (Amazon B0CBKH4XGL) **or** 3.3 V opto relay (B0D8PSX9WL) | Stated options |
-| IRLZ44N at 3.3 V Vgs | **Constraint:** IRLZ44N Rds(on) is specified at **5 V Vgs**; at **3.3 V it may not be fully on**. Do **not** commit IRLZ44N until Vgs(th)/Rds(on) at 3.3 V is shown acceptable **or** pick a FET specified on at 3.3 V (e.g. logic-level with Rds(on) max at Vgs=2.5–3.3 V). | ASSUMED risk — **stop rather than silently use IRLZ44N** |
+| IRLZ44NPBF gate drive | U2 TC4422AVPA accepts the 3.3 V command (VIH requirement 2.4 V) and drives Q1 from fixed `LOGGER_5V`; use Q1's guaranteed maximum 35 mΩ at VGS=4.5 V. C4/C5 are local 100 nF/4.7 µF bypass. | Captured; still verify 2 A/30 s SOA and temperature rise on released copper |
 | Cutdown current | **ASSUMED ≤ 2 A** burst for ≤ 30 s; FET/relay and trace must carry this | ASSUMED |
 | Default-off | Gate/input **pulldown**; cutdown **must not** fire on host reset or strap default | Required |
 | Connector | 2-pin for nichrome, away from SMA keepout | ASSUMED |
@@ -110,8 +110,8 @@ LightAPRS-W 2.0 (ATSAMD21G18 / ARM Cortex-M0) breaks out only "I2C, SPI, 2× Ana
 - **Verified edge header:** J2 is the 11-position row RAW, GND, A1/PB08, A2/PB09, 3V3, GND, SCL, SDA, SCK, MISO, MOSI.
 - **Cutdown default-off** via gate pulldown is still required (a floating gate can false-fire nichrome on reset).
 - OpenLog uses one-way firmware SERCOM4 UART TX on J2.3 A1/PB08; the occupied GPS UART remains untouched and OpenLog TXO remains unused.
-- J2.4 A2/PB09 drives CUTDOWN_CTRL through R2; R3 keeps Q1 off during reset. A0 is not claimed.
-- J2.7/J2.8 share SCL/SDA with U1 PCF8574T at 0x20. U1 P0 sinks D1 active-low; P1–P7 and INT are intentional no-connects. SCK/MISO/MOSI are physically present on J2 but unused by the carrier.
+- J2.4 A2/PB09 drives U2 pin 2 on CUTDOWN_CTRL; U2 pins 6/7 drive R2 through CUTDOWN_DRIVE, and R3 keeps Q1 off during reset. A0 is not claimed.
+- J2.7/J2.8 share SCL/SDA with U1 PCF8574N at 0x20. U1 P0 sinks D1 active-low; P1–P7 and INT are intentional no-connects. SCK/MISO/MOSI are physically present on J2 but unused by the carrier.
 - RTC: **not required** on this carrier (host RTC/GPS time is sufficient). Absence of a carrier RTC is **intentional**.
 
 The authoritative connector and component pin table is `docs/PINOUT.md`; J2 pins 9–11, A1 pins 1/4/6, U1 P1–P7, and U1 INT are intentional no-connects.

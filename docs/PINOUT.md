@@ -1,6 +1,6 @@
 # Pinout — Weather Balloon Logger harness
 
-Authoritative LightAPRS-W 2.0 carrier assignment. J2 matches the verified 11-position 2.54 mm module edge header. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is the direct cutdown GPIO; the exposed I2C bus drives a PCF8574T at address 0x20 for the write LED and future GPS-status LEDs. Logic remains 3.3 V. The captured schematic now uses dedicated fixed `LOGGER_5V` from Pololu S7V8F5 item 2123 for OpenLog, with the corresponding PCB placement and routing still pending.
+Authoritative LightAPRS-W 2.0 carrier assignment. J2 matches the verified 11-position 2.54 mm module edge header. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is the active-high cutdown command into U2; the exposed I2C bus drives a PCF8574N at address 0x20. Logic remains 3.3 V. Dedicated fixed `LOGGER_5V` from Pololu S7V8F5 item 2123 powers OpenLog and U2; the schematic and PCB are synchronized and fully routed.
 
 ## Host interface J2
 
@@ -9,7 +9,7 @@ Authoritative LightAPRS-W 2.0 carrier assignment. J2 matches the verified 11-pos
 | J2 | 1 | PACK_SW | RAW/VBAT input from switched pack positive; SW1 physically opens this rail when OFF. |
 | J2 | 2 | GND | First module ground. |
 | J2 | 3 | UART_TX | A1/PB08, SERCOM4/PAD0 TX to OpenLog RXI; no host RX is assigned. |
-| J2 | 4 | CUTDOWN_CTRL | A2/PB09 direct GPIO through R2 to Q1 gate; R3 guarantees reset-time default-off. |
+| J2 | 4 | CUTDOWN_CTRL | A2/PB09 active-high input to U2 pin 2; R3 guarantees reset-time default-off. |
 | J2 | 5 | 3V3 | Regulated module rail powering OpenLog, U1, and the LED anode path. |
 | J2 | 6 | GND | Second module ground. |
 | J2 | 7 | I2C_SCL | Exposed SCL/PA23 shared with the module's existing I2C devices; no duplicate carrier pull-up is populated pending measured bus resistance. |
@@ -18,7 +18,7 @@ Authoritative LightAPRS-W 2.0 carrier assignment. J2 matches the verified 11-pos
 | J2 | 10 | NC | Physical MISO/PA12 contact is present but intentionally unused by this carrier. |
 | J2 | 11 | NC | Physical MOSI/PB10 contact is present but intentionally unused by this carrier. |
 
-PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the only static cutdown GPIO path: 0 µA when cutdown is low and 3.3 µA only while commanded. U1 address pins A0/A1/A2 are strapped low for 0x20; its quasi-bidirectional ports power up high, so P0 leaves D1 off until firmware explicitly drives it low.
+PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the static default-off gate path: 0 µA when cutdown is low and about 5 µA while the gate is driven near 5 V. U1 address pins A0/A1/A2 are strapped low for 0x20; its quasi-bidirectional ports power up high, so P0 leaves D1 off until firmware explicitly drives it low.
 
 ## Complete schematic pin/net table
 
@@ -36,7 +36,7 @@ PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the only
 | J2 | 1 | PACK_SW | RAW/VBAT input. |
 | J2 | 2 | GND | Module ground. |
 | J2 | 3 | UART_TX | A1/PB08 SERCOM4 TX. |
-| J2 | 4 | CUTDOWN_CTRL | A2/PB09 direct cutdown command. |
+| J2 | 4 | CUTDOWN_CTRL | A2/PB09 active-high input to U2 pin 2. |
 | J2 | 5 | 3V3 | Module regulated output. |
 | J2 | 6 | GND | Module ground. |
 | J2 | 7 | I2C_SCL | Shared host I2C clock. |
@@ -78,6 +78,18 @@ PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the only
 | D1 | 2 | LED_A | Anode from R1. |
 | R4 | 1 | UART_TX | Host transmit side of the back-power-limiting resistor. |
 | R4 | 2 | OPENLOG_RXI | OpenLog receive side. |
+| U2 | 1 | LOGGER_5V | Gate-driver supply. |
+| U2 | 8 | LOGGER_5V | Gate-driver supply. |
+| U2 | 2 | CUTDOWN_CTRL | Active-high 3.3 V command input. |
+| U2 | 3 | NC | Intentionally unconnected. |
+| U2 | 4 | GND | Gate-driver return. |
+| U2 | 5 | GND | Gate-driver return. |
+| U2 | 6 | CUTDOWN_DRIVE | Non-inverting output tied to pin 7 and R2. |
+| U2 | 7 | CUTDOWN_DRIVE | Non-inverting output tied to pin 6 and R2. |
+| C4 | 1 | LOGGER_5V | 100 nF local U2 bypass. |
+| C4 | 2 | GND | Bypass return. |
+| C5 | 1 | LOGGER_5V | 4.7 µF local U2 bulk bypass. |
+| C5 | 2 | GND | Bypass return. |
 | R2 | 1 | CUTDOWN_DRIVE | Series gate input from the tied U2 outputs. |
 | R2 | 2 | CUTDOWN_GATE | Q1 gate node. |
 | R3 | 1 | CUTDOWN_GATE | Intentional default-off pulldown. |

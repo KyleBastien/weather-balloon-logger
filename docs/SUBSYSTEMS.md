@@ -4,7 +4,7 @@ Carrier PCB only. Firmware, GPS, and radios live on LightAPRS-W 2.0. This docume
 
 ## Prose block diagram
 
-Exactly three series Energizer L91 AA cells (3.0–5.4 V) feed pack+ through a mechanical switch **SW1 that breaks pack positive**. Switched `PACK_SW` goes directly to LightAPRS-W 2.0 **RAW** on J2.1 and directly to cutdown J5.1; neither path may pass through a regulator. A dedicated Pololu S7V8F5 item 2123 takes VIN and SHDN from `PACK_SW`, shares GND, and creates fixed `LOGGER_5V` from VOUT for OpenLog A1 VCC only. The tracker’s regulated **3V3** continues to power U1 PCF8574T and the write-activity path 3V3 → 1 kΩ → LED → U1 P0; P0 is active-low and powers up high/off. A2/PB09 drives the cutdown MOSFET gate through R2 with an **intentional pulldown** to GND so nichrome cannot false-fire on reset. A1/PB08 provides one-way SERCOM4 UART TX to OpenLog RXI; OpenLog TXO is intentionally unused. J2.7/J2.8 expose the shared SCL/SDA bus to U1 at address 0x20; P1–P7 are reserved no-connect outputs for future GPS-status LEDs. Two **50 Ω SMA jacks** take RF from separate opposite-corner module contacts: J6 VHF→J3 APRS and J7 HF→J4 WSPR. No second MCU, carrier RTC, USB-serial bridge, L91 charger, or 5 V flight source is added.
+Exactly three series Energizer L91 AA cells (3.0–5.4 V) feed pack+ through a mechanical switch **SW1 that breaks pack positive**. Switched `PACK_SW` goes directly to LightAPRS-W 2.0 **RAW** on J2.1 and directly to cutdown J5.1; neither path passes through a regulator. A dedicated Pololu S7V8F5 item 2123 creates fixed `LOGGER_5V` for OpenLog A1 and the U2 gate driver. The tracker’s regulated **3V3** powers U1 PCF8574N and the write-activity path 3V3 → 1 kΩ → LED → U1 P0. A2/PB09 drives U2 TC4422AVPA; its fixed-5 V output drives Q1 IRLZ44NPBF through R2, while R3 holds the gate low by default. C4/C5 locally bypass U2. A1/PB08 provides one-way SERCOM4 UART TX to OpenLog RXI. J2.7/J2.8 expose the shared SCL/SDA bus to U1 at address 0x20. Two **50 Ω SMA jacks** take RF from J6 VHF→J3 APRS and J7 HF→J4 WSPR.
 
 ```text
 L91 exactly 3s --pack+--> SW1 --PACK_SW--> LightAPRS-W RAW/J2.1 (continuous GPS)
@@ -14,7 +14,8 @@ LightAPRS 3V3 ----------------------------------> U1 + LED anode path
 GND common
 Host A1/PB08 SERCOM4 TX -----------> OpenLog RXI (one-way)
 Host A2/PB09 -----------------------> FET gate + pulldown
-Host SCL/SDA -----------------------> PCF8574T @ 0x20; P0 sinks write LED, P1–P7 reserved
+Host SCL/SDA -----------------------> PCF8574N @ 0x20; P0 sinks write LED, P1–P7 reserved
+Host CUTDOWN_CTRL -> TC4422AVPA @ LOGGER_5V -> 100 R -> IRLZ44NPBF gate
 Pack+ --nichrome jack--> FET drain; FET source --> GND
 LightAPRS-W VHF J6 / HF J7 --------> SMA_APRS J3 / SMA_WSPR J4 (downward, 50 Ω)
 ```
@@ -50,8 +51,8 @@ LightAPRS-W 2.0 (QRP Labs, **ATSAMD21G18** / ARM Cortex-M0, 3.3 V) is the **only
 - **Boot / strapping (ATSAMD21G18):** the SAMD21 boots from internal flash with **no ESP32-style GPIO boot straps**; its bootloader is entered by a double-tap on RESET, and SWDIO/SWCLK/RESET are programming pins not broken out to the extension header. The governing constraint is therefore the *occupied-pin* map below plus keeping cutdown default-off (gate pulldown), not ESP32 strap avoidance.
 - **Verified host pin map** (from LightAPRS-W-2.0 firmware source + qrp-labs.com). Occupied — do NOT reuse: `D0/D1` GPS UART (Serial1), `D3` VHF PTT, `D4` Si4463 SDN, `D7` GPS power, `D8` Si4463 nSEL (SPI CS), `D9` Si4463 nIRQ, `A3` Si5351 power, `A4` TCXO power, `A5` battery sense; `SDA/SCL` I2C bus (BMP180 + Si5351); `MOSI/MISO/SCK` SPI bus (Si4463). The verified 11-position header exposes **A1/PB08** and **A2/PB09** as the two dedicated carrier GPIOs plus the shared I2C/SPI buses. A1 is UART_TX, A2 is cutdown, I2C is shared with U1, and carrier SPI is unused.
 - **UART for OpenLog:** A1/PB08 remains one-way SERCOM4 TX to OpenLog RXI. OpenLog TXO is intentionally unused; the occupied GPS UART remains untouched.
-- **Cutdown GPIO:** the verified header exposes A2/PB09, which now drives CUTDOWN_CTRL directly through R2; R3 remains the mandatory hardware default-off path. A0 is no longer claimed.
-- **LED expansion:** shared SCL/SDA drive U1 PCF8574T at 0x20. P0 sinks D1 active-low; P1–P7 are reserved for future GPS-status LEDs and INT is unused. This avoids loading UART_TX and preserves direct GPIO cutdown control.
+- **Cutdown GPIO:** the verified header exposes A2/PB09, which drives U2 input on `CUTDOWN_CTRL`; tied U2 outputs feed R2 on `CUTDOWN_DRIVE`, and R3 remains the mandatory hardware default-off path. A0 is not claimed.
+- **LED expansion:** shared SCL/SDA drive U1 PCF8574N at 0x20. P0 sinks D1 active-low; P1–P7 are reserved and INT is unused.
 
 ## 3. Connectivity
 
@@ -70,7 +71,7 @@ The tracker feeds RF from two physically separate opposite-corner contacts: sing
 ## 4. UI (operator)
 
 - **SW1:** mechanical pack on/off; breaks pack+. Required by brief.
-- **Write LED:** on **this** board. 3V3 → series **1 kΩ** → D1 → U1 P0; firmware drives P0 low for activity and high/off otherwise. PCF8574T ports power up high, so reset defaults the LED off. This is an activity proxy, not proof of physical SD commit. P1–P7 remain reserved for future GPS-status LEDs. OFF leakage ≤ 1 µA; U1 maximum idle current must be ≤100 µA.
+- **Write LED:** on **this** board. 3V3 → series **1 kΩ** → D1 → U1 P0; firmware drives P0 low for activity and high/off otherwise. PCF8574N ports power up high, so reset defaults the LED off. This is an activity proxy, not proof of physical SD commit. P1–P7 remain reserved. U1 maximum standby current must be ≤100 µA.
 
 No other user LEDs this stage (extra Iq).
 
@@ -119,7 +120,7 @@ The schematic/BOM now match the verified model: one 11-position J2 edge header p
 | USB-serial bridge | OpenLog is the logger; ATSAMD21G18 programming stays on the tracker |
 | L91 charger | Primary cells |
 | 5 V USB as flight source | Pack is the flight source; switch-off budget is 0 µA on pack+ |
-| IRLZ44N / 3.3 V relay | Vgs/Iq not proven; pick a FET specified on at 2.5–3.3 V Vgs later |
+| Direct 3.3 V drive of IRLZ44N | Rejected; U2 drives Q1 from fixed 5 V so the guaranteed 4.5 V RDS(on) rating applies |
 | Host RX / extra direct LED GPIO | OpenLog is one-way; A1/PB08 is UART_TX, A2/PB09 is cutdown, and shared I2C plus U1 supplies LED outputs without another dedicated GPIO |
 | On-board GPS, APRS PA | Those are the LightAPRS-W 2.0 module |
 | High-side cutdown | Not decided |
@@ -141,7 +142,7 @@ The schematic/BOM now match the verified model: one 11-position J2 edge header p
 | `power.openlog_idle_mA` | max 7 | Dedicated `LOGGER_5V` load |
 | `power.openlog_write_mA` | max 25 | OpenLog write qualification |
 | `power.logger_regulator_iq_mA` | max 0.2 | S7V8F5 quiescent-current ceiling |
-| `power.led_expander_idle_uA` | max 100 | PCF8574T selection and qualification |
+| `power.led_expander_idle_uA` | max 100 | PCF8574N selection and qualification |
 | `power.cutdown_off_leakage_uA` | max 50 | FET selection |
 | `power.led_off_leakage_uA` | max 1 | LED circuit |
 | `power.gpio_logic_V` | 3.3 | No pack-driven gates/LEDs |

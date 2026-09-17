@@ -32,3 +32,12 @@ for the official 1.02 mm holes. The 2.54 mm-pitch row is centered across the
 11.43 mm edge and lies 1.27 mm from that edge. With the body extending upward
 from the row in top view, pads read left-to-right as 4 VOUT, 3 GND, 2 VIN, and
 1 SHDN. Future schematic/PCB implementation reserves refdes A2 for this module.
+
+## KEMET radial ceramic capacitors
+
+`WeatherBalloon:KEMET_C315C104K5R5TA` implements the exact 100 nF, 50 V X7R
+part on 2.54 mm pitch. `WeatherBalloon:KEMET_C322C475K5R5TA` implements the
+exact 4.7 µF, 50 V X7R part on 5.08 mm pitch. Both use 0.8 mm drills for the
+manufacturer's 0.51 mm leads, 1.6 mm plated pads, maximum body envelopes on
+F.Fab, 0.5 mm courtyard clearance, and segmented silkscreen that clears the
+pad solder-mask openings.

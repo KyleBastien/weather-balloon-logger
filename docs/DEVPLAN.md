@@ -20,15 +20,16 @@ The locations below are accessible component pads or connector pins, not populat
 | --- | --- | --- |
 | Pack input | J1.1 `PACK_IN` to J1.2 `GND` | Unswitched pack voltage. |
 | Switched pack | SW1.1 or J2.1/J5.1 `PACK_SW` to `GND` | Zero with SW1 OFF; approximately `PACK_IN` with SW1 ON. |
-| Ground continuity | J1.2, J2.2, A1.2, Q1.2, J3.2, J4.2 | Common return; verify before live tests. |
+| Ground continuity | J1.2, J2.2, A1.2, Q1.3, U2.4/U2.5, J3.2, J4.2 | Common return; verify before live tests. |
 | Host 3.3 V | J2.5, U1.16, C3.1, or R1.1 `3V3` to `GND` | Regulated host rail, never raw pack. |
 | Logger 5 V | A2.4, A1.3, C1.1, or C2.1 `LOGGER_5V` to `GND` | Dedicated fixed 5 V logger rail. |
 | Logger UART | J2.3 `UART_TX` or A1.5 `OPENLOG_RXI` to `GND` | A1/PB08, 3.3 V idle-high through R4, 9600 baud scaffold default pending installed OpenLog confirmation. |
 | I2C expander | J2.7 `I2C_SCL`, J2.8 `I2C_SDA`, U1.14/U1.15 | Shared module I2C bus; U1 address 0x20, verify effective pull-ups before operation. |
 | LED anode / cathode | R1.2 or D1.2 `LED_A`; D1.1 or U1.4 `LED_N` | LED is off when P0 is high and on when P0 is driven low. |
-| Cutdown command | J2.4 or R2.1 `CUTDOWN_CTRL` to `GND` | A2/PB09; must be low before other application initialization. |
-| FET gate | R2.2, R3.1, or Q1.1 `CUTDOWN_GATE` to Q1.2 `GND` | Held low by R3 at reset; about 3.3 V only when armed/firing. |
-| FET drain | Q1.3 or J5.2 `CUTDOWN_DRAIN` to `GND` | Load low side; near ground only when Q1 is commanded on. |
+| Cutdown command | J2.4 or U2.2 `CUTDOWN_CTRL` to `GND` | A2/PB09; must be low before other application initialization. |
+| Driver output | U2.6/U2.7 or R2.1 `CUTDOWN_DRIVE` | Fixed-5 V non-inverting gate-driver output. |
+| FET gate | R2.2, R3.1, or Q1.1 `CUTDOWN_GATE` to Q1.3 `GND` | Held low by R3; rises to approximately LOGGER_5V only when firing. |
+| FET drain | Q1.2 or J5.2 `CUTDOWN_DRAIN` to `GND` | Load low side; near ground only when Q1 is commanded on. |
 | APRS RF path | J6.1 VHF to J3.1 `RF_APRS`; J3.2 shield | Separate VHF corner contact; no DC connection to the center conductor is expected elsewhere. |
 | WSPR RF path | J7.1 HF to J4.1 `RF_WSPR`; J4.2 shield | Separate HF corner contact; no DC connection to the center conductor is expected elsewhere. |
 
@@ -39,9 +40,9 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 ### 1. Pre-power document and assembly audit
 
 1. Match each received MPN and suffix to `docs/BOM.md`; verify pin numbering, exact land pattern, voltage/current rating, −40 °C suitability, leakage/Iq limits, and lifecycle/availability. Reject substitutions that have not been requalified.
-2. Replace all `CopperheadDraft_*` footprints with verified manufacturer/library footprints. Confirm connector mating direction, SW1 terminal numbering, AO3400A G/S/D pins, LED polarity, OpenLog header order, and downward SMA mating orientation on a 1:1 print and mechanical mock-up.
+2. Confirm every through-hole footprint on a 1:1 print with purchased parts: connector mating direction, SW1 terminal numbering, IRLZ44NPBF G/D/S pins, LED polarity, OpenLog header order, DIP orientation, and downward SMA mating orientation.
 3. Convert the drawn SMA envelopes into enforceable rule areas, calculate 50 Ω launches from the actual stackup, add the required return-via strategy, and re-evaluate the ≥5 mm dielectric/battery-metal keepout.
-4. Recalculate the complete 2 A for 30 s cutdown path using actual copper weight, trace/pour/via geometry, connector resistance, Q1 maximum RDS(on) at 2.5–3.3 V, transient thermal impedance, and safe operating area.
+4. Recalculate the complete 2 A for 30 s cutdown path using actual copper weight, trace geometry, connector resistance, Q1 maximum RDS(on) at VGS=4.5 V, transient thermal impedance, and safe operating area.
 5. Run ERC, DRC, BOM/pin drift checks, and fabrication review on the revised design. This is the fabrication-order gate.
 
 ### 2. What to meter first — unpowered board
@@ -50,7 +51,7 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 2. Meter continuity among all listed `GND` locations. A missing ground connection is an immediate stop.
 3. With SW1 OFF, verify J1.1 `PACK_IN` is open from J2.1/J5.1 `PACK_SW`. With SW1 ON, verify low resistance from `PACK_IN` to `PACK_SW`; exercise the switch and reject intermittent contacts.
 4. Measure resistance from `PACK_IN`, `PACK_SW`, `3V3`, `CUTDOWN_DRAIN`, `CUTDOWN_GATE`, `RF_APRS`, and `RF_WSPR` to `GND`. Investigate any unexpected short before applying power. Capacitors may cause a momentary charging indication on `3V3`.
-5. Verify R3 measures approximately 1 MΩ from `CUTDOWN_GATE` to `GND`, R2 approximately 100 Ω from `CUTDOWN_CTRL` to `CUTDOWN_GATE`, and the LED path has the expected diode polarity through R1.
+5. Verify R3 measures approximately 1 MΩ from `CUTDOWN_GATE` to `GND`, R2 approximately 100 Ω from `CUTDOWN_DRIVE` to `CUTDOWN_GATE`, and the LED path has the expected diode polarity through R1.
 6. Check RF center-to-center continuity from J6.1 VHF to J3.1 and J7.1 HF to J4.1, shield-to-ground continuity, isolation between APRS/WSPR centers, and no center-to-shield short.
 
 ### 3. Bare carrier power-path test
@@ -71,7 +72,7 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 
 1. Probe `CUTDOWN_CTRL` and `CUTDOWN_GATE` during power application, reset, bootloader entry, brownout, firmware restart, and power removal. Both must remain low until an explicit armed command; `cutdown::init_safe()` must be the first application-level action. Any positive glitch is an immediate stop.
 2. Confirm Q1 remains off with the host disconnected and while its GPIO is high impedance. R3 is intentional and must not be omitted.
-3. Command cutdown only in a bench test mode. Verify approximately 3.3 V at `CUTDOWN_CTRL`, the expected small drop across R2, and approximately 3.3 V at `CUTDOWN_GATE`. Verify the commanded R3 current is about 3.3 µA and is zero when the gate is low.
+3. Command cutdown only in a bench test mode. Verify approximately 3.3 V at `CUTDOWN_CTRL`, approximately 5 V at `CUTDOWN_DRIVE`, the expected small drop across R2, and approximately 5 V at `CUTDOWN_GATE`. Verify the commanded R3 current is about 5 µA and is zero when the gate is low.
 4. Remove the command and verify the gate returns promptly to 0 V. Do not proceed until reset-time and firmware default-off behavior passes repeatedly.
 
 ### 6. OpenLog power-budget and UART test
@@ -93,7 +94,7 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 ### 8. Cutdown dummy-load test
 
 1. Use a fused nonflammable dummy load, not nichrome. Keep RF disabled or correctly terminated. Begin below full load and increase only while monitoring supply current, Q1 VDS, connector drop, trace/via drop, and temperature.
-2. At the qualified worst-case pack voltage and up to the assumed 2 A load, verify Q1 is fully enhanced from the measured 3.3 V gate drive. Use maximum RDS(on), safe-operating-area, and thermal limits rather than threshold voltage.
+2. At the qualified worst-case pack voltage and up to the assumed 2 A load, verify U2 supplies the expected gate voltage and Q1 remains within maximum RDS(on), safe-operating-area, and thermal limits.
 3. Exercise the hard firmware maximum-on timer, one-shot/interlock behavior, resets, brownouts, and removal of the command. No firing or restart may leave Q1 on, and every activation must end within 30 s.
 4. Measure OFF leakage through the complete cutdown path at the maximum pack voltage and required temperature extremes; it must be ≤50 µA. Inspect connectors, solder joints, copper, and Q1 after repeated pulses.
 
@@ -125,7 +126,7 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 
 ## Prototype order plan
 
-1. **Qualification samples only:** obtain small quantities of the exact candidate J1/J5 connector pair, SW1, SMA connectors, Q1, LED, passives, and their mating parts from traceable sources. Obtain the exact LightAPRS-W and OpenLog modules separately. These purchases are for measurement and footprint qualification, not production approval.
+1. **Qualification samples only:** obtain small quantities of the exact J1/J5 connector pair, SW1, SMA connectors, Q1 IRLZ44NPBF, U2 TC4422AVPA, U1 PCF8574N, WP710A10SGC LED, selected Yageo resistors, KEMET capacitors, and mating parts from traceable sources. Obtain the exact LightAPRS-W and OpenLog modules separately.
 2. **Bench fixtures before PCB:** build or buy current-limited/fused cable assemblies, a cutdown dummy load, guarded nichrome jig, 50 Ω RF cables/loads, and a mechanical payload mock-up. Validate module current, header order, switch terminals, connector mating, and OpenLog baud before committing copper.
 3. **Release the revised prototype PCB only after gates pass:** replace all draft footprints, implement enforceable RF rules and calculated launches, complete thermal/current-path work, add required mounting/test/label features, reconcile any protection decisions with schematic and BOM, then rerun ERC, DRC, drift, and fabrication review. The existing `outputs/` package must not be sent to fabrication.
 4. **Recommended first revised lot:** order a small five-board engineering lot after the release review—one for unpowered/power-path bring-up, one for host/OpenLog integration, one for RF characterization, one for destructive cutdown/environmental testing, and one unmodified control/spare. This allocation prevents a stressed cutdown specimen from becoming the flight article.

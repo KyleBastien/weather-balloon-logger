@@ -2,6 +2,12 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-17 — Export-only refresh from the current verified design. Do not modify schematic, PCB, intent, libraries, constraints, firmware, BOM, or design docs. Regenerate .copperhead/renders/board.svg and weather-balloon-logger.svg plus outputs/board.svg, outputs/renders/weather-balloon-logger.svg, Gerbers, drill, STEP, outline DXF, and BOM artifacts from the current committed PCB/schematic state using deterministic export tools. Preserve the current zero-SMD all-through-hole design. Run ERC, DRC, drift, legibility, and constraints. Commit the already-synchronized documentation changes together with refreshed exports only if all checks are clean.
+
+- Change: refresh-verified-design-exports
+- Files: outputs/, weather-balloon-logger.svg
+- Verification: ERC clean, DRC clean
+
 ## 2026-09-17 — Final PCB mechanical/legend cleanup. Current electrical DRC is clean with zero unconnected pads. Do not change schematic, intent, BOM, scripts, outline, RF routes, or functional topology. Fix the remaining 30 DRC findings only: move C4 and C5 to eliminate both J5 courtyard overlaps and three PTH-inside-courtyard errors, rerouting only their LOGGER_5V/GND connections while preserving electrical cleanliness; adjust F.SilkS geometry in both project KEMET footprint library files and their embedded C1-C5 board footprints so silk does not cross their own pad solder-mask openings; reposition or hide only reference text and local silk strokes causing the listed U1/R4, J5/C4/C5, U2/R3/Q1, and A2/U2 silk collisions. Preserve fabrication/fab/courtyard dimensions and all pads. Finish with normal KiCad DRC zero violations and zero unconnected items. Do not commit.
 
 - Change: final-pcb-mechanical-legend-cleanup
