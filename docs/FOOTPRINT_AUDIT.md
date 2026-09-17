@@ -38,7 +38,7 @@ extra RF, cable, service, or enclosure clearance.
 | --- | --- | ---: | --- |
 | J1 | `Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal` | 6.90 x 8.60 mm | Stock KiCad footprint. Place at the board edge for the battery-holder cable; verify plug polarity before power-up. |
 | SW1 | `WeatherBalloon:SW_CK_7101SYZQE` | 7.86 x 13.70 mm | Project-local direct-solder adaptation from C&K pages F-4/F-9: three 2.30 x 1.10 mm plated slots on 4.70 mm centers for the nominal 2.03 x 0.76 mm lugs. Matching STEP model attached. Pin 2 is common. |
-| J2 | `Connector_PinHeader_2.54mm:PinHeader_1x11_P2.54mm_Vertical` | 3.54 x 28.94 mm | Stock footprint for the LightAPRS installed header. Preserve the vendor module envelope and verify on the physical module before fabrication. |
+| J2 | `Connector_PinHeader_2.54mm:PinHeader_1x11_P2.54mm_Vertical` | 3.54 x 28.94 mm | Stock footprint for selected Würth `61301111121`. Official LightAPRS imagery confirms the eleven-pin order; verify the carrier's 1.0 mm drill and complete alignment on the physical module before fabrication. |
 | A1 | `WeatherBalloon:SparkFun_OpenLog_DEV-13712_Carrier` | 16.24 x 20.05 mm | Project-local full-module footprint. Top-side module, header soldered downward into the carrier; pin 1 BLK through pin 6 GRN matches the schematic. |
 | A2 | `WeatherBalloon:Pololu_S7V8F5_Carrier` | 12.43 x 17.51 mm | Implemented project-local full-module footprint for Pololu S7V8F5 item 2123 at (106,121), 270°. Top-side direct-solder installation; official 11.43 x 16.51 mm body, four 1.0 mm drills for official 1.02 mm holes, 2.54 mm pitch, centered row 1.27 mm from the edge, and pads 4 VOUT, 3 GND, 2 VIN, 1 SHDN. |
 | C1, C5 | `WeatherBalloon:KEMET_C322C475K5R5TA` | 6.08 x 5.07 mm | Exact project footprint for the KEMET 4.7 µF, 50 V X7R radial part: 5.08 mm pitch, 0.8 mm drills, 1.6 mm pads. |
@@ -50,7 +50,7 @@ extra RF, cable, service, or enclosure clearance.
 | R4 | `Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal` | 9.72 x 3.00 mm courtyard | Stock KiCad 1/4 W axial through-hole footprint with two 0.8 mm drilled holes on 7.62 mm pitch. It is installed through the board and soldered from the underside; no SMD-only R4 pads remain. |
 | J5 | `Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal` | 8.40 x 12.51 mm | Stock KiCad footprint; 3 A family provides margin over the 2 A cutdown pulse. Place at edge with wire-service clearance. |
 | Q1 | `Package_TO_SOT_THT:TO-220-3_Vertical` | 10.59 x 4.99 mm | Stock KiCad TO-220 footprint matching Infineon IRLZ44NPBF; pin order is G/D/S. |
-| J6, J7 | `Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical` | 3.54 x 3.54 mm each | Stock footprint for the LightAPRS VHF/HF contacts. Preserve the measured module-corner locations. |
+| J6, J7 | `Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical` | 3.54 x 3.54 mm each | Stock footprint for selected Würth `61300111121` LightAPRS VHF/HF contacts. The carrier currently uses a 1.0 mm drill versus Würth's nominal 1.10 mm recommendation; resolve with a physical fit check before release. |
 | J3, J4 | `Connector_Coaxial:SMA_Amphenol_132134_Vertical` | 8.34 x 8.34 mm each | Exact stock KiCad footprints fixed at J3 (168,162) and J4 (112,162), rotation 0°. Pad 1 is the RF center; four through-hole pads numbered 2 are the GND shield tabs. Retain the existing RF/mechanical and cable reservations beyond the component courtyard and verify downward mating in the mechanical mock-up. |
 | H1-H4 | `MountingHole:MountingHole_2.2mm_M2` | 4.90 mm diameter | Stock non-plated hole. Verify the physical LightAPRS hole diameter and center locations before fabrication. |
 
@@ -110,4 +110,12 @@ All substitutions are complete: the board contains 23 populated electrical footp
 
 The final all-through-hole placement is C1 (173,115), C2 (173,121), C3 (173,132), C4 (107.7,133.3), C5 (103,115.5), U1 (161,121.5), U2 (114,133), D1 (173,145), Q1 (115.7,149), R1 (160,145), R2 (103,148), and R3 (114,144), in millimetres. Normal KiCad DRC reports zero violations and zero unconnected pads.
 
-The design is not fabrication-ready until the physical LightAPRS module, hole pattern, header alignment, exact purchased MPNs, and all connector orientations pass a 1:1 print and mechanical mock-up. The released stackup must be used to calculate the two 50 Ω launches, finalize the return-via strategy, and support VNA validation. The 2 A/30 s cutdown path still requires copper, connector, MOSFET SOA, and thermal qualification. Enclosure, cable, microSD, switch, and SMA access must be checked in the payload assembly. Run final ERC, DRC, courtyard, 3D/mechanical, and fabrication review and regenerate `outputs/` only after those holds are closed.
+The design is not fabrication-ready until the physical LightAPRS module, hole
+pattern, header alignment, and all connector orientations pass a 1:1 print and
+mechanical mock-up. The released stackup must be used to calculate the two
+50-ohm launches, finalize the return-via strategy, and support later VNA
+validation. The PCB portion of the 2 A/30 s cutdown calculation is documented
+in `CUTDOWN_CALC.md`; the complete connector/harness path still requires the
+specified prototype pulse test. Enclosure, cable, microSD, switch, and SMA
+access must be checked in the payload assembly. Regenerate `outputs/` only
+after those holds are closed.

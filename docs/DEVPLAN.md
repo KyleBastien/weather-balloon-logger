@@ -2,7 +2,7 @@
 
 ## Status and release gates
 
-This is the Stage 8 hardware bring-up and prototype-order plan. `firmware/DEVPLAN.md` remains the separate firmware qualification plan. The current PCB is a coordinate-level layout study, not a fabrication release: every `CopperheadDraft_*` land pattern and every BOM manufacturer part number is **UNVERIFIED**. Do not order production parts or fabricate the exported board until the exact ordered parts, footprints, temperature ranges, leakage/current limits, RF geometry, and mechanical clearances have been verified, the PCB has been updated, and ERC/DRC have been rerun.
+This is the Stage 8 hardware bring-up and prototype-order plan. `firmware/DEVPLAN.md` remains the separate firmware qualification plan. The current PCB uses real library or documented project footprints, contains no `CopperheadDraft_*` footprints and no SMD pads, and passes ERC/DRC. It is still not a fabrication release: the exact ordered parts, physical fit, temperature ranges, leakage/current limits, RF geometry, cutdown calculations, and payload clearances must pass the gates in `FABRICATION_READINESS.md` before an engineering prototype order.
 
 The locations below are accessible component pads or connector pins, not populated test-point refdes. Probe only with power removed unless a step explicitly calls for live measurement. Keep the nichrome wire disconnected until the final controlled cutdown test.
 
@@ -109,7 +109,7 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 
 | Risk | Evidence needed to close it | Stop/mitigation |
 | --- | --- | --- |
-| Draft footprints or wrong connector pin order | Exact MPN datasheets, 1:1 print, mating-part inspection, updated PCB and DRC | No PCB order while any `CopperheadDraft_*` footprint remains. |
+| Wrong footprint, connector pin order, or physical fit | Exact MPN datasheets, 1:1 print, mating-part inspection, updated PCB and DRC | No PCB order until every exact purchased part and mating interface passes the physical-fit gate. |
 | UNVERIFIED part sourcing or cold rating | Manufacturer-authorized source, exact suffix, lifecycle and −40 °C data | Reject substitutions; keep procurement hold. |
 | Fixed 3s host brownout near 3.0 V | Measured LightAPRS VIN/UVLO under representative load and cold | Stop and revisit the architecture explicitly; a 4s substitution is not permitted. |
 | Logger exceeds split-power budgets | Verify OpenLog ≤7 mA idle and ≤25 mA write, S7V8F5 Iq <0.2 mA, board-added idle ≤8 mA, active/write peak ≤30 mA, and U1 ≤100 µA | Stop and replace or re-architect; do not accept typical-only current claims. |
@@ -128,7 +128,7 @@ Stop at the first failed limit, unexpected heating, unstable rail, excess curren
 
 1. **Qualification samples only:** obtain small quantities of the exact J1/J5 connector pair, SW1, SMA connectors, Q1 IRLZ44NPBF, U2 TC4422AVPA, U1 PCF8574N, WP710A10SGC LED, selected Yageo resistors, KEMET capacitors, and mating parts from traceable sources. Obtain the exact LightAPRS-W and OpenLog modules separately.
 2. **Bench fixtures before PCB:** build or buy current-limited/fused cable assemblies, a cutdown dummy load, guarded nichrome jig, 50 Ω RF cables/loads, and a mechanical payload mock-up. Validate module current, header order, switch terminals, connector mating, and OpenLog baud before committing copper.
-3. **Release the revised prototype PCB only after gates pass:** replace all draft footprints, implement enforceable RF rules and calculated launches, complete thermal/current-path work, add required mounting/test/label features, reconcile any protection decisions with schematic and BOM, then rerun ERC, DRC, drift, and fabrication review. The existing `outputs/` package must not be sent to fabrication.
+3. **Release the revised prototype PCB only after Gate A passes:** follow `FABRICATION_READINESS.md`; implement enforceable RF rules and calculated launches, complete physical-fit and thermal/current-path work, decide on mounting/test/protection features, synchronize schematic/PCB/BOM/docs, and build an independently reviewed manufacturer ZIP. The tracked `outputs/gerbers/` review directory must not be uploaded wholesale.
 4. **Recommended first revised lot:** order a small five-board engineering lot after the release review—one for unpowered/power-path bring-up, one for host/OpenLog integration, one for RF characterization, one for destructive cutdown/environmental testing, and one unmodified control/spare. This allocation prevents a stressed cutdown specimen from becoming the flight article.
 5. **Staged population:** populate and pass the power-path board first; then logic/logger; then RF; then the cutdown specimen. Do not kit or assemble the full lot after a common footprint or current-budget failure.
 6. **Flight-candidate order:** issue a later revision only after all risks above have objective closure, the four-hour mission rehearsal passes, exact MPNs and alternates are controlled, and the schematic/PCB/BOM/docs are synchronized. Repeat incoming inspection and acceptance testing on every flight candidate.

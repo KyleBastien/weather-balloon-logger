@@ -13,6 +13,13 @@ so the first run adds a design rather than a layout.
 
 Nothing here is a design. Replace it by describing what you want to build.
 
+## Project release status
+
+This repository now contains the Weather Balloon Logger carrier design and its
+review exports. It is **not yet released for fabrication**. See
+[`docs/FABRICATION_READINESS.md`](docs/FABRICATION_READINESS.md) for the exact
+engineering-prototype and flight-candidate gates.
+
 ## Working locally
 
 The CLI needs no account and no cloud:
