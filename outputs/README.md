@@ -6,7 +6,7 @@ Generated from the current Weather Balloon Logger KiCad design.
 
 - `board.svg` is the standard Copperhead PCB plot.
 - `renders/weather-balloon-logger.svg` is the schematic render.
-- `renders/board-full-color.svg` is a board-fitted top view showing front copper in red, back copper in blue, front silkscreen, plated holes, the board outline, and mechanical/module-zone drawings.
+- `renders/board-full-color.svg` is a board-fitted top view showing front copper in red, back copper in blue, production front silkscreen, plated holes, and the board outline. Engineering-only User-layer notes are deliberately omitted so assembly labels remain readable.
 
 ## Qualification hold
 

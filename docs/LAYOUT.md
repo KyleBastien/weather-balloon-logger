@@ -6,7 +6,7 @@ The exact 32.77 × 54.80 mm LightAPRS-W 2.0 body reservation occupies (123.615,1
 
 The front silkscreen includes the horizontal, right-reading board label `JAVAS Logger` centered at (110,96) mm with 1.8 mm text height and 0.30 mm stroke. It was moved to the open upper-left area so the A2 module body, solder joints, and hand-assembly access remain unobstructed while the label stays outside the LightAPRS and RF reservations.
 
-Functional F.SilkS labels use compact 1.0–1.2 mm text with 0.18–0.20 mm strokes. Connector names, J1/J5 polarity, power control, regulator/logger, host/expander/driver, cutdown, LED, RF contacts, and both SMA functions are identified next to their existing hardware; edge labels are rotated where useful. Labels remain outside pad solder-mask openings, component bodies/courtyards, and the LightAPRS mating area, and all original reference designators remain unchanged. Rationale: readable field wiring and assembly cues reduce polarity and port-selection errors without changing any electrical or mechanical design object.
+Functional F.SilkS labels use at least 0.8 mm text with 0.15–0.20 mm strokes. Connector names, direct J1/J5 polarity marks, power control, regulator/logger, host/expander, cutdown, LED, RF contacts, and both SMA functions are identified in assembly-visible areas; edge labels are rotated where useful. The space-constrained driver caption reads `U2 DRIVER - LEFT DIP` in the unobstructed lower-center legend strip. Labels remain outside pad solder-mask openings and DRC-reported collisions, and all original reference designators remain unchanged. Rationale: readable field wiring and assembly cues reduce polarity and port-selection errors without changing electrical or mechanical design objects.
 
 ## Placement
 
@@ -65,4 +65,4 @@ A human or specialist must still close these fabrication holds:
 - Recalculate and test the complete 2 A for 30 s cutdown path using released copper, connectors, IRLZ44NPBF maximum RDS(on) at the actual U2-driven gate voltage, SOA, and thermal data.
 - Qualify the implemented A2/R4 split-power path: LightAPRS RAW/J2.1 and J5.1 remain direct `PACK_SW`; verify OpenLog ≤7 mA idle and ≤25 mA write, regulator Iq <0.2 mA, board-added ≤8 mA idle and ≤30 mA active peak, U1 ≤100 µA, reverse-polarity handling, UART integrity through R4, and cold operation.
 - Capture and qualify any ESD/protection parts before placement; reserved drawings do not authorize unbudgeted components.
-- Add production mounting/tooling, fiducials, test points, polarity/RF labels, enclosure clearances, and full fabrication review. Regenerate `outputs/` only after those holds are resolved.
+- Add production mounting/tooling, fiducials, test points, enclosure clearances, and full fabrication review. Confirm the completed polarity/RF labels remain visible in the physical assembly.
