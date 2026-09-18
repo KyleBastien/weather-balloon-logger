@@ -37,7 +37,7 @@ $missingFabFiles = @($requiredFabFiles | Where-Object {
 })
 
 Write-Output "Fabrication source audit"
-Write-Output "  Footprints: $footprints (expected 27: 23 populated + 4 mounting holes)"
+Write-Output "  Footprints: $footprints (expected 28: 23 populated + 4 mounting holes + 1 graphic)"
 Write-Output "  SMD pads: $smdPads (expected 0)"
 Write-Output "  Plated through-hole pads: $pthPads"
 Write-Output "  Non-plated through-hole pads: $npthPads (expected 4)"
@@ -49,7 +49,7 @@ Write-Output "  Plated-slot drill commands: $slotCommands (expected 3 for SW1)"
 Write-Output "  Missing core fabrication files: $($missingFabFiles.Count)"
 
 $failures = @()
-if ($footprints -ne 27) { $failures += "Unexpected footprint count" }
+if ($footprints -ne 28) { $failures += "Unexpected footprint count" }
 if ($smdPads -ne 0) { $failures += "SMD pads present" }
 if ($npthPads -ne 4) { $failures += "Unexpected NPTH count" }
 if ($mpnProperties -ne 23) { $failures += "Not every populated symbol has an MPN" }

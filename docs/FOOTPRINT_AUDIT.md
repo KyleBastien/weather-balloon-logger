@@ -106,7 +106,11 @@ Rationale: centerline entry clears the real shield holes while the short symmetr
 
 ## Completed substitution state and remaining fabrication holds
 
-All substitutions are complete: the board contains 23 populated electrical footprints plus four NPTH mounting holes, no `CopperheadDraft_*` names, and zero SMD pads. All populated parts use plated through-hole pads. J2's stock footprint is stored at 0° because its library-local pad row is vertical.
+All substitutions are complete: the board contains 23 populated electrical
+footprints, four NPTH mounting holes, and one padless front-silkscreen graphic
+footprint (`G1`), with no `CopperheadDraft_*` names and zero SMD pads. All
+populated parts use plated through-hole pads. J2's stock footprint is stored at
+0° because its library-local pad row is vertical.
 
 The final all-through-hole placement is C1 (173,115), C2 (173,121), C3 (173,132), C4 (107.7,133.3), C5 (103,115.5), U1 (161,121.5), U2 (114,133), D1 (173,145), Q1 (115.7,149), R1 (160,145), R2 (103,148), and R3 (114,144), in millimetres. Normal KiCad DRC reports zero violations and zero unconnected pads.
 
