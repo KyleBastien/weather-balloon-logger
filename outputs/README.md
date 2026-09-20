@@ -34,3 +34,14 @@ All rows now have exact MPNs, but the BOM is not a procurement release until
 the physical-fit and mating-part checks in the readiness checklist pass.
 `jlcpcb-bom.csv` is intentionally not an assembly release because this board is
 intended for home through-hole assembly.
+
+## Fit-check purchasing
+
+`fit-check-order-list.xlsx` is the filterable purchasing workbook for one
+complete physical-fit prototype plus practical spares. It includes the exact
+PCB MPNs, LightAPRS-W 2.0, battery and cutdown mating hardware, and a separate
+hold-closure sheet for items that cannot safely be selected yet. The readable
+source and assembly notes are in `../docs/FIT_CHECK_ORDER_LIST.md`; regenerate
+the workbook with `../scripts/build_fit_check_order_list.mjs`. The three
+`fit-check-order-list-*.png` files are rendered previews used to verify every
+worksheet's layout without opening Excel.
