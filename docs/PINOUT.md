@@ -1,116 +1,70 @@
 # Pinout — Weather Balloon Logger harness
 
-Authoritative LightAPRS-W 2.0 carrier assignment. J2 matches the verified 11-position 2.54 mm module edge header. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is the active-high cutdown command into U2; the exposed I2C bus drives a PCF8574N at address 0x20. Logic remains 3.3 V. Dedicated fixed `LOGGER_5V` from Pololu S7V8F5 item 2123 powers OpenLog and U2; the schematic and PCB are synchronized and fully routed.
+Authoritative LightHABTracker 1.0 electrical assignment for this bounded schematic pass. J2 is the official known nine-position order A1, A2, 3V3, GND, SCL, SDA, SCK, MISO, MOSI. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is active-low LED_N. The PCB and mechanical documents intentionally remain stale until the later layout pass.
 
 ## Host interface J2
 
 | Refdes | Pin | Net | Host mapping / rationale |
 | --- | --- | --- | --- |
-| J2 | 1 | PACK_SW | RAW/VBAT input from switched pack positive; SW1 physically opens this rail when OFF. |
-| J2 | 2 | GND | First module ground. |
-| J2 | 3 | UART_TX | A1/PB08, SERCOM4/PAD0 TX to OpenLog RXI; no host RX is assigned. |
-| J2 | 4 | CUTDOWN_CTRL | A2/PB09 active-high input to U2 pin 2; R3 guarantees reset-time default-off. |
-| J2 | 5 | 3V3 | Regulated module rail powering OpenLog, U1, and the LED anode path. |
-| J2 | 6 | GND | Second module ground. |
-| J2 | 7 | I2C_SCL | Exposed SCL/PA23 shared with the module's existing I2C devices; no duplicate carrier pull-up is populated pending measured bus resistance. |
-| J2 | 8 | I2C_SDA | Exposed SDA/PA22 shared with the module's existing I2C devices; connects to U1 SDA. |
-| J2 | 9 | NC | Physical SCK/PB11 contact is present but intentionally unused by this carrier. |
-| J2 | 10 | NC | Physical MISO/PA12 contact is present but intentionally unused by this carrier. |
-| J2 | 11 | NC | Physical MOSI/PB10 contact is present but intentionally unused by this carrier. |
+| J2 | 1 | UART_TX | A1/PB08 one-way host TX through R4 to OpenLog RXI. |
+| J2 | 2 | LED_N | A2/PB09 active-low LED sink; R2 pulls it to 3V3 so reset/high-impedance defaults D1 off. |
+| J2 | 3 | 3V3 | LightHAB regulated 3.3 V for the LED anode path and R2 pull-up. |
+| J2 | 4 | GND | Common signal and power return. |
+| J2 | 5 | NC | Physical SCL contact intentionally unused on this carrier. |
+| J2 | 6 | NC | Physical SDA contact intentionally unused on this carrier. |
+| J2 | 7 | NC | Physical SCK contact intentionally unused on this carrier. |
+| J2 | 8 | NC | Physical MISO contact intentionally unused on this carrier. |
+| J2 | 9 | NC | Physical MOSI contact intentionally unused on this carrier. |
 
-PB08 and PB09 have no ESP32-style boot-strap role on ATSAMD21G18. R3 is the static default-off gate path: 0 µA when cutdown is low and about 5 µA while the gate is driven near 5 V. U1 address pins A0/A1/A2 are strapped low for 0x20; its quasi-bidirectional ports power up high, so P0 leaves D1 off until firmware explicitly drives it low.
+The A1/PB08 and A2/PB09 assignments follow the requested LightHAB interface contract. R2 is the intentional hardware reset-default-off path for the active-low LED; the former PCF8574 and cutdown-driver reset behavior no longer applies.
 
 ## Complete schematic pin/net table
 
 | Refdes | Pin | Net | Function / intentional absence |
 | --- | --- | --- | --- |
-| J1 | 1 | PACK_IN | Unswitched L91 pack positive input. |
-| J1 | 2 | GND | Pack return. |
-| SW1 | 1 | PACK_SW | Selected ON throw. |
-| SW1 | 2 | PACK_IN | Switch common. |
-| SW1 | 3 | NC | Intentional unused throw implements ON/OFF. |
-| A2 | 1 | PACK_SW | SHDN tied high to the switched pack for deterministic enable. |
-| A2 | 2 | PACK_SW | VIN from the switched 3S pack. |
+| J1 | 1 | VBATT | LightHAB VBATT feed to A2; onboard-switch control of this rail is unverified. |
+| J1 | 2 | GND | LightHAB power return. |
+| A2 | 1 | VBATT | SHDN tied to LightHAB VBATT under the unverified onboard-switch assumption. |
+| A2 | 2 | VBATT | S7V8F5 VIN from LightHAB VBATT. |
 | A2 | 3 | GND | Regulator return. |
-| A2 | 4 | LOGGER_5V | Fixed 5 V output for OpenLog only. |
-| J2 | 1 | PACK_SW | RAW/VBAT input. |
-| J2 | 2 | GND | Module ground. |
-| J2 | 3 | UART_TX | A1/PB08 SERCOM4 TX. |
-| J2 | 4 | CUTDOWN_CTRL | A2/PB09 active-high input to U2 pin 2. |
-| J2 | 5 | 3V3 | Module regulated output. |
-| J2 | 6 | GND | Module ground. |
-| J2 | 7 | I2C_SCL | Shared host I2C clock. |
-| J2 | 8 | I2C_SDA | Shared host I2C data. |
-| J2 | 9 | NC | SCK contact intentionally unused. |
-| J2 | 10 | NC | MISO contact intentionally unused. |
-| J2 | 11 | NC | MOSI contact intentionally unused. |
-| A1 | 1 | NC | BLK/FTDI orientation pin intentionally unused. |
+| A2 | 4 | LOGGER_5V | Fixed 5 V output for OpenLog. |
+| J2 | 1 | UART_TX | A1/PB08 host TX to R4. |
+| J2 | 2 | LED_N | A2/PB09 active-low LED cathode/sink node. |
+| J2 | 3 | 3V3 | LightHAB regulated 3.3 V. |
+| J2 | 4 | GND | Common return. |
+| J2 | 5 | NC | Physical SCL contact intentionally unused. |
+| J2 | 6 | NC | Physical SDA contact intentionally unused. |
+| J2 | 7 | NC | Physical SCK contact intentionally unused. |
+| J2 | 8 | NC | Physical MISO contact intentionally unused. |
+| J2 | 9 | NC | Physical MOSI contact intentionally unused. |
+| A1 | 1 | NC | BLK orientation pin intentionally unused. |
 | A1 | 2 | GND | OpenLog ground. |
-| A1 | 3 | LOGGER_5V | OpenLog VCC from S7V8F5 fixed 5 V output. |
-| A1 | 4 | NC | TXO intentionally unused; logger is receive-only. |
-| A1 | 5 | OPENLOG_RXI | RXI receives host log bytes through R4. |
-| A1 | 6 | NC | GRN/FTDI orientation pin intentionally unused. |
+| A1 | 3 | LOGGER_5V | OpenLog VCC from S7V8F5. |
+| A1 | 4 | NC | TXO intentionally unused. |
+| A1 | 5 | OPENLOG_RXI | RXI receives host bytes through R4. |
+| A1 | 6 | NC | GRN orientation pin intentionally unused. |
 | C1 | 1 | LOGGER_5V | OpenLog bulk bypass. |
 | C1 | 2 | GND | Bypass return. |
 | C2 | 1 | LOGGER_5V | OpenLog high-frequency bypass. |
 | C2 | 2 | GND | Bypass return. |
-| U1 | 1 | GND | A0 address strap low. |
-| U1 | 2 | GND | A1 address strap low. |
-| U1 | 3 | GND | A2 address strap low; address is 0x20. |
-| U1 | 4 | LED_N | P0 active-low write LED sink. |
-| U1 | 5 | NC | P1 reserved for future GPS-status LED. |
-| U1 | 6 | NC | P2 reserved for future GPS-status LED. |
-| U1 | 7 | NC | P3 reserved for future GPS-status LED. |
-| U1 | 8 | GND | Expander ground. |
-| U1 | 9 | NC | P4 reserved for future GPS-status LED. |
-| U1 | 10 | NC | P5 reserved for future GPS-status LED. |
-| U1 | 11 | NC | P6 reserved for future GPS-status LED. |
-| U1 | 12 | NC | P7 reserved for future GPS-status LED. |
-| U1 | 13 | NC | INT intentionally unused. |
-| U1 | 14 | I2C_SCL | Shared I2C clock. |
-| U1 | 15 | I2C_SDA | Shared I2C data. |
-| U1 | 16 | 3V3 | Expander VDD. |
-| C3 | 1 | 3V3 | U1 local decoupling. |
-| C3 | 2 | GND | U1 decoupling return. |
+| R4 | 1 | UART_TX | Host side of UART back-power limiter. |
+| R4 | 2 | OPENLOG_RXI | OpenLog receive side. |
 | R1 | 1 | 3V3 | LED current-limiter supply. |
 | R1 | 2 | LED_A | D1 anode feed. |
-| D1 | 1 | LED_N | Cathode; U1 P0 active-low sink. |
+| D1 | 1 | LED_N | Cathode driven active-low by J2.2. |
 | D1 | 2 | LED_A | Anode from R1. |
-| R4 | 1 | UART_TX | Host transmit side of the back-power-limiting resistor. |
-| R4 | 2 | OPENLOG_RXI | OpenLog receive side. |
-| U2 | 1 | LOGGER_5V | Gate-driver supply. |
-| U2 | 8 | LOGGER_5V | Gate-driver supply. |
-| U2 | 2 | CUTDOWN_CTRL | Active-high 3.3 V command input. |
-| U2 | 3 | NC | Intentionally unconnected. |
-| U2 | 4 | GND | Gate-driver return. |
-| U2 | 5 | GND | Gate-driver return. |
-| U2 | 6 | CUTDOWN_DRIVE | Non-inverting output tied to pin 7 and R2. |
-| U2 | 7 | CUTDOWN_DRIVE | Non-inverting output tied to pin 6 and R2. |
-| C4 | 1 | LOGGER_5V | 100 nF local U2 bypass. |
-| C4 | 2 | GND | Bypass return. |
-| C5 | 1 | LOGGER_5V | 4.7 µF local U2 bulk bypass. |
-| C5 | 2 | GND | Bypass return. |
-| R2 | 1 | CUTDOWN_DRIVE | Series gate input from the tied U2 outputs. |
-| R2 | 2 | CUTDOWN_GATE | Q1 gate node. |
-| R3 | 1 | CUTDOWN_GATE | Intentional default-off pulldown. |
-| R3 | 2 | GND | Pulldown return. |
-| Q1 | 1 | CUTDOWN_GATE | Gate. |
-| Q1 | 2 | CUTDOWN_DRAIN | Drain to nichrome low side. |
-| Q1 | 3 | GND | Source. |
-| J5 | 1 | PACK_SW | Nichrome high side. |
-| J5 | 2 | CUTDOWN_DRAIN | Nichrome switched low side. |
-| J6 | 1 | RF_APRS | Single LightAPRS VHF corner contact. |
-| J7 | 1 | RF_WSPR | Single LightAPRS HF corner contact. |
-| J3 | 1 | RF_APRS | APRS SMA center. |
-| J3 | 2 | GND | APRS SMA shield. |
-| J4 | 1 | RF_WSPR | WSPR SMA center. |
-| J4 | 2 | GND | WSPR SMA shield. |
+| R2 | 1 | 3V3 | Reset-default-off pull-up supply. |
+| R2 | 2 | LED_N | 100 kΩ pull-up keeps D1 off while J2.2 is high-impedance. |
+| J3 | 1 | OUT1 | LightHAB pyro output passed directly to J5.1; rating unverified. |
+| J3 | 2 | GND | LightHAB pyro return passed directly to J5.2. |
+| J5 | 1 | OUT1 | Direct LightHAB OUT1 cutdown output. |
+| J5 | 2 | GND | Direct LightHAB pyro return. |
 
 ## Intentional absences
 
 - No host RX path: OpenLog TXO remains unused.
-- No UART-sunk LED: D1 is isolated from UART_TX and is controlled by U1 P0.
-- P1–P7 are reserved but intentionally no-connect until future GPS-status LEDs are specified and budgeted.
-- U1 INT is unused; firmware may poll or write the expander without consuming another host pin.
-- No added I2C pull-ups are populated until the existing LightAPRS-W bus pull-ups and effective resistance are verified.
-- SCK, MISO, and MOSI are present on J2 but intentionally unused by this carrier.
+- No I2C expander: U1 and C3 are intentionally removed because LightHAB A2/PB09 drives the LED directly.
+- No carrier pyro driver: U2, Q1, R3, C4, and C5 are intentionally removed because LightHAB OUT1/GND passes directly to J5; its switching and current rating remain unverified.
+- No carrier RF connectors or nets are captured in this electrical pass; J4, J6, and J7 are intentionally removed.
+- SCL, SDA, SCK, MISO, and MOSI remain physically present on J2.5–J2.9 and are intentional no-connects.
+- The PCB, layout/mechanical documents, and generated outputs are intentionally deferred and must not be treated as synchronized with this schematic.

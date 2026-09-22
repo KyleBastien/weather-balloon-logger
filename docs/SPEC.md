@@ -1,161 +1,92 @@
-# Specification — Weather Balloon Logger
+# Specification — Weather Balloon Logger carrier
 
-Carrier board that integrates a LightAPRS-W 2.0 tracker with flight-pack power, dual SMA antennas, UART SD logging, a write-activity LED, and a nichrome cutdown driver. Firmware lives on the LightAPRS-W 2.0 (ATSAMD21G18 / ARM Cortex-M0). This board is the harness, not a second MCU.
+This carrier adapts a LightHABTracker 1.0 to a SparkFun OpenLog, an activity LED, and a removable nichrome cutdown lead. The LightHABTracker remains the only flight computer and supplies GPS, APRS/WSPR radios, a 3×AA battery holder, two SMA connectors, and two pyro channels.
 
-## 1. Device and architecture
-
-| Item | Requirement |
-| --- | --- |
-| Host | LightAPRS-W 2.0 (QRP Labs), ATSAMD21G18 (ARM Cortex-M0), hosts all flight firmware. Rationale: brief names this as brains. |
-| Role of this PCB | Power distribution, connectors, OpenLog + write LED, cutdown switch, downward SMA. No competing MCU. |
-| Flight duration | **≥ 4 h** continuous GPS + APRS + WSPR for the whole flight. Source: brief “~4 hour flight”. |
-| Logging | SparkFun OpenLog (ATmega328, headers), UART from host, post-flight SD analysis. |
-| Cutdown | Nichrome burn wire severs payload-from-balloon cord at max altitude; driven from this board. |
-| Operator control | Mechanical pack on/off switch. Rationale: brief requires on/off for the battery array. |
-
-## 2. Power and energy budget
-
-### 2.1 Cells and pack
-
-| Parameter | Value | Status |
-| --- | --- | --- |
-| Chemistry | Energizer L91 Ultimate Lithium AA (Li-FeS2) | Stated |
-| Topology | **Exactly 3 series cells**; no 4-cell option in the approved architecture | Fixed requirement; series cells do not add amp-hours |
-| Holder | Fixed 3AA holder for Energizer L91 cells | Approved architecture |
-| Per-cell voltage | Fresh ≤ **1.8 V**, nominal **1.5 V**, end-of-discharge **≥ 1.0 V** (do not discharge L91 into reversal) | ASSUMED from L91 datasheet class |
-| Pack voltage | **3.0–5.4 V** (3s EOD–fresh) | Fixed requirement |
-| Host feed | LightAPRS-W 2.0 RAW/J2.1 remains directly on switched `PACK_SW`; its continuous-GPS load is never routed through the logger regulator. | Approved split-power architecture |
-| Cutdown feed | J5.1 remains directly on switched `PACK_SW`; the nichrome path must never be routed through a regulator. | Approved split-power architecture |
-
-**Forbidden:** alkaline AA/AAA, LiPo 1S, a 4-cell flight pack, routing LightAPRS RAW or J5.1 through the logger regulator, and paralleling cells without per-string fusing.
-
-### 2.2 Energy (continuous GPS, 4 h)
-
-| Parameter | Value | Status |
-| --- | --- | --- |
-| GPS mode | Continuous for the entire flight (not 1-Hz duty-cycled off) | Stated |
-| ASSUMED average pack current | **≤ 200 mA** mean over 4 h (GPS on + ATSAMD21G18 + OpenLog + APRS/WSPR TX duty). Peak TX may exceed this; peaks do not relax the mean. | ASSUMED |
-| Energy at 4 h | 200 mA × 4 h = **800 mAh** at pack current | Derived |
-| L91 usable capacity | Must be demonstrated as **≥ 1600 mAh** under the actual cold temperature, load profile, and end-of-discharge limit | Qualification requirement |
-| Design margin | Four-hour demand remains **≤ 800 mAh**; usable pack capacity must be **≥ 1600 mAh** under the actual cold/load profile | Approved budget |
-| Verdict | Fixed 3s L91 is acceptable only after the measured cold/load profile demonstrates the required ≥1600 mAh usable capacity; series cell count is not an amp-hour adjustment. | Decision |
-
-### 2.3 Quiescent / leakage (pre-flight and cutdown-off)
-
-This vehicle is **GPS-on for the whole powered flight**; there is **no in-flight deep-sleep current budget**. Leakage still matters on the pad with the switch on and cutdown idle, and for any always-connected divider.
-
-| Parameter | Value | Status |
-| --- | --- | --- |
-| Switch OFF pack current | **0 µA** except holder/switch leakage. Switch must **break the pack positive**. | ASSUMED |
-| Switch ON, cutdown OFF, logger idle | Board-added idle current **≤ 8 mA** beyond the LightAPRS-W 2.0 module itself, including OpenLog, U1, regulator Iq, and leakage | Approved budget |
-| Logger active/write peak | Board-added active/write peak **≤ 30 mA** beyond LightAPRS-W 2.0 | Approved budget |
-| OpenLog current | Idle **≤ 7 mA**; write **≤ 25 mA** | Approved qualification limits |
-| Logger regulator quiescent current | Pololu S7V8F5 item 2123 **< 0.2 mA** | Approved selection limit |
-| Cutdown MOSFET/relay OFF leakage | **≤ 50 µA** at max pack voltage | ASSUMED |
-| Write LED OFF leakage | **≤ 1 µA** (no bleed path that looks like a glow) | ASSUMED |
-| Pull-ups/downs on host GPIOs | Must not violate LightAPRS-W 2.0 strapping; extra leakage through straps **≤ 50 µA** total | ASSUMED — **check MCU strapping table before any pin** |
-
-**A part that fits voltage/package but blows Iq is a bug.** The approved split-power budget is OpenLog idle ≤7 mA, OpenLog write ≤25 mA, S7V8F5 quiescent current <0.2 mA, board-added idle ≤8 mA, and board-added active/write peak ≤30 mA. U1 remains limited to 100 µA, while the existing cutdown-off, LED-off, and host-strap leakage limits remain unchanged. Gate pulldown on the cutdown FET is **intentional** (missing pulldown looks like a mistake but a floating gate can false-fire nichrome).
-
-### 2.4 Logic and rails on this board
-
-| Rail | Value | Status |
-| --- | --- | --- |
-| GPIO / LED / FET gate | **3.3 V** logic, sourced from LightAPRS-W 3V3 (or equivalent regulated 3.3 V), not raw pack | ATSAMD21G18, 3.3 V |
-| Logger regulator input | Pololu S7V8F5 item 2123 VIN and SHDN on switched `PACK_SW`, input rating **2.7–11.8 V**; no reverse-polarity protection | Selected dedicated OpenLog supply |
-| LOGGER_5V | S7V8F5 fixed **5 V** VOUT powers OpenLog A1 VCC only; GND is common | Approved split-power architecture |
-| OpenLog UART | 3.3 V one-way host TX → OpenLog RXI; OpenLog TXO is intentionally unused; verify 3.3 V input compatibility while A1 is powered at 5 V | Stage-4 pin-budget decision |
-| LED / I2C expander | 3V3 → **1 kΩ** → D1 → U1 P0 (`LED_N`). PCF8574N address pins are low for 0x20; P0 is active-low and powers up high/off. P1–P7 are reserved. | U1 maximum standby current ≤ 100 µA; activity indication is not physical SD-commit proof |
-
-The S7V8F5 is a 0.1-inch four-pin module installed with a direct-solder straight header. Its module temperature rating is unverified and requires cold qualification. It has no reverse-polarity protection, so pack polarity must be enforced upstream. The LED and U1 remain on LightAPRS 3V3; only OpenLog moves to `LOGGER_5V`.
-
-## 3. Antennas
+## 1. Architecture
 
 | Item | Requirement | Status |
 | --- | --- | --- |
-| Radios | APRS **and** WSPR for the entire flight | Stated |
-| Connectors | **Two SMA** (jacks) on this board, **facing downward** so coax/antennas run through the payload | Stated |
-| Mapping | One SMA **APRS** (typically 2 m), one SMA **WSPR** (HF; LightAPRS-W 2.0 band as built) | ASSUMED split |
-| Keepout | Copper/parts keepout around SMA center pins and keep RF path short; no battery metal in the near-field of the jacks **ASSUMED ≥ 5 mm** board keepout from SMA dielectric | ASSUMED |
-| Impedance | **50 Ω** SMA | ASSUMED |
+| Host | LightHABTracker 1.0, ATSAMD21G18 | Selected |
+| Flight duration | At least 4 h with GPS and flight firmware continuously available | Required; cold-load test pending |
+| Battery | Three Energizer L91 AA cells in the tracker holder | Selected |
+| Logger | SparkFun OpenLog DEV-13955, one-way UART receive | Selected |
+| Logger supply | Pololu S7V8F5 fixed 5 V buck-boost | Selected |
+| Cutdown | LightHAB onboard OUT1 pyro channel passed directly to J5 | Selected; electrical rating unverified |
+| Carrier assembly | All populated carrier parts directly soldered through-hole; no SMD pads | Required |
 
-## 4. SD logger and write LED
+The tracker is approximately 56 × 75 mm and 36 g without batteries or antennas according to the vendor. Exact hole centers, drills, header pitch and coordinates, maximum battery-holder height, and connector/switch geometry are not published and must be measured on a purchased unit before fabrication.
 
-| Item | Requirement |
+## 2. Power
+
+LightHAB accepts 2.7–16 V and carries its own 3×AA holder. The carrier does not contain a second battery holder or master switch. J1 receives LightHAB `VBATT` and `GND`; `VBATT` feeds both VIN and SHDN on A2. This design assumes the photographed LightHAB switch disconnects or controls J1 VBATT. That behavior is **UNVERIFIED**. If J1 remains live with the tracker switched off, this topology must be revised before fabrication.
+
+A2 produces `LOGGER_5V` only for OpenLog A1 and its local C1/C2 bypass. The tracker 3V3 rail powers only the low-current activity LED path. Common ground joins J1, J2, A1, A2, J3, and J5.
+
+| Parameter | Requirement |
 | --- | --- |
-| Module | SparkFun OpenLog with headers (ATmega328, preprogrammed), example Amazon B0BHL56BP5 |
-| Interface | One-way UART: host A1/PB08 SERCOM4 TX → OpenLog RXI; OpenLog TXO is intentionally no-connect; GND common |
-| Power | OpenLog A1 VCC on dedicated fixed `LOGGER_5V` from Pololu S7V8F5 item 2123; see §2.4 |
-| Write LED | On **this** board. 3V3 → 1 kΩ → D1 → PCF8574N P0; firmware drives P0 low for activity and high/off otherwise. P0 powers up high, so reset defaults the LED off. |
-| Absence of USB-serial bridge on this PCB | **Intentional** — OpenLog is the logger; programming the ATSAMD21G18 stays on LightAPRS-W 2.0 |
+| Mission energy | Demonstrate ≥4 h at the real cold-temperature and RF duty profile |
+| OpenLog idle/write | Qualify ≤7 mA idle and ≤25 mA writing |
+| S7V8F5 input | 2.7–11.8 V; no reverse-polarity protection |
+| S7V8F5 quiescent | <0.2 mA enabled |
+| LED reset state | Off; R2=100 kΩ pulls active-low `LED_N` to 3V3 |
+| Switch-off state | Measure J1 VBATT and carrier current with the LightHAB switch off |
 
-## 5. Cutdown (nichrome)
+## 3. Interfaces
 
-| Item | Requirement | Status |
+### J2 — LightHAB extended pins
+
+J2 is a directly soldered 1×9 through-hole interface in this order:
+
+| Pin | LightHAB signal | Carrier use |
 | --- | --- | --- |
-| Load | Nichrome wire heats and burns a cord at max altitude | Stated |
-| Switch | Low-side driver preferred: **logic-level MOSFET**, not a 3.3 V relay module, unless FET cannot be fully enhanced at 3.3 V Vgs | ASSUMED (relay coil Iq and vibration) |
-| Brief examples | IRLZ44N TO-220 (Amazon B0CBKH4XGL) **or** 3.3 V opto relay (B0D8PSX9WL) | Stated options |
-| IRLZ44NPBF gate drive | U2 TC4422AVPA accepts the 3.3 V command (VIH requirement 2.4 V) and drives Q1 from fixed `LOGGER_5V`; use Q1's guaranteed maximum 35 mΩ at VGS=4.5 V. C4/C5 are local 100 nF/4.7 µF bypass. | Captured; still verify 2 A/30 s SOA and temperature rise on released copper |
-| Cutdown current | **ASSUMED ≤ 2 A** burst for ≤ 30 s; FET/relay and trace must carry this | ASSUMED |
-| Default-off | Gate/input **pulldown**; cutdown **must not** fire on host reset or strap default | Required |
-| Connector | 2-pin for nichrome, away from SMA keepout | ASSUMED |
+| 1 | A1 / PB08 | `UART_TX` through R4 to OpenLog RXI |
+| 2 | A2 / PB09 | Active-low `LED_N` |
+| 3 | 3V3 | LED supply and R2 pull-up |
+| 4 | GND | Common return |
+| 5 | SCL | Intentional no-connect |
+| 6 | SDA | Intentional no-connect |
+| 7 | SCK | Intentional no-connect |
+| 8 | MISO | Intentional no-connect |
+| 9 | MOSI | Intentional no-connect |
 
-## 6. Pin and strapping rules (host)
+A1/PB08 and A2/PB09 appear unused in the reviewed upstream firmware at commit `797b78d120b0e844f60798b88dfa3735f27e89da`, but integration must be rebased and retested against the exact firmware shipped on the purchased tracker.
 
-LightAPRS-W 2.0 (ATSAMD21G18 / ARM Cortex-M0) breaks out only "I2C, SPI, 2× Analog"; most GPIO are already used by GPS, the Si4463/Si5351 radios, and flash.
+### OpenLog and activity LED
 
-- **MCU is ATSAMD21G18, not ESP32:** the SAMD21 has no ESP32-style GPIO boot straps (no GPIO0/2/12/15 rules). It boots from internal flash; the bootloader is a double-tap on RESET; SWDIO/SWCLK/RESET are not on the extension header. The governing rule is the verified occupied-pin map, not strap avoidance.
-- **Occupied (do not reuse):** D0/D1 GPS UART, D3 VHF PTT, D4 Si4463 SDN, D7 GPS power, D8 Si4463 nSEL, D9 Si4463 nIRQ, A3 Si5351 power, A4 TCXO power, A5 battery sense; SDA/SCL (I2C: BMP180 + Si5351); MOSI/MISO/SCK (SPI: Si4463).
-- **Verified edge header:** J2 is the 11-position row RAW, GND, A1/PB08, A2/PB09, 3V3, GND, SCL, SDA, SCK, MISO, MOSI.
-- **Cutdown default-off** via gate pulldown is still required (a floating gate can false-fire nichrome on reset).
-- OpenLog uses one-way firmware SERCOM4 UART TX on J2.3 A1/PB08; the occupied GPS UART remains untouched and OpenLog TXO remains unused.
-- J2.4 A2/PB09 drives U2 pin 2 on CUTDOWN_CTRL; U2 pins 6/7 drive R2 through CUTDOWN_DRIVE, and R3 keeps Q1 off during reset. A0 is not claimed.
-- J2.7/J2.8 share SCL/SDA with U1 PCF8574N at 0x20. U1 P0 sinks D1 active-low; P1–P7 and INT are intentional no-connects. SCK/MISO/MOSI are physically present on J2 but unused by the carrier.
-- RTC: **not required** on this carrier (host RTC/GPS time is sufficient). Absence of a carrier RTC is **intentional**.
+OpenLog is receive-only: J2.1 → R4 1 kΩ → A1 RXI. A1 TXO is intentionally unused. A2 supplies fixed 5 V to A1 VCC. The LED path is 3V3 → R1 1 kΩ → D1 → `LED_N`; firmware drives J2.2 low during activity. R2 keeps it off while the pin is high-impedance at reset. Activity indicates firmware intent to log, not confirmed SD media completion.
 
-The authoritative connector and component pin table is `docs/PINOUT.md`; J2 pins 9–11, A1 pins 1/4/6, U1 P1–P7, and U1 INT are intentional no-connects.
+### Cutdown
 
-## 7. Mechanical / environment
+J3 receives LightHAB OUT1/GND and connects directly to the same pins on J5, a horizontal JST-XH connector. The carrier adds no MOSFET, gate driver, or high-current power path. OUT1 polarity, switching topology, pulse duration, current capability, default state, and fault behavior are **UNVERIFIED**. Do not connect nichrome until those properties and the complete harness are bench-tested with a current-limited supply and inert load.
 
-| Item | Value | Status |
-| --- | --- | --- |
-| SMA orientation | Perpendicular to board, **mates pointing down** (through payload) | Stated |
-| Temperature | **ASSUMED −40 °C to +40 °C** (ascent to burst). L91 chosen because alkaline fails cold. |
-| Conformal / enclosure | Out of scope for this spec seed | — |
-| Mass / outline | Unspecified; **ASSUMED** fit under a typical HAB payload foam; no kg budget stated | ASSUMED unspecified |
+### Antennas
 
-## 8. What this spec does **not** include (intentional)
+Both antenna connections remain entirely on the LightHABTracker. The carrier contains no SMA connector and no RF trace. The PCB must keep mechanical clearance below and around both onboard SMA connectors and their cable bend volumes.
 
-- On-board MCU, GPS, or APRS PA — those are the LightAPRS-W 2.0 module.
-- Charging circuitry — primary L91 cells.
-- 5 V USB power as a flight source.
-- High-side nichrome without an explicit later decision.
-- `openspec/` capability specs — not seeded unless that tree already exists.
+## 4. Firmware allocation
 
-## 9. Constraint index (must match `record_constraint`)
+- A1/PB08: SERCOM4 UART TX to OpenLog.
+- A2/PB09: active-low activity LED; write HIGH before configuring OUTPUT to avoid a reset flash.
+- LightHAB D4/D5 and the vendor pyro implementation remain owned by upstream firmware. OUT1 is selected for cutdown.
+- SCL, SDA, SCK, MISO, and MOSI are not used by the carrier.
+- The local firmware is an integration/qualification scaffold, not a replacement for the complete LightHAB flight firmware.
 
-| Key | Bound |
-| --- | --- |
-| `flight.duration_h` | min 4 |
-| `power.pack_chemistry` | L91 AA Li-FeS2 |
-| `power.series_cells` | exactly 3 |
-| `power.pack_voltage_V` | 3.0–5.4 (fixed 3s) |
-| `power.mean_flight_current_mA` | max 200 |
-| `power.flight_energy_mAh` | min usable 1600 after derate (2× 800 mAh) |
-| `power.switch_off_current_uA` | max 0 (ideal; switch breaks pack+) |
-| `power.board_added_idle_mA` | max 8 (excluding LightAPRS-W 2.0) |
-| `power.board_added_active_peak_mA` | max 30 during logger activity/write |
-| `power.openlog_idle_mA` | max 7 |
-| `power.openlog_write_mA` | max 25 |
-| `power.logger_regulator_iq_mA` | max 0.2 for S7V8F5 |
-| `power.led_expander_idle_uA` | max 100 for U1 |
-| `power.cutdown_off_leakage_uA` | max 50 |
-| `power.led_off_leakage_uA` | max 1 |
-| `power.gpio_logic_V` | 3.3 |
-| `openlog.vcc_V` | 3.3–12 |
-| `antenna.connector` | SMA 50 Ω, two jacks, downward |
-| `antenna.keepout_mm` | min 5 (ASSUMED, SMA dielectric) |
-| `cutdown.load_current_A` | max 2 burst |
-| `cutdown.vgs_fully_on_V` | must be valid at 3.3 V (IRLZ44N not auto-approved) |
-| `power.strap_leakage_uA` | max 50 extra through host straps |
+## 5. Mechanical and environment
+
+The carrier outline is 90 × 80 mm. Reserve a provisional 56 × 75 mm LightHAB zone on the right side with the LightHAB component face outward and its battery holder between module and carrier. Use provisional 18–20 mm board-to-board clearance. Place carrier parts on the left wing and keep the OpenLog microSD card accessible. Align the LightHAB USB connector and two SMA connectors with board edges and preserve plug/cable access.
+
+All LightHAB mounting holes and mating interface pads in this revision are photo-derived placeholders and must be labeled **UNVERIFIED — DO NOT FABRICATE**. Final placement requires a purchased module or an official dimensioned drawing.
+
+Qualification temperature remains −40 °C to +40 °C unless the mission profile establishes a wider range. Cold-soak the complete powered stack, batteries, logger, SD card, connectors, and cutdown harness.
+
+## 6. Release gates
+
+Before a fit-test PCB:
+
+1. Measure the LightHAB outline, four hole centers and drills, 1×9 pitch/coordinates/drills, J1/J3 pad coordinates/drills, holder height, and maximum component height.
+2. Confirm mounting orientation and USB/SMA/cable access.
+3. Confirm whether the onboard switch controls J1 VBATT.
+4. Confirm OUT1/GND polarity, voltage, current limit, switching topology, default state, and supported pulse duration.
+5. Reconcile those measurements into the footprint, reroute, and regenerate 1:1 plots.
+
+Before fabrication, additionally complete DRC/ERC, footprint-vs-purchased-part checks, cold/power tests, pyro firing tests, firmware integration tests, and a physical 1:1 paper fit check. Until those gates pass, generated fabrication files are engineering previews only.

@@ -133,4 +133,42 @@
 		)
 	)
 )
+(symbol "OUT1"
+	(power)
+	(pin_names (offset 0))
+	(exclude_from_sim yes)
+	(in_bom no)
+	(on_board no)
+	(property "Reference" "#PWR" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+	(property "Value" "OUT1" (at 0 3.556 0) (effects (font (size 1.27 1.27)) hide))
+	(symbol "OUT1_0_1"
+		(polyline (pts (xy 0 0) (xy 0 1.27)) (stroke (width 0.254) (type default)) (fill (type none)))
+		(polyline (pts (xy -0.762 1.27) (xy 0 2.54) (xy 0.762 1.27) (xy -0.762 1.27)) (stroke (width 0.254) (type default)) (fill (type outline)))
+	)
+	(symbol "OUT1_1_1"
+		(pin power_in line (at 0 0 90) (length 0) hide
+			(name "OUT1" (effects (font (size 1.27 1.27))))
+			(number "1" (effects (font (size 1.27 1.27))))
+		)
+	)
+)
+(symbol "VBATT"
+	(power)
+	(pin_names (offset 0))
+	(exclude_from_sim yes)
+	(in_bom no)
+	(on_board no)
+	(property "Reference" "#PWR" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+	(property "Value" "VBATT" (at 0 3.556 0) (effects (font (size 1.27 1.27)) hide))
+	(symbol "VBATT_0_1"
+		(polyline (pts (xy 0 0) (xy 0 1.27)) (stroke (width 0.254) (type default)) (fill (type none)))
+		(polyline (pts (xy -0.762 1.27) (xy 0 2.54) (xy 0.762 1.27) (xy -0.762 1.27)) (stroke (width 0.254) (type default)) (fill (type outline)))
+	)
+	(symbol "VBATT_1_1"
+		(pin power_in line (at 0 0 90) (length 0) hide
+			(name "VBATT" (effects (font (size 1.27 1.27))))
+			(number "1" (effects (font (size 1.27 1.27))))
+		)
+	)
+)
 )
