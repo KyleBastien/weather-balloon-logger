@@ -1,6 +1,6 @@
 # Pinout — Weather Balloon Logger harness
 
-Authoritative LightHABTracker 1.0 electrical assignment for this bounded schematic pass. J2 is the official known nine-position order A1, A2, 3V3, GND, SCL, SDA, SCK, MISO, MOSI. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is active-low LED_N. The PCB and mechanical documents intentionally remain stale until the later layout pass.
+Authoritative LightHABTracker 1.0 carrier assignment. J2 is the official known nine-position order A1, A2, 3V3, GND, SCL, SDA, SCK, MISO, MOSI. A1/PB08 is one-way OpenLog UART TX; A2/PB09 is active-low LED_N. The PCB implements this mapping with provisional connector and mounting geometry pending measurement of the purchased tracker.
 
 ## Host interface J2
 
@@ -65,6 +65,6 @@ The A1/PB08 and A2/PB09 assignments follow the requested LightHAB interface cont
 - No host RX path: OpenLog TXO remains unused.
 - No I2C expander: U1 and C3 are intentionally removed because LightHAB A2/PB09 drives the LED directly.
 - No carrier pyro driver: U2, Q1, R3, C4, and C5 are intentionally removed because LightHAB OUT1/GND passes directly to J5; its switching and current rating remain unverified.
-- No carrier RF connectors or nets are captured in this electrical pass; J4, J6, and J7 are intentionally removed.
+- No carrier RF connectors or nets are present; the LightHAB onboard SMA connectors remain accessible inside the documented mechanical keepouts.
 - SCL, SDA, SCK, MISO, and MOSI remain physically present on J2.5–J2.9 and are intentional no-connects.
-- The PCB, layout/mechanical documents, and generated outputs are intentionally deferred and must not be treated as synchronized with this schematic.
+- The schematic and PCB are synchronized electrically; the LightHAB mounting/connector geometry remains explicitly provisional and blocks fabrication.

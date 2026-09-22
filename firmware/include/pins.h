@@ -6,8 +6,8 @@
 
 namespace weather_balloon {
 namespace pins {
-static constexpr uint8_t kCutdownCtrl = A2;       // J2.4 CUTDOWN_CTRL / PB09
-static constexpr uint8_t kOpenLogTx = A1;         // J2.3 UART_TX / PB08
+static constexpr uint8_t kActivityLed = A2;       // J2.2 LED_N / PB09, active-low
+static constexpr uint8_t kOpenLogTx = A1;         // J2.1 UART_TX / PB08
 static constexpr uint8_t kOpenLogTxPortGroup = 1; // PB08: PORT group B
 static constexpr uint8_t kOpenLogTxPortPin = 8;   // PB08
 static constexpr uint8_t kOpenLogSercom = 4;       // SERCOM4

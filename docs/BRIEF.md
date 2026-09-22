@@ -1,9 +1,16 @@
-# Weather Balloon Logger
+# Weather Balloon Logger carrier brief
 
-I want to build a board that brings together some off the shelf parts to log data for my Weather Balloon project. The main part and brains of the operation will be LightAPRS-W 2.0 tracker (https://qrp-labs.com/lightaprsw2.html) this uses an ATSAMD21G18 (ARM Cortex-M0) based chip so that will be host the main firmware to control everything. I'll be running a APRS and WSPR antenna for the entire flight, so we'll need hookups for the antenas on the board, facing downards so we can run them through the payload using an SMA connector for the antennas.
+Build a hand-solderable through-hole carrier around the QRP Labs LightHABTracker 1.0. LightHAB remains the GPS/APRS/WSPR host, supplies its own 3×AA battery holder and antenna connectors, and owns the two pyro outputs.
 
-I also need to be able to hook up a battery array to that with an on/off switch for controlling when it is on/off. The battery array needs to be able to support continious GPS usage for the entire ~4 hour flight using L91 Energizer Ultimate Lithium AA batteries. I'm thinking something like a 3AA Battery Cases with AAA Battery Adapters – Triple Battery Holder (https://www.amazon.com/dp/B07M7WYZ32?th=1) but maybe bigger if needed.
+The carrier shall:
 
-I also need to hook up an SD Card logger like the SparkFun OpenLog with Headers Open Source Data Logger ATmega328 VCC Input: 3.3V-12V Preprogrammed ATmega328 and bootloader (https://www.amazon.com/dp/B0BHL56BP5) to log all data to for offline analysis after the flight. I also want an LED light on the board that will flash everytime data is written to the SD card so we can visually check it's work.
+- mount the tracker once its exact geometry is measured;
+- power a SparkFun OpenLog with headers from LightHAB VBATT through a dedicated Pololu S7V8F5 fixed 5 V regulator;
+- send telemetry from A1/PB08 to OpenLog RXI through a 1 kΩ series resistor;
+- use A2/PB09 as an active-low write-attempt LED with a hardware 100 kΩ reset-default-off pull-up;
+- pass LightHAB OUT1/GND directly to a soldered JST-XH cutdown connector;
+- contain only through-hole soldered parts, with no SMD pads or carrier RF routing;
+- preserve access/keepouts for LightHAB USB, SMA connectors, battery holder, and solder joints;
+- remain explicitly blocked from fabrication until the purchased tracker is measured and passes a 1:1 exact-parts fit check.
 
-Last, I need a relay switch system probably via a MOSFET like IRLZ44N IRLZ44 MOSFET Transistors 47A 55V IRLZ44NPBF Logic Level Mosfets 47 Amp 55 Volt TO-220 (https://www.amazon.com/dp/B0CBKH4XGL?th=1). Or a relay device like DC 3.3V Relay Module 1 Channel Optocoupler Module (https://www.amazon.com/dp/B0D8PSX9WL). I'll be connecting a Nichrome wire to this relay so that I can burn a small piece of rope that will separate the balloon from the payload when we reach max altitiude.
+The carrier does not provide sockets, a second battery holder, a second power switch, an I²C expander, an external pyro MOSFET/driver, or carrier SMA connectors.

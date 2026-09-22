@@ -2,7 +2,7 @@
 """Generate firmware/include/pins.h from docs/PINOUT.md.
 
 Run from the repository root. The generator intentionally accepts only the
-Stage-4 J2 assignments required by this firmware scaffold and fails closed if
+LightHAB J2 assignments required by this firmware scaffold and fails closed if
 the authoritative table changes.
 """
 from pathlib import Path
@@ -19,10 +19,10 @@ for line in text.splitlines():
     if match:
         rows.setdefault((int(match.group(1)), match.group(2)), match.group(3))
 
-uart = rows.get((3, "UART_TX"), "")
-cutdown = rows.get((4, "CUTDOWN_CTRL"), "")
-if "A1/PB08" not in uart or "A2/PB09" not in cutdown:
-    raise SystemExit("PINOUT.md no longer matches J2.3 UART_TX=A1/PB08 and J2.4 CUTDOWN_CTRL=A2/PB09; review before regenerating")
+uart = rows.get((1, "UART_TX"), "")
+led = rows.get((2, "LED_N"), "")
+if "A1/PB08" not in uart or "A2/PB09" not in led:
+    raise SystemExit("PINOUT.md no longer matches J2.1 UART_TX=A1/PB08 and J2.2 LED_N=A2/PB09; review before regenerating")
 
 header = """#pragma once
 
@@ -32,8 +32,8 @@ header = """#pragma once
 
 namespace weather_balloon {
 namespace pins {
-static constexpr uint8_t kCutdownCtrl = A2;       // J2.4 CUTDOWN_CTRL / PB09
-static constexpr uint8_t kOpenLogTx = A1;         // J2.3 UART_TX / PB08
+static constexpr uint8_t kActivityLed = A2;       // J2.2 LED_N / PB09, active-low
+static constexpr uint8_t kOpenLogTx = A1;         // J2.1 UART_TX / PB08
 static constexpr uint8_t kOpenLogTxPortGroup = 1; // PB08: PORT group B
 static constexpr uint8_t kOpenLogTxPortPin = 8;   // PB08
 static constexpr uint8_t kOpenLogSercom = 4;       // SERCOM4

@@ -1,22 +1,19 @@
-# copperhead board template
+# Weather Balloon Logger LightHAB carrier
 
-The skeleton a hosted `copperhead create` run starts from. A repository
-generated from this template already has the directories the CLI writes into,
-so the first run adds a design rather than a layout.
+This repository contains a hand-solderable through-hole carrier for the QRP Labs LightHABTracker 1.0, SparkFun OpenLog, and Pololu S7V8F5 regulator.
 
-| Directory | Holds |
+| Directory | Contents |
 | --- | --- |
-| `docs/` | the brief, and the documents copperhead keeps in step with the design |
-| `ecad/` | the KiCad project: schematic, board, and its libraries |
-| `mcad/` | enclosure and mechanical files, when a board has them |
-| `firmware/` | firmware, when a board runs any |
-
-Nothing here is a design. Replace it by describing what you want to build.
+| `docs/` | Electrical, mechanical, BOM, purchasing, and release records |
+| `library/` | Project KiCad symbols and through-hole footprints |
+| `firmware/` | LightHAB upstream integration scaffold and test plan |
+| `outputs/` | Review renders, fit sheet, BOM, Gerbers, drill, DXF, and STEP |
+| `scripts/` | Deterministic board rebuild, export, and audit tools |
 
 ## Project release status
 
 This repository now contains the Weather Balloon Logger carrier design and its
-review exports. It is **not yet released for fabrication**. See
+review exports. It is **not yet released for fabrication** because the purchased LightHAB must be measured before its connector and mounting geometry can be finalized. See
 [`docs/FABRICATION_READINESS.md`](docs/FABRICATION_READINESS.md) for the exact
 engineering-prototype and flight-candidate gates.
 
@@ -30,5 +27,4 @@ copperhead check          # ERC, DRC, and doc drift. No model, no network.
 copperhead do "..."       # propose, edit, verify, commit
 ```
 
-Licensed MIT, so a board built from it carries no obligation from the
-template itself.
+The current PCB has zero SMD pads, zero unconnected items, and a prominent no-fabrication warning in the provisional module area.

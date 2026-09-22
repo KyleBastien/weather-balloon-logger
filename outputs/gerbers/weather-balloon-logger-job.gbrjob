@@ -5,7 +5,7 @@
       "Application": "Pcbnew",
       "Version": "10.0.6"
     },
-    "CreationDate": "2026-09-16T22:44:02-07:00"
+    "CreationDate": "2026-09-21T18:18:29-07:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
@@ -14,8 +14,8 @@
       "Revision": "rev?"
     },
     "Size": {
-      "X": 80.1,
-      "Y": 78.6
+      "X": 90.2,
+      "Y": 80.2
     },
     "LayerNumber": 2,
     "BoardThickness": 1.6,
@@ -27,93 +27,53 @@
       "PadToPad": 0.2,
       "PadToTrack": 0.2,
       "TrackToTrack": 0.2,
-      "MinLineWidth": 0.3
+      "MinLineWidth": 0.35
     }
   ],
   "FilesAttributes": [
     {
-      "Path": "weather-balloon-logger-F_Cu.gtl",
+      "Path": "weather-balloon-logger-F_Cu.gbr",
       "FileFunction": "Copper,L1,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "weather-balloon-logger-B_Cu.gbl",
+      "Path": "weather-balloon-logger-B_Cu.gbr",
       "FileFunction": "Copper,L2,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "weather-balloon-logger-F_Adhesive.gta",
-      "FileFunction": "Glue,Top",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "weather-balloon-logger-B_Adhesive.gba",
-      "FileFunction": "Glue,Bot",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "weather-balloon-logger-F_Paste.gtp",
+      "Path": "weather-balloon-logger-F_Paste.gbr",
       "FileFunction": "SolderPaste,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "weather-balloon-logger-B_Paste.gbp",
+      "Path": "weather-balloon-logger-B_Paste.gbr",
       "FileFunction": "SolderPaste,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "weather-balloon-logger-F_Silkscreen.gto",
+      "Path": "weather-balloon-logger-F_Silkscreen.gbr",
       "FileFunction": "Legend,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "weather-balloon-logger-B_Silkscreen.gbo",
+      "Path": "weather-balloon-logger-B_Silkscreen.gbr",
       "FileFunction": "Legend,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "weather-balloon-logger-F_Mask.gts",
+      "Path": "weather-balloon-logger-F_Mask.gbr",
       "FileFunction": "SolderMask,Top",
       "FilePolarity": "Negative"
     },
     {
-      "Path": "weather-balloon-logger-B_Mask.gbs",
+      "Path": "weather-balloon-logger-B_Mask.gbr",
       "FileFunction": "SolderMask,Bot",
       "FilePolarity": "Negative"
     },
     {
-      "Path": "weather-balloon-logger-User_Drawings.gbr",
-      "FileFunction": "Other,User",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "weather-balloon-logger-User_Comments.gbr",
-      "FileFunction": "Other,User",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "weather-balloon-logger-User_Eco1.gbr",
-      "FileFunction": "Other,User",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "weather-balloon-logger-User_Eco2.gbr",
-      "FileFunction": "Other,User",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "weather-balloon-logger-Edge_Cuts.gm1",
+      "Path": "weather-balloon-logger-Edge_Cuts.gbr",
       "FileFunction": "Profile",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "weather-balloon-logger-F_Fab.gbr",
-      "FileFunction": "AssemblyDrawing,Top",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "weather-balloon-logger-B_Fab.gbr",
-      "FileFunction": "AssemblyDrawing,Bot",
       "FilePolarity": "Positive"
     }
   ],

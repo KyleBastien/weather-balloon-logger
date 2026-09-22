@@ -2,6 +2,14 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-21 — Complete the LightHABTracker migration
+
+- Added controlled MPN fields to all 12 populated schematic symbols and regenerated BOM/order artifacts.
+- Removed carrier cutdown control from the firmware scaffold; A2/PB09 now initializes HIGH-before-output as the active-low logger LED, while A1/PB08 remains OpenLog TX.
+- Replaced stale LightAPRS procurement, readiness, cutdown, and development instructions with the measured-LightHAB fit gate.
+- Regenerated schematic/PCB SVGs, green render, 1:1 PDF, Gerbers/drill, STEP, outline DXF, BOMs, and purchasing workbook.
+- Verification: ERC clean; DRC clean with zero unconnected items; drift and constraints clean; 0 SMD pads; fabrication-source audit passed.
+
 ## 2026-09-17 — Export-only refresh from the current verified design. Do not modify schematic or PCB sources. Regenerate all existing output artifacts, including .copperhead/renders/board.svg, .copperhead/renders/weather-balloon-logger.svg, outputs/board.svg, outputs/renders/board-full-color.svg, outputs/renders/weather-balloon-logger.svg, all Gerbers and drill files in outputs/gerbers, outputs/board.step, the outline DXF, and BOM artifacts. Preserve the current verified through-hole design and readable silkscreen exactly.
 
 - Change: refresh-all-verified-design-exports

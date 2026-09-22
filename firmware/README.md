@@ -1,24 +1,26 @@
-# Weather Balloon Logger firmware scaffold
+# Weather Balloon Logger firmware integration scaffold
 
-This Stage-7 scaffold targets the LightAPRS-W 2.0 ATSAMD21G18 with the Arduino SAMD core plus the vendor CMSIS device registers already shipped by that core. It is an integration seed, not flight-ready firmware.
+This scaffold is the carrier-side patch seed for the LightHABTracker 1.0 ATSAMD21G18 firmware. It is not a standalone, compiled flight image: the final changes must be rebased onto and built with the upstream LightHABTracker source pinned in `DEVPLAN.md`.
 
-`docs/PINOUT.md` is the single source of truth. Regenerate `include/pins.h` from the repository root with:
+`docs/PINOUT.md` is the pin source of truth. Regenerate `include/pins.h` from the repository root with:
 
 ```text
 python firmware/tools/generate_pins.py
 ```
 
-The generator fails closed unless J2 pin 3 remains `UART_TX` on A1/PB08 and J2 pin 4 remains `CUTDOWN_CTRL` on A2/PB09. It claims no GPS UART, SPI, RESET, or SWD pin; J2 SCL/SDA are reserved for the PCF8574T LED expander.
+The generator fails closed unless J2.1 remains UART TX on A1/PB08 and J2.2 remains the active-low activity LED on A2/PB09.
 
-## Happy path
+## Intended behavior
 
-`WeatherBalloonLogger.ino` first drives cutdown OFF on A2/PB09, initializes a polling TX-only SERCOM4 UART on PB08/PAD0, then sends a CSV heading and one deterministic safe telemetry row to OpenLog. OpenLog TXO is unused. The revised board LED is on PCF8574T P0 at 0x20; this scaffold does not yet implement the I2C LED transaction and must not claim visible write indication until that firmware is added and tested.
+`WeatherBalloonLogger.ino` preloads A2 HIGH before making it an output, initializes a polling TX-only SERCOM4 UART on A1/PB08, then writes a heading and one deterministic record to OpenLog while pulsing the LED low. OpenLog TXO is unused.
+
+LightHAB's upstream firmware—not this carrier scaffold—owns OUT1 cutdown timing, arming, and safety. No carrier code directly commands the pyro output.
 
 ## Boundaries
 
-- `cutdown` provides the default-off hardware driver boundary. Production arming, maximum-on-time, one-shot, altitude validation, and fault policy are deliberately not invented here.
-- `openlog` provides TX-only UART output without taking the occupied GPS UART.
-- `telemetry_stub` marks the integration seam for the existing LightAPRS GPS/radio application.
-- No code in this scaffold fires the nichrome output.
+- `openlog` provides the proposed TX-only UART implementation without taking the occupied GPS UART.
+- `telemetry_stub` marks the seam where upstream LightHAB telemetry must be supplied.
+- The LED pulse reports that bytes were sent; it cannot prove that the microSD card committed them.
+- A1/PB08 and A2/PB09 appeared unused in the inspected upstream source, but that must be reconfirmed during the pinned-source integration and build.
 
-See `DEVPLAN.md` for build status and required qualification work.
+See `DEVPLAN.md` for the exact upstream baseline and qualification gates.

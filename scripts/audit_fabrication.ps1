@@ -22,12 +22,12 @@ $blankMpn = @($bom | Where-Object { [string]::IsNullOrWhiteSpace($_.MPN) }).Coun
 $unverifiedMpn = @($bom | Where-Object { $_.MPN -match 'UNVERIFIED' }).Count
 
 $requiredFabFiles = @(
-    'weather-balloon-logger-F_Cu.gtl',
-    'weather-balloon-logger-B_Cu.gbl',
-    'weather-balloon-logger-F_Mask.gts',
-    'weather-balloon-logger-B_Mask.gbs',
-    'weather-balloon-logger-F_Silkscreen.gto',
-    'weather-balloon-logger-Edge_Cuts.gm1',
+    'weather-balloon-logger-F_Cu.gbr',
+    'weather-balloon-logger-B_Cu.gbr',
+    'weather-balloon-logger-F_Mask.gbr',
+    'weather-balloon-logger-B_Mask.gbr',
+    'weather-balloon-logger-F_Silkscreen.gbr',
+    'weather-balloon-logger-Edge_Cuts.gbr',
     'weather-balloon-logger.drl',
     'weather-balloon-logger-job.gbrjob'
 )
@@ -37,26 +37,26 @@ $missingFabFiles = @($requiredFabFiles | Where-Object {
 })
 
 Write-Output "Fabrication source audit"
-Write-Output "  Footprints: $footprints (expected 28: 23 populated + 4 mounting holes + 1 graphic)"
+Write-Output "  Footprints: $footprints (expected 17: 12 populated + 4 mounting holes + 1 graphic)"
 Write-Output "  SMD pads: $smdPads (expected 0)"
 Write-Output "  Plated through-hole pads: $pthPads"
 Write-Output "  Non-plated through-hole pads: $npthPads (expected 4)"
-Write-Output "  Schematic MPN properties: $mpnProperties (expected 23)"
-Write-Output "  BOM populated quantity: $bomQuantity (expected 23)"
+Write-Output "  Schematic MPN properties: $mpnProperties (expected 12)"
+Write-Output "  BOM populated quantity: $bomQuantity (expected 12)"
 Write-Output "  BOM blank MPN rows: $blankMpn (expected 0)"
 Write-Output "  BOM unverified MPN rows: $unverifiedMpn (expected 0)"
-Write-Output "  Plated-slot drill commands: $slotCommands (expected 3 for SW1)"
+Write-Output "  Plated-slot drill commands: $slotCommands (expected 0)"
 Write-Output "  Missing core fabrication files: $($missingFabFiles.Count)"
 
 $failures = @()
-if ($footprints -ne 28) { $failures += "Unexpected footprint count" }
+if ($footprints -ne 17) { $failures += "Unexpected footprint count" }
 if ($smdPads -ne 0) { $failures += "SMD pads present" }
 if ($npthPads -ne 4) { $failures += "Unexpected NPTH count" }
-if ($mpnProperties -ne 23) { $failures += "Not every populated symbol has an MPN" }
-if ($bomQuantity -ne 23) { $failures += "Unexpected BOM quantity" }
+if ($mpnProperties -ne 12) { $failures += "Not every populated symbol has an MPN" }
+if ($bomQuantity -ne 12) { $failures += "Unexpected BOM quantity" }
 if ($blankMpn -ne 0) { $failures += "Blank BOM MPN" }
 if ($unverifiedMpn -ne 0) { $failures += "Unverified BOM MPN" }
-if ($slotCommands -ne 3) { $failures += "Unexpected plated-slot count" }
+if ($slotCommands -ne 0) { $failures += "Unexpected plated-slot count" }
 if ($missingFabFiles.Count -ne 0) { $failures += "Missing core fabrication output" }
 
 if ($failures.Count -ne 0) {

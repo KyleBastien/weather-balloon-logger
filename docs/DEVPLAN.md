@@ -1,138 +1,27 @@
-# Hardware development plan — Weather Balloon Logger harness
+# Development and qualification plan
 
-## Status and release gates
+## Current design
 
-This is the Stage 8 hardware bring-up and prototype-order plan. `firmware/DEVPLAN.md` remains the separate firmware qualification plan. The current PCB uses real library or documented project footprints, contains no `CopperheadDraft_*` footprints and no SMD pads, and passes ERC/DRC. It is still not a fabrication release: the exact ordered parts, physical fit, temperature ranges, leakage/current limits, RF geometry, cutdown calculations, and payload clearances must pass the gates in `FABRICATION_READINESS.md` before an engineering prototype order.
+The carrier mounts a LightHABTracker 1.0, powers an OpenLog through a dedicated Pololu S7V8F5 5 V regulator, provides an active-low write-attempt LED, and passes LightHAB OUT1/GND directly to J5. The tracker retains its onboard 3×AA holder, dual SMA connectors, radios, GPS, and pyro control. The carrier adds no RF path or pyro driver.
 
-The locations below are accessible component pads or connector pins, not populated test-point refdes. Probe only with power removed unless a step explicitly calls for live measurement. Keep the nichrome wire disconnected until the final controlled cutdown test.
+## Next bounded revision: measured mechanical fit
 
-## Required equipment and safe setup
+1. Purchase and photograph the exact LightHABTracker.
+2. Record all dimensions listed in `FABRICATION_READINESS.md` with a caliper and annotated photos.
+3. Confirm VBATT switch behavior and OUT1 electrical behavior on a protected bench setup.
+4. Replace provisional J1/J2/J3 and H1-H4 geometry in `scripts/rebuild_lighthab_board.py`; select exact interface MPNs.
+5. Rebuild the PCB, preserve the 90 × 80 mm outline unless measurements demand a documented change, and check USB/SMA/battery envelopes.
+6. Print the 1:1 fit sheet and perform the exact-parts physical overlay.
+7. Regenerate all sources, BOM/order list, renders, and review outputs. Remove the warning only when evidence closes the fit gate.
 
-- Current-limited bench supply covering 3.0–7.2 V, two DMMs with µA/mA/A ranges, oscilloscope, logic analyzer or 3.3 V UART decoder, and a temperature probe or thermal camera.
-- Fused nonflammable dummy load for cutdown tests, then a guarded fire-resistant nichrome fixture outdoors or in a suitable enclosure. Keep personnel, cord, batteries, and antennas away from the hot wire.
-- Verified 50 Ω cables, terminations, and a VNA or RF specialist setup for separate J6-VHF-to-J3 and J7-HF-to-J4 qualification. Never transmit APRS/WSPR into an open connector or an unqualified load.
-- ESD-safe bench, magnification, 1:1 footprint print, exact mating connectors, exact LightAPRS-W 2.0 and OpenLog modules, and the manufacturer datasheets for every ordered suffix.
-- A written test log recording board serial, installed MPNs, instrument IDs, ambient temperature, supply voltage/current limit, measured values, and pass/fail disposition.
+## Electrical bring-up
 
-## Probe-location map
+1. With LightHAB and OpenLog disconnected, inspect soldering and verify no shorts between VBATT, 3V3, LOGGER_5V, OUT1, and GND.
+2. Verify the installed Pololu pin order and current-limit the supply. Confirm 5 V at A1 VCC before installing OpenLog.
+3. Confirm A1 UART is 3.3 V logic and R4 prevents unwanted back-power current.
+4. Confirm D1 is off at reset and active only when A2/PB09 is driven low.
+5. Test J5 using an inert load and the vendor firmware's OUT1 controls. The carrier does not increase the output rating.
 
-| Quantity | First-choice probe locations | Expected meaning |
-| --- | --- | --- |
-| Pack input | J1.1 `PACK_IN` to J1.2 `GND` | Unswitched pack voltage. |
-| Switched pack | SW1.1 or J2.1/J5.1 `PACK_SW` to `GND` | Zero with SW1 OFF; approximately `PACK_IN` with SW1 ON. |
-| Ground continuity | J1.2, J2.2, A1.2, Q1.3, U2.4/U2.5, J3.2, J4.2 | Common return; verify before live tests. |
-| Host 3.3 V | J2.5, U1.16, C3.1, or R1.1 `3V3` to `GND` | Regulated host rail, never raw pack. |
-| Logger 5 V | A2.4, A1.3, C1.1, or C2.1 `LOGGER_5V` to `GND` | Dedicated fixed 5 V logger rail. |
-| Logger UART | J2.3 `UART_TX` or A1.5 `OPENLOG_RXI` to `GND` | A1/PB08, 3.3 V idle-high through R4, 9600 baud scaffold default pending installed OpenLog confirmation. |
-| I2C expander | J2.7 `I2C_SCL`, J2.8 `I2C_SDA`, U1.14/U1.15 | Shared module I2C bus; U1 address 0x20, verify effective pull-ups before operation. |
-| LED anode / cathode | R1.2 or D1.2 `LED_A`; D1.1 or U1.4 `LED_N` | LED is off when P0 is high and on when P0 is driven low. |
-| Cutdown command | J2.4 or U2.2 `CUTDOWN_CTRL` to `GND` | A2/PB09; must be low before other application initialization. |
-| Driver output | U2.6/U2.7 or R2.1 `CUTDOWN_DRIVE` | Fixed-5 V non-inverting gate-driver output. |
-| FET gate | R2.2, R3.1, or Q1.1 `CUTDOWN_GATE` to Q1.3 `GND` | Held low by R3; rises to approximately LOGGER_5V only when firing. |
-| FET drain | Q1.2 or J5.2 `CUTDOWN_DRAIN` to `GND` | Load low side; near ground only when Q1 is commanded on. |
-| APRS RF path | J6.1 VHF to J3.1 `RF_APRS`; J3.2 shield | Separate VHF corner contact; no DC connection to the center conductor is expected elsewhere. |
-| WSPR RF path | J7.1 HF to J4.1 `RF_WSPR`; J4.2 shield | Separate HF corner contact; no DC connection to the center conductor is expected elsewhere. |
+## Flight qualification
 
-## Bring-up sequence
-
-Stop at the first failed limit, unexpected heating, unstable rail, excess current, smoke, odor, or intermittent connection. Record the failure and correct the design before continuing. Do not defeat a current limit merely to make a failing board start.
-
-### 1. Pre-power document and assembly audit
-
-1. Match each received MPN and suffix to `docs/BOM.md`; verify pin numbering, exact land pattern, voltage/current rating, −40 °C suitability, leakage/Iq limits, and lifecycle/availability. Reject substitutions that have not been requalified.
-2. Confirm every through-hole footprint on a 1:1 print with purchased parts: connector mating direction, SW1 terminal numbering, IRLZ44NPBF G/D/S pins, LED polarity, OpenLog header order, DIP orientation, and downward SMA mating orientation.
-3. Convert the drawn SMA envelopes into enforceable rule areas, calculate 50 Ω launches from the actual stackup, add the required return-via strategy, and re-evaluate the ≥5 mm dielectric/battery-metal keepout.
-4. Recalculate the complete 2 A for 30 s cutdown path using actual copper weight, trace geometry, connector resistance, Q1 maximum RDS(on) at VGS=4.5 V, transient thermal impedance, and safe operating area.
-5. Run ERC, DRC, BOM/pin drift checks, and fabrication review on the revised design. This is the fabrication-order gate.
-
-### 2. What to meter first — unpowered board
-
-1. Inspect solder joints, bridges, polarity, connector orientation, and debris under magnification. Leave LightAPRS-W, OpenLog, antennas, and nichrome disconnected.
-2. Meter continuity among all listed `GND` locations. A missing ground connection is an immediate stop.
-3. With SW1 OFF, verify J1.1 `PACK_IN` is open from J2.1/J5.1 `PACK_SW`. With SW1 ON, verify low resistance from `PACK_IN` to `PACK_SW`; exercise the switch and reject intermittent contacts.
-4. Measure resistance from `PACK_IN`, `PACK_SW`, `3V3`, `CUTDOWN_DRAIN`, `CUTDOWN_GATE`, `RF_APRS`, and `RF_WSPR` to `GND`. Investigate any unexpected short before applying power. Capacitors may cause a momentary charging indication on `3V3`.
-5. Verify R3 measures approximately 1 MΩ from `CUTDOWN_GATE` to `GND`, R2 approximately 100 Ω from `CUTDOWN_DRIVE` to `CUTDOWN_GATE`, and the LED path has the expected diode polarity through R1.
-6. Check RF center-to-center continuity from J6.1 VHF to J3.1 and J7.1 HF to J4.1, shield-to-ground continuity, isolation between APRS/WSPR centers, and no center-to-shield short.
-
-### 3. Bare carrier power-path test
-
-1. Keep J2, A1, J5 load, and both RF outputs disconnected. Set SW1 OFF and connect a current-limited supply to J1 at a conservative 3.0 V. Confirm no measurable load current beyond instrument uncertainty and physical insulation leakage; SW1 must break pack positive.
-2. Confirm `PACK_SW` is 0 V with SW1 OFF. Toggle SW1 ON and confirm `PACK_SW` follows `PACK_IN` without abnormal current or contact drop. Repeat across 3.0–5.4 V. Test 7.2 V only after every installed part on the switched path is verified for the allowed 4s case.
-3. Return SW1 OFF before connecting or removing any module.
-
-### 4. Host-only power and 3V3 qualification
-
-1. Connect only the verified LightAPRS-W interface at J2; leave OpenLog and nichrome disconnected and disable RF transmission or attach qualified 50 Ω loads. Use the fixed 3s range of 3.0–5.4 V and a protective current limit above verified inrush.
-2. Power on and meter `PACK_SW` first, then J2.5 `3V3`. Confirm LightAPRS RAW/J2.1 is directly on `PACK_SW`; stop if raw pack appears on `3V3`, if the rail is outside tolerance, or if current is unexplained.
-3. Verify host startup, continuous GPS, APRS, WSPR, I2C, and SPI remain functional. Confirm A1/PB08 UART, A2/PB09 cutdown, and shared SCL/SDA do not collide with upstream firmware or existing I2C addresses.
-4. Demonstrate LightAPRS operation from 5.4 V down through the fixed 3.0 V end-of-discharge limit under representative load and cold conditions. A 4s substitution is not permitted; failure requires an explicit architecture review.
-5. Measure host-only current at defined modes to establish the baseline used for board-added-current subtraction and the ≤200 mA mean-flight budget.
-
-### 5. Default-off cutdown control before installing a load
-
-1. Probe `CUTDOWN_CTRL` and `CUTDOWN_GATE` during power application, reset, bootloader entry, brownout, firmware restart, and power removal. Both must remain low until an explicit armed command; `cutdown::init_safe()` must be the first application-level action. Any positive glitch is an immediate stop.
-2. Confirm Q1 remains off with the host disconnected and while its GPIO is high impedance. R3 is intentional and must not be omitted.
-3. Command cutdown only in a bench test mode. Verify approximately 3.3 V at `CUTDOWN_CTRL`, approximately 5 V at `CUTDOWN_DRIVE`, the expected small drop across R2, and approximately 5 V at `CUTDOWN_GATE`. Verify the commanded R3 current is about 5 µA and is zero when the gate is low.
-4. Remove the command and verify the gate returns promptly to 0 V. Do not proceed until reset-time and firmware default-off behavior passes repeatedly.
-
-### 6. OpenLog power-budget and UART test
-
-1. Verify the installed OpenLog and Pololu S7V8F5 item 2123 independently. Confirm S7V8F5 input rating 2.7–11.8 V, fixed 5 V output, Iq <0.2 mA, 0.1-inch four-pin direct-solder straight-header interface, and absence of reverse-polarity protection. Its temperature rating is unverified, so cold qualification is mandatory.
-2. With power off, verify VIN and SHDN go to `PACK_SW`, GND to GND, VOUT to `LOGGER_5V`, and A1.3 VCC to `LOGGER_5V`. Confirm LightAPRS RAW/J2.1 and J5.1 remain direct `PACK_SW` paths. Power on and meter `LOGGER_5V` at A1.3 before enabling logging.
-3. Measure board-added idle and write currents relative to the host-only baseline with D1 off and Q1 off. OpenLog must be ≤7 mA idle and ≤25 mA writing; total board-added current must be ≤8 mA idle and ≤30 mA active/write peak. U1 remains ≤100 µA, and Q1/off-path leakage remains ≤50 µA.
-4. Decode `UART_TX`: idle must be high, logic levels must be 3.3 V compatible, and the baud/configuration must match the installed OpenLog. The scaffold default is 9600 baud, 8-N-1, not a verified flight setting.
-5. Initialize U1 at 0x20 with all ports high, transmit a uniquely numbered record, and explicitly pulse P0 low/high around the intended write indication. Verify D1 lights only while P0 is low and is dark otherwise; LED-off leakage must be ≤1 µA. Remove the SD card safely and confirm the exact record is present. The LED remains an activity proxy, not proof of media commit.
-6. Repeat logging while GPS and both radio functions operate into qualified loads, watching for rail droop, UART corruption, resets, and current-budget violations.
-
-### 7. RF and mechanical qualification
-
-1. With power off, repeat RF continuity/isolation checks after assembly. Inspect launch soldering and verify SMA mates point downward through the payload without cable, enclosure, or battery interference.
-2. Using the actual stackup and qualified 50 Ω equipment, measure J6-VHF-to-J3 and J7-HF-to-J4 for return loss, insertion loss, channel isolation, and unintended resonance across the applicable APRS and WSPR bands. A DRC-clean draft trace is not a 50 Ω proof.
-3. Verify the ≥5 mm SMA dielectric keepouts, return-current path/via fence, reserved protection strategy, cable bend radius, and absence of battery metal or nichrome hardware in the near field.
-4. Perform conducted/radiated system checks only with suitable loads/antennas and regulatory controls; confirm simultaneous subsystem operation does not corrupt GPS or logging.
-
-### 8. Cutdown dummy-load test
-
-1. Use a fused nonflammable dummy load, not nichrome. Keep RF disabled or correctly terminated. Begin below full load and increase only while monitoring supply current, Q1 VDS, connector drop, trace/via drop, and temperature.
-2. At the qualified worst-case pack voltage and up to the assumed 2 A load, verify U2 supplies the expected gate voltage and Q1 remains within maximum RDS(on), safe-operating-area, and thermal limits.
-3. Exercise the hard firmware maximum-on timer, one-shot/interlock behavior, resets, brownouts, and removal of the command. No firing or restart may leave Q1 on, and every activation must end within 30 s.
-4. Measure OFF leakage through the complete cutdown path at the maximum pack voltage and required temperature extremes; it must be ≤50 µA. Inspect connectors, solder joints, copper, and Q1 after repeated pulses.
-
-### 9. Controlled nichrome and environmental test
-
-1. Only after the dummy-load test passes, fit the intended nichrome geometry in a guarded fire-resistant fixture with a sacrificial representative cord. Use the real connector/harness and a fused supply.
-2. Demonstrate clean separation at worst-case pack/end-of-discharge and cold conditions without exceeding 2 A or 30 s. Record current, voltage, time-to-cut, Q1 VDS, and temperatures. Repeat enough times to establish margin; a single successful burn is not qualification.
-3. Repeat power, logging, reset/brownout, RF, leakage, regulator cold-start, and cutdown checks across the intended −40 °C to +40 °C environment or a justified test envelope. Recalculate the 4 h energy budget from measured mode durations and currents; demand must remain ≤800 mAh, mean pack current must remain ≤200 mA, and the fixed 3s pack must demonstrate ≥1600 mAh usable capacity under the actual cold/load profile.
-4. Complete a four-hour end-to-end mission rehearsal with continuous GPS, representative APRS/WSPR duty, OpenLog logging, correct LED activity, and a safely simulated or controlled cutdown event. Confirm file integrity and no unexplained resets.
-
-## Risk register
-
-| Risk | Evidence needed to close it | Stop/mitigation |
-| --- | --- | --- |
-| Wrong footprint, connector pin order, or physical fit | Exact MPN datasheets, 1:1 print, mating-part inspection, updated PCB and DRC | No PCB order until every exact purchased part and mating interface passes the physical-fit gate. |
-| UNVERIFIED part sourcing or cold rating | Manufacturer-authorized source, exact suffix, lifecycle and −40 °C data | Reject substitutions; keep procurement hold. |
-| Fixed 3s host brownout near 3.0 V | Measured LightAPRS VIN/UVLO under representative load and cold | Stop and revisit the architecture explicitly; a 4s substitution is not permitted. |
-| Logger exceeds split-power budgets | Verify OpenLog ≤7 mA idle and ≤25 mA write, S7V8F5 Iq <0.2 mA, board-added idle ≤8 mA, active/write peak ≤30 mA, and U1 ≤100 µA | Stop and replace or re-architect; do not accept typical-only current claims. |
-| S7V8F5 polarity or cold failure | Polarity-controlled harness inspection plus cold startup/load data; module temperature rating remains unverified | No flight until reverse-polarity risk is controlled and cold qualification passes. |
-| Cutdown false-fire at reset/brownout | Scope captures at `CUTDOWN_CTRL` and `CUTDOWN_GATE`, repeated fault tests | R3 stays fitted; firmware initializes low first; no nichrome testing until clean. |
-| Q1/trace/connector overheats at 2 A for 30 s | Verified RDS(on)/SOA, measured VDS/drop/temperature, actual copper calculation | Widen/pour/multiply vias or change qualified parts and repeat schematic/layout review. |
-| Cutdown OFF leakage exceeds 50 µA | Maximum-voltage and temperature measurement of complete path | Reject Q1/contamination/assembly and correct before flight. |
-| LED glows or loads UART | Idle-high waveform, ≤1 µA OFF leakage, UART/OpenLog error test | Correct polarity/value/part; LED remains a transmit proxy only. |
-| RF path is not 50 Ω or violates keepout | Actual stackup calculation, VNA data, rule areas, mechanical mock-up | Reroute launches/returns; no RF-power test into an unqualified path. |
-| Downward SMA or payload mechanics do not fit | 3D/mechanical mock-up with cables, enclosure, battery, and harness | Move/reorient before PCB order; keep battery metal outside near field. |
-| Firmware scaffold is unbuilt or baud is wrong | Exact board-package build and installed OpenLog configuration/readback | Follow `firmware/DEVPLAN.md`; no flight on source review alone. |
-| Four-hour/cold energy margin is optimistic | Logged mission-profile currents and cold-capacity evidence | Reduce load/duty within mission needs or revisit pack architecture without forbidden chemistry. |
-| ESD/protection remains only reserved space | Selected/captured parts with leakage, voltage, capacitance, RF, BOM, and layout verification | Do not populate invented protection; make an explicit design revision. |
-
-## Prototype order plan
-
-1. **Qualification samples only:** obtain small quantities of the exact J1/J5 connector pair, SW1, SMA connectors, Q1 IRLZ44NPBF, U2 TC4422AVPA, U1 PCF8574N, WP710A10SGC LED, selected Yageo resistors, KEMET capacitors, and mating parts from traceable sources. Obtain the exact LightAPRS-W and OpenLog modules separately.
-2. **Bench fixtures before PCB:** build or buy current-limited/fused cable assemblies, a cutdown dummy load, guarded nichrome jig, 50 Ω RF cables/loads, and a mechanical payload mock-up. Validate module current, header order, switch terminals, connector mating, and OpenLog baud before committing copper.
-3. **Release the revised prototype PCB only after Gate A passes:** follow `FABRICATION_READINESS.md`; implement enforceable RF rules and calculated launches, complete physical-fit and thermal/current-path work, decide on mounting/test/protection features, synchronize schematic/PCB/BOM/docs, and build an independently reviewed manufacturer ZIP. The tracked `outputs/gerbers/` review directory must not be uploaded wholesale.
-4. **Recommended first revised lot:** order a small five-board engineering lot after the release review—one for unpowered/power-path bring-up, one for host/OpenLog integration, one for RF characterization, one for destructive cutdown/environmental testing, and one unmodified control/spare. This allocation prevents a stressed cutdown specimen from becoming the flight article.
-5. **Staged population:** populate and pass the power-path board first; then logic/logger; then RF; then the cutdown specimen. Do not kit or assemble the full lot after a common footprint or current-budget failure.
-6. **Flight-candidate order:** issue a later revision only after all risks above have objective closure, the four-hour mission rehearsal passes, exact MPNs and alternates are controlled, and the schematic/PCB/BOM/docs are synchronized. Repeat incoming inspection and acceptance testing on every flight candidate.
-
-## Completion record
-
-A prototype stage passes only when its measured results, instrument conditions, exact installed parts, deviations, and corrective actions are recorded. Any waiver to a stated electrical budget or safety limit requires an explicit specification and constraint decision; it must not be hidden in a test note.
+Follow `firmware/DEVPLAN.md` for software integration. Qualify the exact 3S L91 set, logger current, radio duty, antennas, thermal/vacuum behavior, cutdown assembly, and four-hour mission profile. Preserve raw measurements and stop on unexplained resets, heating, rail droop, radio degradation, or unexpected pyro activation.

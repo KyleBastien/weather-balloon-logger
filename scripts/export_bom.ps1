@@ -19,8 +19,8 @@ $rows = Import-Csv $output
 $quantity = ($rows | Measure-Object -Property qty -Sum).Sum
 $missingMpn = @($rows | Where-Object { [string]::IsNullOrWhiteSpace($_.MPN) })
 
-if ($quantity -ne 23) {
-    throw "Expected 23 populated refdes, found $quantity"
+if ($quantity -ne 12) {
+    throw "Expected 12 populated refdes, found $quantity"
 }
 
 if ($missingMpn.Count -ne 0) {
