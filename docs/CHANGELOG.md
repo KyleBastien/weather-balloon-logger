@@ -275,3 +275,9 @@ Append-only, newest first. One entry per committed copperhead run.
 - Change: seed-weather-balloon-logger-spec
 - Files: docs/SPEC.md, docs\DECISIONS.md
 - Verification: ERC not required
+# 2026-09-21 — provisional LightHAB PCB rebuild
+
+- Replaced the obsolete LightAPRS layout with the 12-reference LightHAB electrical design.
+- Added a 90 × 80 mm outline, provisional 56 × 75 mm module zone, four provisional 3.2 mm NPTH holes, onboard SMA/USB mechanical keepouts, functional silkscreen labels, and a prominent no-fabrication warning.
+- Preserved the coffee-balloon front-silkscreen artwork and moved all populated carrier parts to the left wing.
+- Verification: KiCad ERC clean; DRC clean; zero unconnected items; zero SMD pads; Copperhead drift/constraints/legibility checks clean except the existing A4 paper-size advisory.

@@ -70,14 +70,7 @@
         }
       },
       "diff_pair_dimensions": [],
-      "drc_exclusions": [
-        "courtyards_overlap|156525954|153235000|06608b6e-4bc8-455b-9a3f-6306853b7cd9|223fc07c-5b07-4e0e-af82-089f1e6364f6",
-        "npth_inside_courtyard|154100000|153520000|150be234-2a0e-46db-a4d5-dcc8924cfc7a|06608b6e-4bc8-455b-9a3f-6306853b7cd9",
-        "pth_inside_courtyard|156300000|155000000|bbad6d46-2eff-4001-84b8-d262f2182335|223fc07c-5b07-4e0e-af82-089f1e6364f6",
-        "courtyards_overlap|125465000|155922967|14e0d0a2-f48f-42a0-bb7b-373360a1ba5b|d5cc2b80-371f-48ca-a154-5d0c19e3c791",
-        "pth_inside_courtyard|123700000|155000000|efa29235-e918-413d-ae5e-265cff076307|14e0d0a2-f48f-42a0-bb7b-373360a1ba5b",
-        "npth_inside_courtyard|125900000|153520000|214c5e8b-0fa5-492c-a463-8810ae1707c6|d5cc2b80-371f-48ca-a154-5d0c19e3c791"
-      ],
+      "drc_exclusions": [],
       "meta": {
         "version": 2
       },
