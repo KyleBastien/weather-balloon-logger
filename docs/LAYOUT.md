@@ -49,7 +49,7 @@ KiCad 10 reports zero DRC violations and zero unconnected items. The clean DRC p
 
 ## Silkscreen and assembly readability
 
-Front silkscreen labels identify OpenLog/microSD access, logger 5 V, activity, cutdown polarity, the extended-pin interface, VBATT/GND, OUT1/GND, and the no-fabrication warning. The warning sits above the module zone and remains visible with the module installed. The coffee-balloon artwork remains unobstructed in the lower-left wing.
+Front silkscreen labels identify OpenLog/microSD access, logger 5 V, activity, cutdown polarity, the extended-pin interface, VBATT/GND, OUT1/GND, and the no-fabrication warning. The warning sits above the module zone and remains visible with the module installed. The coffee-balloon artwork remains in the lower-left wing; the OUT1 and ground corridors route above and around its full silkscreen envelope.
 
 Engineering annotations on User.Comments show the provisional LightHAB body, stack direction/clearance, SMA keepouts, and USB keepout. They are not copper or electrical pads.
 

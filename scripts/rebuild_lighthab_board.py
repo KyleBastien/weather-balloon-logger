@@ -225,8 +225,11 @@ def main():
 
     route_path(board, nets["VBATT"], pcbnew.F_Cu,
                [pad("J1", 1), (134, 142), (134, 145), (110.62, 145), pad("A2", 1), pad("A2", 2)], 0.8)
+    # Keep both cutdown conductors outside the G1 artwork envelope
+    # (x=122.25..129.75, y=157.375..168.625) so the logo remains readable in
+    # the colored review render and on the finished front silkscreen.
     route_path(board, nets["OUT1"], pcbnew.F_Cu,
-               [pad("J3", 1), (140, 155), (140, 158), pad("J5", 1)], 0.8)
+               [pad("J3", 1), (140, 151), (110, 151), (110, 158), pad("J5", 1)], 0.8)
 
     # Ground owns the rear layer, so its branches may cross each other safely.
     route_path(board, nets["GND"], pcbnew.B_Cu,
@@ -237,7 +240,7 @@ def main():
     route_path(board, nets["GND"], pcbnew.B_Cu, [pad("C2", 2), (133, 138)], 0.8)
     route_path(board, nets["GND"], pcbnew.B_Cu, [pad("A2", 3), (105.54, 143), (133, 143)], 0.8)
     route_path(board, nets["GND"], pcbnew.B_Cu,
-               [pad("J5", 2), (106, 161), (133, 161), (133, 157.54)], 0.8)
+               [pad("J5", 2), (106, 153), (133, 153), (133, 157.54)], 0.8)
 
     pcbnew.SaveBoard(str(BOARD_PATH), board)
     print(f"wrote {BOARD_PATH}")

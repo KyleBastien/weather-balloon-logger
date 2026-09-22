@@ -27,7 +27,7 @@ Every populated carrier component is intended for direct through-hole soldering.
 | Refs | Footprint | Status |
 | --- | --- | --- |
 | H1–H4 | `MountingHole:MountingHole_3.2mm_M3` | **Provisional:** 3.2 mm NPTH and all centers require measurement |
-| G1 | `WeatherBalloon:CoffeeBalloon_7.5x11.25mm` | Padless front-silkscreen artwork; visually clear in current render |
+| G1 | `WeatherBalloon:CoffeeBalloon_7.5x11.25mm` | Padless front-silkscreen artwork; OUT1 and GND traces route outside its full envelope |
 
 ## Removed obsolete footprints
 

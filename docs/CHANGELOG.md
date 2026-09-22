@@ -2,6 +2,11 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-22 — Clear the silkscreen logo
+
+- Rerouted the OUT1 front-copper and J5 ground back-copper corridors above and around G1's complete 7.5 × 11.25 mm envelope.
+- Preserved the logo position, electrical topology, 90 × 80 mm outline, LightHAB keepouts, and all-through-hole construction.
+
 ## 2026-09-21 — Complete the LightHABTracker migration
 
 - Added controlled MPN fields to all 12 populated schematic symbols and regenerated BOM/order artifacts.
