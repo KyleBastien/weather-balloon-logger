@@ -15,7 +15,7 @@ The front silkscreen includes the coffee artwork and the required `UNVERIFIED LI
 
 ## BOM and order list
 
-- `BOM.csv` is generated from schematic MPN fields and contains 12 populated through-hole references.
+- `BOM.csv` is generated from schematic MPN fields and contains 10 populated through-hole references.
 - `jlcpcb-bom.csv` is a convenient grouped reference only; this project is intended for hand assembly and is not an assembly-service release.
 - `fit-check-order-list.xlsx` separates safe buy-now items from held interfaces/fabrication. The three PNG files are visual checks of every worksheet.
 

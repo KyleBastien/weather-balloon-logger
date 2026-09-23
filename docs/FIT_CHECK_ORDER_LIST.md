@@ -1,6 +1,6 @@
 # Physical fit-check order list
 
-Prepared 2026-09-21 for the LightHABTracker carrier. The machine-readable version is `outputs/fit-check-order-list.xlsx`. Quantities under **Order** include practical spares.
+Prepared 2026-09-22 for the LightHABTracker carrier. The machine-readable version is `outputs/fit-check-order-list.xlsx`. Quantities under **Order** include practical spares.
 
 ## Buy now
 
@@ -8,7 +8,6 @@ Prepared 2026-09-21 for the LightHABTracker carrier. The machine-readable versio
 | --- | --- | --- | ---: | ---: | --- | --- |
 | Host module | Host | LightHABTracker 1.0 | 1 | 1 | [QRP Labs](https://shop.qrp-labs.com/aprs/LightHABTracker) | Measure before carrier fabrication. Includes the 3×AA holder. |
 | Logger | A1 | SparkFun `DEV-13955` | 1 | 1 | [SparkFun](https://www.sparkfun.com/sparkfun-openlog-with-headers.html) | Buy the with-headers version. |
-| Regulator | A2 | Pololu S7V8F5 item `2123` | 1 | 1 | [Pololu](https://www.pololu.com/product/2123) | Included straight header is direct-soldered. |
 | Capacitor | C1 | KEMET `C322C475K5R5TA` | 1 | 3 | DigiKey | 4.7 µF radial THT. |
 | Capacitor | C2 | KEMET `C315C104K5R5TA` | 1 | 5 | DigiKey | 100 nF radial THT. |
 | LED | D1 | Kingbright `WP710A10SGC` | 1 | 2 | DigiKey | 3 mm green THT. |
@@ -25,7 +24,6 @@ Prepared 2026-09-21 for the LightHABTracker carrier. The machine-readable versio
 
 | Item | Reason | Closure |
 | --- | --- | --- |
-| J1 VBATT/GND interface | Pad pitch, hole size, location, and preferred solder connection are unverified. | Measure and select an exact THT/header MPN. |
 | J2 1×9 signal interface | Electrical order is known; mechanical location, pitch, and installed orientation are not authoritative. | Measure the actual row and select the exact direct-solder part. |
 | J3 OUT1/GND interface | Pad geometry and output capability are unverified. | Measure it and qualify OUT1 with an inert load. |
 | Bare carrier PCB | The provisional geometry is intentionally marked no-fabrication. | Update CAD from measurements and pass the 1:1 fit check. |
@@ -33,4 +31,4 @@ Prepared 2026-09-21 for the LightHABTracker carrier. The machine-readable versio
 | Nichrome and crimp sleeves | Resistance/current and joint sizes depend on verified OUT1 capability. | Qualify an inert load first, then cold-test the exact burn assembly. |
 | Final mounting hardware | Hole diameter, stack height, underside components, holder, USB, and SMA envelopes are unknown. | Measure the complete tracker assembly. |
 
-Do not buy the removed LightAPRS-era switch, carrier SMA connectors, RF pins, battery connector/holder, PCF8574, MOSFET driver, MOSFET, or their associated passives. They are not present in the LightHAB carrier.
+Do not buy the removed LightAPRS-era switch, carrier SMA connectors, RF pins, battery connector/holder, PCF8574, MOSFET driver, MOSFET, Pololu logger regulator, or their associated passives. They are not present in the LightHAB carrier.

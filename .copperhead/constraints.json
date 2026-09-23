@@ -26,7 +26,7 @@
     "min": 3,
     "max": 3,
     "value": "exactly 3 series Energizer L91 cells",
-    "source": "docs/SPEC.md §2.1 fixed approved split-power architecture",
+    "source": "docs/SPEC.md §2 fixed three-cell LightHAB power architecture",
     "affects": [
       "docs/SPEC.md",
       "docs/SUBSYSTEMS.md",
@@ -78,7 +78,7 @@
   },
   "power.board_added_idle_mA": {
     "max": 8,
-    "source": "docs/SPEC.md §2.3 approved split-power idle budget",
+    "source": "docs/SPEC.md §2 direct-3V3 logger qualification budget",
     "affects": [
       "docs/SPEC.md",
       "docs/BOM.md",
@@ -107,7 +107,7 @@
   },
   "power.gpio_logic_V": {
     "value": "3.3",
-    "source": "docs/SPEC.md §2.4 GPIO / LED / FET gate: 3.3 V logic from LightAPRS-W 3V3, not raw pack",
+    "source": "docs/SPEC.md §2 LightHAB J2.3 supplies the carrier 3V3 rail",
     "affects": [
       "docs/SPEC.md",
       "docs/PINOUT.md",
@@ -115,10 +115,10 @@
     ]
   },
   "openlog.vcc_V": {
-    "min": 5,
-    "max": 5,
-    "value": "fixed LOGGER_5V from Pololu S7V8F5 item 2123",
-    "source": "docs/SPEC.md §2.4 approved split-power architecture",
+    "min": 3.3,
+    "max": 3.3,
+    "value": "direct LightHAB J2.3 3V3; host rail capacity accepted by user and pending bench validation",
+    "source": "docs/SPEC.md §2; SparkFun OpenLog supports 3.3–12 V and recommends 3.3–5 V",
     "affects": [
       "docs/SPEC.md",
       "docs/BOM.md",
@@ -144,18 +144,6 @@
       "power.pack"
     ]
   },
-  "cutdown.vgs_fully_on_V": {
-    "forbidden": [
-      "IRLZ44N without 3.3V Rds(on) proof"
-    ],
-    "value": "must be fully enhanced at 3.3 V Vgs; IRLZ44N not auto-approved",
-    "source": "docs/SPEC.md §5 IRLZ44N Rds(on) is specified at 5 V Vgs; at 3.3 V it may not be fully on — stop rather than silently use IRLZ44N",
-    "affects": [
-      "docs/SPEC.md",
-      "docs/BOM.md",
-      "power.pack"
-    ]
-  },
   "power.strap_leakage_uA": {
     "max": 50,
     "source": "docs/SPEC.md §2.3 Pull-ups/downs on host GPIOs: extra leakage through straps ≤ 50 µA total; check MCU strapping table before any pin",
@@ -174,23 +162,14 @@
     ]
   },
   "host.free_gpio": {
-    "value": "J2.3 A1/PB08 is one-way OpenLog UART_TX; J2.4 A2/PB09 is CUTDOWN_CTRL into U2 TC4422AVPA; U2 drives Q1 through R2 and R3 defaults the gate off; A0 is unused; shared J2.7/J2.8 I2C serves U1; occupied GPS/radio/SPI pins remain forbidden",
-    "source": "docs/PINOUT.md Host interface J2; docs/SUBSYSTEMS.md §2 and §6",
+    "value": "J2.1 A1/PB08 is one-way OpenLog UART_TX through R4; J2.2 A2/PB09 is active-low LED_N with R2 reset pull-up; J2.5-J2.9 are unused carrier contacts",
+    "source": "docs/PINOUT.md Host interface J2; docs/SUBSYSTEMS.md §2–4",
     "affects": [
       "docs/SPEC.md",
       "docs/SUBSYSTEMS.md",
       "docs/PINOUT.md",
       "firmware/include/pins.h",
       "firmware/tools/generate_pins.py"
-    ]
-  },
-  "firmware.cutdown_boot_state": {
-    "value": "CUTDOWN_CTRL must be driven low/off before any other application-level initialization; R3 remains the reset-time hardware default-off path",
-    "source": "docs/SPEC.md §5 Default-off and firmware/DEVPLAN.md Happy-path acceptance",
-    "affects": [
-      "firmware/WeatherBalloonLogger.ino",
-      "firmware/src/cutdown.cpp",
-      "firmware/DEVPLAN.md"
     ]
   },
   "firmware.openlog_baud": {
@@ -211,20 +190,9 @@
       "docs/DEVPLAN.md"
     ]
   },
-  "power.led_expander_idle_uA": {
-    "max": 100,
-    "source": "docs/SPEC.md §2.3 allocation and docs/BOM.md U1 acceptance limit",
-    "affects": [
-      "docs/SPEC.md",
-      "docs/BOM.md",
-      "docs/SUBSYSTEMS.md",
-      "docs/DEVPLAN.md",
-      "power.pack"
-    ]
-  },
-  "mechanical.lightaprs_module_zone": {
-    "value": "exact 32.77 x 54.80 mm FACE-UP zone at x=123.615..156.385, y=101..155.8; H1/H2=(125.9/154.1,115.35), H3/H4=(125.9/154.1,153.52), approximate 2.2 mm holes; J2 x=154.9 at 270 deg with 2.548 mm pitch and y=121.72..147.20; J7 HF=(123.7,155.0) and J6 VHF=(156.3,155.0) clear the lower holes; all non-mating components outside",
-    "source": "docs/SUBSYSTEMS.md section 6 Measured coordinate transcription and docs/LAYOUT.md DRC-adjusted placement",
+  "mechanical.lighthab_module_zone": {
+    "value": "provisional 56 x 75 mm zone at x=134..190, y=95..170 with H1-H4 and J2/J3 explicitly awaiting measurement; all carrier component bodies remain in the left wing",
+    "source": "docs/SPEC.md §5 and docs/LAYOUT.md provisional LightHAB carrier geometry",
     "affects": [
       "weather-balloon-logger.kicad_pcb",
       "docs/LAYOUT.md",
@@ -252,19 +220,9 @@
       "docs/DEVPLAN.md"
     ]
   },
-  "power.logger_regulator_iq_mA": {
-    "max": 0.2,
-    "source": "docs/SPEC.md §2.3 and §2.4 Pololu S7V8F5 item 2123 selection limit",
-    "affects": [
-      "docs/SPEC.md",
-      "docs/BOM.md",
-      "docs/SUBSYSTEMS.md",
-      "docs/DEVPLAN.md"
-    ]
-  },
   "power.split_architecture": {
-    "value": "LightAPRS RAW/J2.1 and cutdown J5.1 direct on PACK_SW; S7V8F5 VIN and SHDN on PACK_SW, GND common, VOUT LOGGER_5V to OpenLog A1 VCC only",
-    "source": "docs/SPEC.md §2.1 and §2.4",
+    "value": "LightHAB J2.3 3V3 directly powers OpenLog A1 VCC, C1/C2 bypass, and the activity LED path; OUT1/GND passes independently through J3 to J5",
+    "source": "docs/SPEC.md §2 and §3",
     "affects": [
       "docs/SPEC.md",
       "docs/SUBSYSTEMS.md",
@@ -273,16 +231,6 @@
       "docs/DEVPLAN.md",
       "weather-balloon-logger.kicad_sch",
       "weather-balloon-logger.kicad_pcb"
-    ]
-  },
-  "power.logger_regulator_module": {
-    "value": "Pololu S7V8F5 item 2123; 2.7–11.8 V input; fixed 5 V; 0.1-inch four-pin direct-solder straight header; no reverse-polarity protection; temperature rating unverified and cold qualification required",
-    "source": "docs/SPEC.md §2.4 and docs/BOM.md approved off-board logger regulator",
-    "affects": [
-      "docs/SPEC.md",
-      "docs/BOM.md",
-      "docs/SUBSYSTEMS.md",
-      "docs/DEVPLAN.md"
     ]
   }
 }

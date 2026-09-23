@@ -1,6 +1,6 @@
 # Weather Balloon Logger LightHAB carrier
 
-This repository contains a hand-solderable through-hole carrier for the QRP Labs LightHABTracker 1.0, SparkFun OpenLog, and Pololu S7V8F5 regulator.
+This repository contains a hand-solderable through-hole carrier for the QRP Labs LightHABTracker 1.0 and SparkFun OpenLog. LightHAB's exposed 3.3 V rail powers the logger directly.
 
 | Directory | Contents |
 | --- | --- |

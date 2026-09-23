@@ -25,13 +25,15 @@ matching the existing schematic numbering.
 
 ## Pololu S7V8F5 logger regulator
 
+This footprint is retained as a legacy library asset but is not used by the current LightHAB carrier. The live design powers OpenLog directly from LightHAB J2.3 3V3 and has no A2 regulator.
+
 `WeatherBalloon:Pololu_S7V8F5_Carrier` models Pololu item 2123 mounted top-side
 and direct-soldered through its included straight 1x4 header. The footprint
 reserves the official 11.43 x 16.51 mm module body and uses four 1.0 mm drills
 for the official 1.02 mm holes. The 2.54 mm-pitch row is centered across the
 11.43 mm edge and lies 1.27 mm from that edge. With the body extending upward
 from the row in top view, pads read left-to-right as 4 VOUT, 3 GND, 2 VIN, and
-1 SHDN. Future schematic/PCB implementation reserves refdes A2 for this module.
+1 SHDN.
 
 ## KEMET radial ceramic capacitors
 

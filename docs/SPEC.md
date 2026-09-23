@@ -10,7 +10,7 @@ This carrier adapts a LightHABTracker 1.0 to a SparkFun OpenLog, an activity LED
 | Flight duration | At least 4 h with GPS and flight firmware continuously available | Required; cold-load test pending |
 | Battery | Three Energizer L91 AA cells in the tracker holder | Selected |
 | Logger | SparkFun OpenLog DEV-13955, one-way UART receive | Selected |
-| Logger supply | Pololu S7V8F5 fixed 5 V buck-boost | Selected |
+| Logger supply | LightHAB J2.3 regulated 3V3, direct | Accepted assumption; bench validation required |
 | Cutdown | LightHAB onboard OUT1 pyro channel passed directly to J5 | Selected; electrical rating unverified |
 | Carrier assembly | All populated carrier parts directly soldered through-hole; no SMD pads | Required |
 
@@ -18,18 +18,15 @@ The tracker is approximately 56 × 75 mm and 36 g without batteries or antennas 
 
 ## 2. Power
 
-LightHAB accepts 2.7–16 V and carries its own 3×AA holder. The carrier does not contain a second battery holder or master switch. J1 receives LightHAB `VBATT` and `GND`; `VBATT` feeds both VIN and SHDN on A2. This design assumes the photographed LightHAB switch disconnects or controls J1 VBATT. That behavior is **UNVERIFIED**. If J1 remains live with the tracker switched off, this topology must be revised before fabrication.
-
-A2 produces `LOGGER_5V` only for OpenLog A1 and its local C1/C2 bypass. The tracker 3V3 rail powers only the low-current activity LED path. Common ground joins J1, J2, A1, A2, J3, and J5.
+LightHAB accepts 2.7–16 V and carries its own 3×AA holder. The carrier does not contain a second battery holder, master switch, or logger regulator. J2.3 `3V3` directly powers OpenLog A1, C1/C2 bypass, and the activity LED path. Common ground joins J2, A1, J3, and J5. SparkFun specifies OpenLog VCC at 3.3–12 V and recommends 3.3–5 V, so 3.3 V is valid for the logger; this design accepts the unverified assumption that LightHAB can supply the approximately 20–23 mA active-write load plus transient margin.
 
 | Parameter | Requirement |
 | --- | --- |
 | Mission energy | Demonstrate ≥4 h at the real cold-temperature and RF duty profile |
 | OpenLog idle/write | Qualify ≤7 mA idle and ≤25 mA writing |
-| S7V8F5 input | 2.7–11.8 V; no reverse-polarity protection |
-| S7V8F5 quiescent | <0.2 mA enabled |
+| LightHAB 3V3 | Remain in tolerance through OpenLog startup, card inrush, and writes |
 | LED reset state | Off; R2=100 kΩ pulls active-low `LED_N` to 3V3 |
-| Switch-off state | Measure J1 VBATT and carrier current with the LightHAB switch off |
+| OpenLog source | Direct J2.3 3V3; no carrier regulator |
 
 ## 3. Interfaces
 
@@ -41,7 +38,7 @@ J2 is a directly soldered 1×9 through-hole interface in this order:
 | --- | --- | --- |
 | 1 | A1 / PB08 | `UART_TX` through R4 to OpenLog RXI |
 | 2 | A2 / PB09 | Active-low `LED_N` |
-| 3 | 3V3 | LED supply and R2 pull-up |
+| 3 | 3V3 | OpenLog VCC/C1/C2 plus LED supply and R2 pull-up |
 | 4 | GND | Common return |
 | 5 | SCL | Intentional no-connect |
 | 6 | SDA | Intentional no-connect |
@@ -53,7 +50,7 @@ A1/PB08 and A2/PB09 appear unused in the reviewed upstream firmware at commit `7
 
 ### OpenLog and activity LED
 
-OpenLog is receive-only: J2.1 → R4 1 kΩ → A1 RXI. A1 TXO is intentionally unused. A2 supplies fixed 5 V to A1 VCC. The LED path is 3V3 → R1 1 kΩ → D1 → `LED_N`; firmware drives J2.2 low during activity. R2 keeps it off while the pin is high-impedance at reset. Activity indicates firmware intent to log, not confirmed SD media completion.
+OpenLog is receive-only: J2.1 → R4 1 kΩ → A1 RXI. A1 TXO is intentionally unused. J2.3 supplies 3.3 V directly to A1 VCC and local C1/C2 bypass. The LED path is 3V3 → R1 1 kΩ → D1 → `LED_N`; firmware drives J2.2 low during activity. R2 keeps it off while the pin is high-impedance at reset. Activity indicates firmware intent to log, not confirmed SD media completion.
 
 ### Cutdown
 
@@ -83,9 +80,9 @@ Qualification temperature remains −40 °C to +40 °C unless the mission profil
 
 Before a fit-test PCB:
 
-1. Measure the LightHAB outline, four hole centers and drills, 1×9 pitch/coordinates/drills, J1/J3 pad coordinates/drills, holder height, and maximum component height.
+1. Measure the LightHAB outline, four hole centers and drills, 1×9 pitch/coordinates/drills, J3 pad coordinates/drills, holder height, and maximum component height.
 2. Confirm mounting orientation and USB/SMA/cable access.
-3. Confirm whether the onboard switch controls J1 VBATT.
+3. Confirm LightHAB 3V3 remains in tolerance while OpenLog starts and writes at the cold/voltage extremes.
 4. Confirm OUT1/GND polarity, voltage, current limit, switching topology, default state, and supported pulse duration.
 5. Reconcile those measurements into the footprint, reroute, and regenerate 1:1 plots.
 

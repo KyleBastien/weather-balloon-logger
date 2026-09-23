@@ -1,31 +1,27 @@
 # Subsystems — Weather Balloon Logger carrier
 
-The LightHABTracker 1.0 is the flight computer, GPS, radio system, battery carrier, and pyro controller. This PCB is a passive through-hole carrier plus a dedicated OpenLog regulator.
+The LightHABTracker 1.0 is the flight computer, GPS, radio system, battery carrier, logger power source, and pyro controller. This PCB is a passive through-hole carrier.
 
 ## Block diagram
 
 ```text
-LightHAB 3×AA holder / onboard switch
-        |
-        +-- J1 VBATT/GND --> Pololu S7V8F5 --> LOGGER_5V --> OpenLog
-        |
-        +-- LightHAB flight computer
-              +-- A1/PB08 --> 1 kΩ --> OpenLog RXI
-              +-- A2/PB09 --> active-low activity LED
-              +-- OUT1/GND --> J3 --> J5 JST-XH --> cutdown harness
-              +-- onboard VHF/UHF radios --> onboard SMA connectors
+LightHAB 3×AA holder / onboard power
+        +-- J2.3 3V3 --> OpenLog VCC + C1/C2 bypass
+        +-- A1/PB08 --> 1 kΩ --> OpenLog RXI
+        +-- A2/PB09 --> active-low activity LED
+        +-- OUT1/GND --> J3 --> J5 JST-XH --> cutdown harness
+        +-- onboard VHF/UHF radios --> onboard SMA connectors
 ```
 
-J1 VBATT switching and J3 OUT1 electrical capability are assumptions, not verified facts.
+LightHAB 3V3 current capacity and J3 OUT1 electrical capability are assumptions requiring bench validation.
 
 ## 1. Power
 
-LightHAB J1 VBATT/GND supplies Pololu S7V8F5 A2. VIN and SHDN share VBATT; VOUT creates `LOGGER_5V` for OpenLog. LightHAB switch control of VBATT is unverified.
+LightHAB J2.3 3V3 directly supplies OpenLog and its bypass capacitors. SparkFun supports a 3.3 V OpenLog supply; LightHAB rail capacity at startup/write current remains a bench-test gate.
 
 ## 2. Host / MCU
 
 - J2: 1×9 extended-pin row ordered A1, A2, 3V3, GND, SCL, SDA, SCK, MISO, MOSI.
-- J1: two-pin VBATT/GND feed for the logger regulator.
 - J3: two-pin OUT1/GND pyro handoff to the carrier cutdown connector.
 - A1 and A2 are the only extension GPIO used by the carrier.
 - I2C and SPI contacts remain physically present and intentional no-connects.
@@ -34,7 +30,7 @@ The old LightAPRS 11-pin interface, separate VHF/HF contacts, carrier SMA connec
 
 ## 3.1 UART SD logger
 
-Pololu S7V8F5 A2 receives J1 VBATT at VIN and SHDN and produces `LOGGER_5V`. C1 4.7 µF and C2 100 nF bypass that rail at OpenLog A1. The regulator and OpenLog remain direct-solder modules with through-hole headers.
+LightHAB J2.3 directly powers OpenLog A1 VCC. C1 4.7 µF and C2 100 nF bypass the 3V3 rail at OpenLog. OpenLog remains a direct-solder module with through-hole headers.
 
 LightHAB A1/PB08 provides one-way SERCOM4 TX. R4 1 kΩ limits possible back-power into A1 RXI during rail sequencing. OpenLog TXO, BLK, and GRN are intentionally unused.
 
@@ -61,7 +57,8 @@ The provisional layout mounts LightHAB on the right side, component face outward
 | Block | Reason |
 | --- | --- |
 | Second MCU, GPS, radios | Integrated on LightHAB |
-| Carrier battery holder/switch | LightHAB includes them; switch behavior must be verified |
+| Carrier battery holder/switch | LightHAB includes them |
+| Carrier logger regulator | OpenLog accepts 3.3 V; LightHAB J2.3 supplies it directly |
 | Carrier SMA and RF traces | LightHAB includes two SMA connectors |
 | I2C LED expander | A2/PB09 directly drives one low-current LED |
 | Carrier MOSFET/driver | LightHAB OUT1 is selected, pending rating verification |

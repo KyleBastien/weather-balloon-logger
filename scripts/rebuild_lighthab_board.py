@@ -16,10 +16,8 @@ PROJECT_FP = ROOT / "library" / "WeatherBalloon.pretty"
 
 
 NETS = {
-    "VBATT": {"J1.1", "A2.1", "A2.2"},
-    "GND": {"J1.2", "J2.4", "A2.3", "A1.2", "C1.2", "C2.2", "J3.2", "J5.2"},
-    "LOGGER_5V": {"A2.4", "A1.3", "C1.1", "C2.1"},
-    "3V3": {"J2.3", "R1.1", "R2.1"},
+    "GND": {"J2.4", "A1.2", "C1.2", "C2.2", "J3.2", "J5.2"},
+    "3V3": {"J2.3", "A1.3", "C1.1", "C2.1", "R1.1", "R2.1"},
     "UART_TX": {"J2.1", "R4.1"},
     "OPENLOG_RXI": {"R4.2", "A1.5"},
     "LED_A": {"R1.2", "D1.2"},
@@ -32,7 +30,6 @@ NETS = {
 PARTS = {
     "A1": ("WeatherBalloon", "SparkFun_OpenLog_DEV-13712_Carrier", "OpenLog", 116.5, 110.0, 0),
     "R4": ("Resistor_THT", "R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal", "1k", 128.0, 106.0, 180),
-    "A2": ("WeatherBalloon", "Pololu_S7V8F5_Carrier", "Pololu S7V8F5", 103.0, 140.0, 0),
     "C1": ("WeatherBalloon", "KEMET_C322C475K5R5TA", "4.7uF", 116.0, 132.0, 0),
     "C2": ("WeatherBalloon", "KEMET_C315C104K5R5TA", "100nF", 116.0, 138.0, 0),
     "R1": ("Resistor_THT", "R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal", "1k", 110.0, 116.0, 0),
@@ -41,11 +38,10 @@ PARTS = {
     "J5": ("Connector_JST", "JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal", "Cutdown output", 108.5, 158.0, 180),
     # Photo-derived LightHAB mating locations: intentionally provisional.
     "J2": ("Connector_PinHeader_2.54mm", "PinHeader_1x09_P2.54mm_Vertical", "LightHABTracker 1.0", 136.5, 109.0, 0),
-    "J1": ("Connector_PinHeader_2.54mm", "PinHeader_1x02_P2.54mm_Vertical", "LightHAB VBATT/GND", 144.0, 142.0, 0),
     "J3": ("Connector_PinHeader_2.54mm", "PinHeader_1x02_P2.54mm_Vertical", "LightHAB OUT1/GND", 144.0, 155.0, 0),
 }
 
-POWER_NETS = {"VBATT", "GND", "LOGGER_5V", "OUT1"}
+POWER_NETS = {"3V3", "GND", "OUT1"}
 
 
 def fp_dir(nickname: str) -> Path:
@@ -188,12 +184,11 @@ def main():
     # Readable functional front-silkscreen labels, outside the module body.
     add_text(board, "OPENLOG", 123.0, 94.0, size=1.25)
     add_text(board, "microSD ACCESS", 124.0, 99.0, size=0.9)
-    add_text(board, "LOGGER 5V", 126.0, 129.0, size=1.0)
+    add_text(board, "LOGGER 3V3", 126.0, 129.0, size=1.0)
     add_text(board, "ACTIVITY", 125.0, 123.5, size=0.95)
     add_text(board, "CUTDOWN", 118.0, 155.0, size=1.05)
     add_text(board, "1 OUT1   2 GND", 117.0, 168.0, size=0.8)
     add_text(board, "LIGHTHAB EXTENDED PINS 1=A1", 132.5, 119.0, size=0.8, angle=90)
-    add_text(board, "VBATT / GND", 132.5, 143.0, size=0.8, angle=90)
     add_text(board, "OUT1 / GND", 132.5, 156.0, size=0.8, angle=90)
 
     def pad(ref, number):
@@ -209,6 +204,15 @@ def main():
                [pad("J2", 3), (132, 114.08), (132, 122), (108, 122), (108, 116), pad("R1", 1)], 0.35)
     route_path(board, nets["3V3"], pcbnew.F_Cu,
                [(108, 120), pad("R2", 1)], 0.35)
+    # Feed OpenLog from the LightHAB 3V3 pin on the back layer.  Leave J2 to
+    # the right before heading above the module so this path clears the other
+    # J2 pads and the front-layer UART/activity routing.
+    route_path(board, nets["3V3"], pcbnew.B_Cu,
+               [pad("J2", 3), (139, 114.08), (139, 104), (111.42, 104), pad("A1", 3)], 0.5)
+    route_path(board, nets["3V3"], pcbnew.F_Cu,
+               [(108, 122), (108, 132), pad("C1", 1)], 0.5)
+    route_path(board, nets["3V3"], pcbnew.F_Cu,
+               [(108, 132), (108, 138), pad("C2", 1)], 0.5)
     route_path(board, nets["LED_A"], pcbnew.F_Cu,
                [pad("R1", 2), pad("D1", 2)], 0.35)
     route_path(board, nets["LED_N"], pcbnew.F_Cu,
@@ -216,15 +220,6 @@ def main():
     route_path(board, nets["LED_N"], pcbnew.F_Cu,
                [(124.5, 118), (124.5, 120), pad("R2", 2)], 0.35)
 
-    route_path(board, nets["LOGGER_5V"], pcbnew.F_Cu,
-               [pad("A1", 3), (111.42, 112.5), (101.5, 112.5), (101.5, 140), pad("A2", 4)], 0.5)
-    route_path(board, nets["LOGGER_5V"], pcbnew.F_Cu,
-               [(101.5, 132), pad("C1", 1)], 0.5)
-    route_path(board, nets["LOGGER_5V"], pcbnew.F_Cu,
-               [(101.5, 138), pad("C2", 1)], 0.5)
-
-    route_path(board, nets["VBATT"], pcbnew.F_Cu,
-               [pad("J1", 1), (134, 142), (134, 145), (110.62, 145), pad("A2", 1), pad("A2", 2)], 0.8)
     # Keep both cutdown conductors outside the G1 artwork envelope
     # (x=122.25..129.75, y=157.375..168.625) so the logo remains readable in
     # the colored review render and on the finished front silkscreen.
@@ -235,10 +230,8 @@ def main():
     route_path(board, nets["GND"], pcbnew.B_Cu,
                [pad("A1", 2), (113.96, 112.5), (133, 112.5), (133, 157.54), pad("J3", 2)], 0.8)
     route_path(board, nets["GND"], pcbnew.B_Cu, [pad("J2", 4), (133, 116.62)], 0.8)
-    route_path(board, nets["GND"], pcbnew.B_Cu, [pad("J1", 2), (133, 144.54)], 0.8)
     route_path(board, nets["GND"], pcbnew.B_Cu, [pad("C1", 2), (133, 132)], 0.8)
     route_path(board, nets["GND"], pcbnew.B_Cu, [pad("C2", 2), (133, 138)], 0.8)
-    route_path(board, nets["GND"], pcbnew.B_Cu, [pad("A2", 3), (105.54, 143), (133, 143)], 0.8)
     route_path(board, nets["GND"], pcbnew.B_Cu,
                [pad("J5", 2), (106, 153), (133, 153), (133, 157.54)], 0.8)
 

@@ -1,8 +1,10 @@
-Comment,Designator,Footprint,LCSC Part #
-OpenLog,A1,WeatherBalloon:SparkFun_OpenLog_DEV-13712_Carrier,
-4.7uF,C1,WeatherBalloon:KEMET_C322C475K5R5TA,
-100nF,C2,WeatherBalloon:KEMET_C315C104K5R5TA,
-WP710A10SGC,D1,LED_THT:LED_D3.0mm,
-LightHABTracker 1.0,J2,Connector_PinHeader_2.54mm:PinHeader_1x09_P2.54mm_Vertical,
-1k,"R1,R4",Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal,
-100k,R2,Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal,
+"Comment","Designator","Footprint","LCSC Part #"
+"OpenLog","A1","WeatherBalloon:SparkFun_OpenLog_DEV-13712_Carrier",""
+"4.7uF","C1","WeatherBalloon:KEMET_C322C475K5R5TA",""
+"100nF","C2","WeatherBalloon:KEMET_C315C104K5R5TA",""
+"WP710A10SGC","D1","LED_THT:LED_D3.0mm",""
+"LightHABTracker 1.0","J2","Connector_PinHeader_2.54mm:PinHeader_1x09_P2.54mm_Vertical",""
+"LightHAB OUT1/GND","J3","Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",""
+"Cutdown output","J5","Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal",""
+"1k","R1,R4","Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",""
+"100k","R2","Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",""

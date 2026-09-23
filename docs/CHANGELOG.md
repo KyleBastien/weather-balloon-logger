@@ -2,6 +2,13 @@
 
 Append-only, newest first. One entry per committed copperhead run.
 
+## 2026-09-22 — Power OpenLog directly from LightHAB 3V3
+
+- Removed the provisional J1 VBATT interface, A2 Pololu regulator, and the `VBATT`/`LOGGER_5V` nets from the live schematic and PCB.
+- Connected LightHAB J2.3 3V3 directly to OpenLog A1 VCC, C1/C2 bypass, and the activity LED path; retained the 1 kΩ UART series resistor.
+- Reduced the populated carrier BOM from 12 to 10 references and synchronized the order list, fit gates, layout/audit records, and review outputs.
+- Kept LightHAB 3V3 capacity as an explicit bench-validation gate rather than treating the assumption as proven.
+
 ## 2026-09-22 — Clear the silkscreen logo
 
 - Rerouted the OUT1 front-copper and J5 ground back-copper corridors above and around G1's complete 7.5 × 11.25 mm envelope.

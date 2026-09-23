@@ -811,6 +811,166 @@ Edge.Cuts
 100
 AcDbCircle
  10
+116.5
+ 20
+-110.
+ 30
+0
+ 40
+0.5
+  0
+CIRCLE
+  5
+2D
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
+113.9599999999999937
+ 20
+-110.
+ 30
+0
+ 40
+0.5
+  0
+CIRCLE
+  5
+2E
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
+111.4200000000000017
+ 20
+-110.
+ 30
+0
+ 40
+0.5
+  0
+CIRCLE
+  5
+2F
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
+108.8799999999999955
+ 20
+-110.
+ 30
+0
+ 40
+0.5
+  0
+CIRCLE
+  5
+30
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
+106.3399999999999892
+ 20
+-110.
+ 30
+0
+ 40
+0.5
+  0
+CIRCLE
+  5
+31
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
+103.7999999999999972
+ 20
+-110.
+ 30
+0
+ 40
+0.5
+  0
+CIRCLE
+  5
+32
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
+110.
+ 20
+-116.
+ 30
+0
+ 40
+0.4
+  0
+CIRCLE
+  5
+33
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
+117.6199999999999903
+ 20
+-116.
+ 30
+0
+ 40
+0.4
+  0
+CIRCLE
+  5
+34
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
 116.
  20
 -132.
@@ -821,7 +981,7 @@ AcDbCircle
   0
 CIRCLE
   5
-2D
+35
 330
 1A
 100
@@ -841,7 +1001,7 @@ AcDbCircle
   0
 CIRCLE
   5
-2E
+36
 330
 1A
 100
@@ -851,9 +1011,9 @@ Edge.Cuts
 100
 AcDbCircle
  10
-144.
+108.5
  20
--155.
+-158.
  30
 0
  40
@@ -861,7 +1021,7 @@ AcDbCircle
   0
 CIRCLE
   5
-2F
+37
 330
 1A
 100
@@ -871,9 +1031,9 @@ Edge.Cuts
 100
 AcDbCircle
  10
-144.
+106.
  20
--157.539999999999992
+-158.
  30
 0
  40
@@ -881,7 +1041,7 @@ AcDbCircle
   0
 CIRCLE
   5
-30
+38
 330
 1A
 100
@@ -891,7 +1051,27 @@ Edge.Cuts
 100
 AcDbCircle
  10
-138.
+186.
+ 20
+-166.
+ 30
+0
+ 40
+1.5999989999999999
+  0
+CIRCLE
+  5
+39
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
+186.
  20
 -99.
  30
@@ -901,7 +1081,7 @@ AcDbCircle
   0
 CIRCLE
   5
-31
+3A
 330
 1A
 100
@@ -921,7 +1101,7 @@ AcDbCircle
   0
 CIRCLE
   5
-32
+3B
 330
 1A
 100
@@ -941,186 +1121,6 @@ AcDbCircle
   0
 CIRCLE
   5
-33
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-136.5
- 20
--109.
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-34
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-136.5
- 20
--111.539999999999992
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-35
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-136.5
- 20
--114.0799999999999983
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-36
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-136.5
- 20
--116.6199999999999903
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-37
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-136.5
- 20
--119.1599999999999966
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-38
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-136.5
- 20
--121.6999999999999886
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-39
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-136.5
- 20
--124.2399999999999949
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-3A
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-136.5
- 20
--126.7800000000000011
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-3B
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-136.5
- 20
--129.3199999999999932
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
 3C
 330
 1A
@@ -1131,13 +1131,13 @@ Edge.Cuts
 100
 AcDbCircle
  10
-110.6199999999999903
+110.
  20
--140.
+-120.
  30
 0
  40
-0.5
+0.4
   0
 CIRCLE
   5
@@ -1151,57 +1151,17 @@ Edge.Cuts
 100
 AcDbCircle
  10
-108.0799999999999983
+117.6199999999999903
  20
--140.
+-120.
  30
 0
  40
-0.5
+0.4
   0
 CIRCLE
   5
 3E
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-105.539999999999992
- 20
--140.
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-3F
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-103.
- 20
--140.
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-40
 330
 1A
 100
@@ -1218,6 +1178,46 @@ AcDbCircle
 0
  40
 1.5999989999999999
+  0
+CIRCLE
+  5
+3F
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
+122.6999999999999886
+ 20
+-116.
+ 30
+0
+ 40
+0.45
+  0
+CIRCLE
+  5
+40
+330
+1A
+100
+AcDbEntity
+  8
+Edge.Cuts
+100
+AcDbCircle
+ 10
+120.1599999999999966
+ 20
+-116.
+ 30
+0
+ 40
+0.45
   0
 CIRCLE
   5
@@ -1273,7 +1273,7 @@ AcDbCircle
  10
 144.
  20
--142.
+-155.
  30
 0
  40
@@ -1293,7 +1293,7 @@ AcDbCircle
  10
 144.
  20
--144.539999999999992
+-157.539999999999992
  30
 0
  40
@@ -1311,9 +1311,9 @@ Edge.Cuts
 100
 AcDbCircle
  10
-186.
+138.
  20
--166.
+-99.
  30
 0
  40
@@ -1331,13 +1331,13 @@ Edge.Cuts
 100
 AcDbCircle
  10
-122.6999999999999886
+136.5
  20
--116.
+-109.
  30
 0
  40
-0.45
+0.5
   0
 CIRCLE
   5
@@ -1351,13 +1351,13 @@ Edge.Cuts
 100
 AcDbCircle
  10
-120.1599999999999966
+136.5
  20
--116.
+-111.539999999999992
  30
 0
  40
-0.45
+0.5
   0
 CIRCLE
   5
@@ -1371,13 +1371,13 @@ Edge.Cuts
 100
 AcDbCircle
  10
-186.
+136.5
  20
--99.
+-114.0799999999999983
  30
 0
  40
-1.5999989999999999
+0.5
   0
 CIRCLE
   5
@@ -1391,13 +1391,13 @@ Edge.Cuts
 100
 AcDbCircle
  10
-110.
+136.5
  20
--116.
+-116.6199999999999903
  30
 0
  40
-0.4
+0.5
   0
 CIRCLE
   5
@@ -1411,13 +1411,13 @@ Edge.Cuts
 100
 AcDbCircle
  10
-117.6199999999999903
+136.5
  20
--116.
+-119.1599999999999966
  30
 0
  40
-0.4
+0.5
   0
 CIRCLE
   5
@@ -1431,9 +1431,9 @@ Edge.Cuts
 100
 AcDbCircle
  10
-108.5
+136.5
  20
--158.
+-121.6999999999999886
  30
 0
  40
@@ -1451,9 +1451,9 @@ Edge.Cuts
 100
 AcDbCircle
  10
-106.
+136.5
  20
--158.
+-124.2399999999999949
  30
 0
  40
@@ -1471,13 +1471,13 @@ Edge.Cuts
 100
 AcDbCircle
  10
-110.
+136.5
  20
--120.
+-126.7800000000000011
  30
 0
  40
-0.4
+0.5
   0
 CIRCLE
   5
@@ -1491,129 +1491,9 @@ Edge.Cuts
 100
 AcDbCircle
  10
-117.6199999999999903
+136.5
  20
--120.
- 30
-0
- 40
-0.4
-  0
-CIRCLE
-  5
-4F
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-116.5
- 20
--110.
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-50
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-113.9599999999999937
- 20
--110.
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-51
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-111.4200000000000017
- 20
--110.
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-52
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-108.8799999999999955
- 20
--110.
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-53
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-106.3399999999999892
- 20
--110.
- 30
-0
- 40
-0.5
-  0
-CIRCLE
-  5
-54
-330
-1A
-100
-AcDbEntity
-  8
-Edge.Cuts
-100
-AcDbCircle
- 10
-103.7999999999999972
- 20
--110.
+-129.3199999999999932
  30
 0
  40
@@ -1637,7 +1517,7 @@ AcDbDictionary
   3
 ACAD_GROUP
 350
-55
+4F
   3
 ACAD_LAYOUT
 350
@@ -1649,7 +1529,7 @@ ACAD_PLOTSTYLENAME
   0
 DICTIONARY
   5
-55
+4F
 330
 20
 100

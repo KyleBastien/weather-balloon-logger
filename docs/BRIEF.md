@@ -5,7 +5,7 @@ Build a hand-solderable through-hole carrier around the QRP Labs LightHABTracker
 The carrier shall:
 
 - mount the tracker once its exact geometry is measured;
-- power a SparkFun OpenLog with headers from LightHAB VBATT through a dedicated Pololu S7V8F5 fixed 5 V regulator;
+- power a SparkFun OpenLog with headers directly from LightHAB J2.3 3V3, accepting the host-rail-capacity assumption until bench validation;
 - send telemetry from A1/PB08 to OpenLog RXI through a 1 kΩ series resistor;
 - use A2/PB09 as an active-low write-attempt LED with a hardware 100 kΩ reset-default-off pull-up;
 - pass LightHAB OUT1/GND directly to a soldered JST-XH cutdown connector;
